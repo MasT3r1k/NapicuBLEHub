@@ -80,7 +80,11 @@ const Home = () => {
         <div className="box-device-list">
           {devices.map((device) => (
             (filter_allow_unknown_name || !filter_allow_unknown_name && device.name != "Unknown") && (!uuid_filter_value.length || uuid_filter_value.length  && device.uuids?.indexOf(uuid_filter_value) != -1 ) ? (
-              <div className="box box-bg has-text-white is-size-6 has-text-weight-bold is-clickable is-unselectable" key={device.id}>{device.name}</div>    
+              <div className="box box-bg has-text-white is-size-6 has-text-weight-bold is-clickable is-unselectable" key={device.id}>{device.name}
+              
+                <span className="device-adress"> ({device.address})</span>
+               
+              </div>    
             ) : null
           ))}
         </div>

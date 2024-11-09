@@ -98,11 +98,8 @@ export default class NapicuServer {
       id: peripheral.id,
       uuids: peripheral.advertisement.serviceUuids,
       name: peripheral.advertisement.localName || "Unknown",
+      address: peripheral.address
     };
-
-    console.log(peripheral.advertisement.serviceUuids);
-    
-
     this.devices.push(device);
     this.io.emit("device", device);
   }
