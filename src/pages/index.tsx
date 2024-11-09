@@ -28,7 +28,7 @@ const Home = () => {
     });
 
     socket.on("scan_status", (status) => {
-      setScanning(status.status);
+      setScanning(status);
     });
 
     return () => {
@@ -37,11 +37,11 @@ const Home = () => {
   }, []);
 
   const startScan = (): void => {
-    if (socket) socket.emit("startScan", {});
+    if (socket) socket.emit("start_scan", {});
   };
 
   const stopScan = (): void  => {
-    if (socket) socket.emit("stopScan", {});
+    if (socket) socket.emit("stop_scan", {});
   };
 
   return (

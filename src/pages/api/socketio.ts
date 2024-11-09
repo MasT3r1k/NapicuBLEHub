@@ -7,29 +7,29 @@ import noble from "@abandonware/noble";
 let isScanning = false;
 
 // Funkce pro spuštění skenování
-const startScan = (io: SocketIOServer) => {
+const start_scan = (io: SocketIOServer) => {
   if (isScanning) return;
 
   console.log("Starting BLE scan...");
   isScanning = true;
 
   noble.startScanning([], true);
-  io.emit("scanStatus", { scanning: true });
+  io.emit("scan_status", true);
 
   // Automatické zastavení po 30 sekundách
   setTimeout(() => {
-    stopScan(io);
-  }, 30000);
+    stop_scan(io);
+  }, 10000);
 };
 
 // Funkce pro zastavení skenování
-const stopScan = (io: SocketIOServer) => {
+const stop_scan = (io: SocketIOServer) => {
   if (!isScanning) return;
 
   console.log("Stopping BLE scan...");
   noble.stopScanning();
   isScanning = false;
-  io.emit("scanStatus", { scanning: false });
+  io.emit("scan_status", false);
 };
 
 export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
@@ -48,15 +48,15 @@ export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
       console.log("New client connected");
 
       // Pošleme stav skenování při připojení
-      socket.emit("scanStatus", { scanning: isScanning });
+      socket.emit("scan_status",  isScanning);
 
       // Posloucháme na zprávy od klienta
-      socket.on("startScan", () => {
-        startScan(io);
+      socket.on("start_scan", () => {
+        start_scan(io);
       });
 
-      socket.on("stopScan", () => {
-        stopScan(io);
+      socket.on("stop_scan", () => {
+        stop_scan(io);
       });
     });
 
@@ -76,8 +76,8 @@ export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
         name: peripheral.advertisement.localName || "Unknown",
       };
 
-      console.log("Discovered device:", device);
-      io.emit("deviceFound", device);
+ 
+      io.emit("device", device);
     });
   }
 
