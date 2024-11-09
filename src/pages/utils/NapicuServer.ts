@@ -12,7 +12,7 @@ export default class NapicuServer {
 
   private time_id: NodeJS.Timeout | null = null;
 
-  private devices: Device[] = [];
+  private found_peripheral: noble.Peripheral[] = [];
 
   constructor(req: NextApiRequest, res: NextApiResponseServerIO) {
     console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - Starting...\x1b[0m");
@@ -30,7 +30,7 @@ export default class NapicuServer {
     this.io.on("connection", (socket) => {
       console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - New client connected.\x1b[0m");
   
-      for(const device of this.devices) {
+      for(const device of this.cast_noble_peripherals_to_device(this.found_peripheral)) {
         socket.emit("device", device);
       }
       
@@ -46,7 +46,7 @@ export default class NapicuServer {
         if (client_count === 0) {
           console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - No clients connected.\x1b[0m");
           this.stop_scan();
-          this.devices = [];
+          this.found_peripheral = [];
         }
       });
     });
@@ -100,11 +100,36 @@ export default class NapicuServer {
       name: peripheral.advertisement.localName || "Unknown",
       address: peripheral.address
     };
-    this.devices.push(device);
-    this.io.emit("device", device);
+
+
+
+    this.found_peripheral.push(peripheral);
+
+    this.io.emit("device", this.cast_noble_peripherals_to_device(peripheral));
   }
 
   private emit_scan_status(): void {
     this.io.emit("scan_status", this.is_scanning);
+  }
+
+
+  private cast_noble_peripherals_to_device(peripherals: noble.Peripheral[]): Device[];
+  private cast_noble_peripherals_to_device(peripheral: noble.Peripheral): Device;
+  private cast_noble_peripherals_to_device(peripherals: noble.Peripheral | noble.Peripheral[]): Device | Device[] {
+    if (Array.isArray(peripherals)) {
+      return peripherals.map((peripheral) => ({
+        id: peripheral.id,
+        uuids: [peripheral.uuid],
+        name: peripheral.advertisement.localName || "Unknown",
+        address: peripheral.address,
+      }));
+    } else {
+      return {
+        id: peripherals.id,
+        uuids: [peripherals.uuid],
+        name: peripherals.advertisement.localName || "Unknown",
+        address: peripherals.address,
+      };
+    }
   }
 }
