@@ -52,10 +52,6 @@ const Home = () => {
     <div className="section">
       <div className="box box-bg">
         <div className="is-size-1 has-text-weight-bold has-text-white">NapicuBLE</div>
-        
-
-
-
 
       </div>
 
@@ -75,6 +71,43 @@ const Home = () => {
             Filter results
         </button>
       </div>
+
+      <div className="filter-window">
+        <div className="section">
+            <div className="box has-background-white">
+              <div className="has-text-centered is-size-4 has-text-black has-text-weight-bold">Filters</div>
+
+              <div className="filters-options">
+                <div className="container is-flex is-justify-content-space-between is-align-items-center">
+                  <div>Allow Unknown name</div>
+
+                  <div className="chck-input">
+                    <input type="checkbox" id="custom-checkbox" />
+                    <label htmlFor="custom-checkbox" className="checkmark"></label>
+                  </div>
+
+
+
+                </div>
+                <div className="container is-flex is-justify-content-space-between is-align-items-center">
+                  <div>Filter by service UUID: </div>
+                  <div className="uuid-input">
+                    <input type="text"/>
+                  </div>
+                </div>
+              </div>
+
+              <div className="buttons-op is-flex is-justify-content-center">
+                <button className="filter-button has-text-weight-bold has-text-white is-size-6" onClick={filter_results}>
+                    Ok
+                </button>
+              </div>
+
+            </div>
+        </div>
+    
+      </div>
+
     </div>
   );
 };
