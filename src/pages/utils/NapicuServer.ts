@@ -5,8 +5,6 @@ import { DefaultEventsMap, Server as SocketIOServer } from "socket.io";
 import noble from "@abandonware/noble";
 import { Device } from "@/types/ble_device";
 
-
-
 export default class NapicuServer {
   private io:  SocketIOServer<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
 
@@ -15,8 +13,6 @@ export default class NapicuServer {
   private time_id: NodeJS.Timeout | null = null;
 
   private devices: Device[] = [];
-  
-
 
   constructor(req: NextApiRequest, res: NextApiResponseServerIO) {
     console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - Starting...\x1b[0m");
@@ -33,10 +29,9 @@ export default class NapicuServer {
     //On client connect
     this.io.on("connection", (socket) => {
       console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - New client connected.\x1b[0m");
-      if(this.is_scanning) {
-        for(const device of this.devices) {
-          socket.emit("device", device);
-        }
+  
+      for(const device of this.devices) {
+        socket.emit("device", device);
       }
       
       socket.emit("scan_status", this.is_scanning);
@@ -51,11 +46,10 @@ export default class NapicuServer {
         if (client_count === 0) {
           console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - No clients connected.\x1b[0m");
           this.stop_scan();
+          this.devices = [];
         }
       });
     });
-
- 
 
     //On noble change
     noble.on("stateChange", this.noble_change);
@@ -70,8 +64,7 @@ export default class NapicuServer {
     
       noble.startScanning([], true);
       this.emit_scan_status();
-    
-      // Automatické zastavení po 30 sekundách
+
       this.time_id = setTimeout(() => {
         this.stop_scan();
       }, 10000);
@@ -113,8 +106,4 @@ export default class NapicuServer {
   private emit_scan_status(): void {
     this.io.emit("scan_status", this.is_scanning);
   }
-
-    
-
-
 }

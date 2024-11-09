@@ -45,16 +45,27 @@ const Home = () => {
   };
 
   return (
-    <div>
-      <h1>Bluetooth zařízení v okolí</h1>
-      <button onClick={scanning ? stopScan : startScan}>
-        {scanning ? "Stop scan" : "Start scan"}
-      </button>
-      <ul>
-        {devices.map((device) => (
-          <li key={device.id}>{device.name}</li>
-        ))}
-      </ul>
+    <div className="section">
+      <div className="box box-bg">
+        <div className="is-size-1 has-text-weight-bold has-text-white">NapicuBLE</div>
+        
+        <button className="button scan-button" onClick={scanning ? stopScan : startScan}>
+          {scanning ? "Stop scan" : "Start scan"}
+        </button>
+
+
+
+      </div>
+
+      <div className="section">
+        <div className="box-device-list">
+          {devices.map((device) => (
+            <div className="box box-bg has-text-white is-size-6 has-text-weight-bold" key={device.id}>{device.name}</div>
+          ))}
+        </div>
+      </div>
+
+
     </div>
   );
 };
