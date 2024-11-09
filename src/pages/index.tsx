@@ -24,7 +24,7 @@ const Home = () => {
     socket.on("device", (device: Device) => {
       setDevices((prevDevices) => {
  
-        if (!prevDevices.some((d) => d.id === device.id)) {
+        if (!prevDevices.some((d) => d.address === device.address)) { //TODO
           return [...prevDevices, device];
         }
         return prevDevices;
@@ -39,6 +39,10 @@ const Home = () => {
       socket.disconnect();
     };
   }, []);
+
+  const connect = (address: string): void => {
+    if (socket) socket.emit("connect_device", address);
+  };
 
   const startScan = (): void => {
     if (socket) socket.emit("start_scan", {});
@@ -80,7 +84,7 @@ const Home = () => {
         <div className="box-device-list">
           {devices.map((device) => (
             (filter_allow_unknown_name || !filter_allow_unknown_name && device.name != "Unknown") && (!uuid_filter_value.length || uuid_filter_value.length  && device.uuids?.indexOf(uuid_filter_value) != -1 ) ? (
-              <div className="box box-bg has-text-white is-size-6 has-text-weight-bold is-clickable is-unselectable" key={device.id}>{device.name}
+              <div className="box box-bg has-text-white is-size-6 has-text-weight-bold is-clickable is-unselectable" onClick={() => {connect(device.address)}} key={device.address}>{device.name}
               
                 <span className="device-adress"> ({device.address})</span>
                

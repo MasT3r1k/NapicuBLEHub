@@ -14,6 +14,7 @@ export default class NapicuServer {
 
   private found_peripheral: noble.Peripheral[] = [];
 
+
   constructor(req: NextApiRequest, res: NextApiResponseServerIO) {
     console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - Starting...\x1b[0m");
 
@@ -40,6 +41,8 @@ export default class NapicuServer {
 
       socket.on("stop_scan", this.stop_scan);
 
+      socket.on("connect_device", this.connect);
+
       socket.on("disconnect", () => {
         const client_count: number = this.io.sockets.sockets.size;
         console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - Client has disconnected. Number of connected clients:\x1b[0m", client_count);
@@ -55,6 +58,14 @@ export default class NapicuServer {
     noble.on("stateChange", this.noble_change);
     //On noble discover
     noble.on("discover", this.noble_discover);
+  }
+
+  private connect = (address: any): void => {
+    for(const peripheral of this.found_peripheral) {
+      if(peripheral.address === address) {
+
+      }
+    }
   }
 
   private start_scan = (): void => {
@@ -94,18 +105,11 @@ export default class NapicuServer {
   }
 
   private noble_discover = (peripheral: noble.Peripheral) => {
-    const device: Device = {
-      id: peripheral.id,
-      uuids: peripheral.advertisement.serviceUuids,
-      name: peripheral.advertisement.localName || "Unknown",
-      address: peripheral.address
-    };
+    if (!this.found_peripheral.some((d: noble.Peripheral) => d.address === peripheral.address)) {
+      this.found_peripheral.push(peripheral);
 
-
-
-    this.found_peripheral.push(peripheral);
-
-    this.io.emit("device", this.cast_noble_peripherals_to_device(peripheral));
+      this.io.emit("device", this.cast_noble_peripherals_to_device(peripheral));
+    }
   }
 
   private emit_scan_status(): void {
@@ -118,14 +122,12 @@ export default class NapicuServer {
   private cast_noble_peripherals_to_device(peripherals: noble.Peripheral | noble.Peripheral[]): Device | Device[] {
     if (Array.isArray(peripherals)) {
       return peripherals.map((peripheral) => ({
-        id: peripheral.id,
         uuids: [peripheral.uuid],
         name: peripheral.advertisement.localName || "Unknown",
         address: peripheral.address,
       }));
     } else {
       return {
-        id: peripherals.id,
         uuids: [peripherals.uuid],
         name: peripherals.advertisement.localName || "Unknown",
         address: peripherals.address,
