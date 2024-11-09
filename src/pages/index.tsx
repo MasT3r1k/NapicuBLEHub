@@ -44,14 +44,16 @@ const Home = () => {
     if (socket) socket.emit("stop_scan", {});
   };
 
+  const filter_results = (): void => {
+
+  }
+
   return (
     <div className="section">
       <div className="box box-bg">
         <div className="is-size-1 has-text-weight-bold has-text-white">NapicuBLE</div>
         
-        <button className="button scan-button" onClick={scanning ? stopScan : startScan}>
-          {scanning ? "Stop scan" : "Start scan"}
-        </button>
+
 
 
 
@@ -65,7 +67,14 @@ const Home = () => {
         </div>
       </div>
 
-
+      <div className="buttons-op is-flex is-justify-content-center">
+        <button className={`has-text-weight-bold has-text-white is-size-5 ${scanning ? "stop-scan-button" : "scan-button"}`} onClick={scanning ? stopScan : startScan}>
+            {scanning ? "Stop scan" : "Start scan"}
+        </button>
+        <button className="filter-button has-text-weight-bold has-text-white is-size-5" onClick={filter_results}>
+            Filter results
+        </button>
+      </div>
     </div>
   );
 };

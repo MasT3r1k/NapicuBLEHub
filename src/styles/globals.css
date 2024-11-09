@@ -42,12 +42,28 @@ body {
 .box-device-list{
   width: 50%;
   max-height: 60vh;
+  min-height: 60vh;
   overflow-y: auto;
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
 
-.scan-button{
-  margin: atuo
+
+.buttons-op>button {
+  padding: 15px;
+  border-radius: 10px;
+  margin-left: 10px
+}
+
+.scan-button {
+  background-color: #64d63e;
+}
+
+.stop-scan-button {
+  background-color: #f14e1b;
+}
+
+.filter-button {
+  background-color: #1897ff;
 }
