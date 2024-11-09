@@ -3,6 +3,7 @@ import { NextApiRequest } from "next";
 import { NextApiResponseServerIO } from "@/types/next";
 import { DefaultEventsMap, Server as SocketIOServer } from "socket.io";
 import noble from "@abandonware/noble";
+import { Device } from "@/types/ble_device";
 
 
 
@@ -12,6 +13,8 @@ export default class NapicuServer {
   private is_scanning: boolean = false;
 
   private time_id: NodeJS.Timeout | null = null;
+
+  private devices: Device[] = [];
   
 
 
@@ -30,6 +33,12 @@ export default class NapicuServer {
     //On client connect
     this.io.on("connection", (socket) => {
       console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - New client connected.\x1b[0m");
+      if(this.is_scanning) {
+        for(const device of this.devices) {
+          socket.emit("device", device);
+        }
+      }
+      
       socket.emit("scan_status", this.is_scanning);
 
       socket.on("start_scan", this.start_scan);
@@ -92,11 +101,12 @@ export default class NapicuServer {
   }
 
   private noble_discover = (peripheral: noble.Peripheral) => {
-    const device = {
+    const device: Device = {
       id: peripheral.id,
       name: peripheral.advertisement.localName || "Unknown",
     };
 
+    this.devices.push(device);
     this.io.emit("device", device);
   }
 
