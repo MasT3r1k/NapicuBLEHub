@@ -106,11 +106,11 @@ body {
 
 
 .filter-window>.section{
-  top: 30%;
+  top: 50%;
   width: 40%;
   position: absolute;
   left: 50%;
-  transform: translate(-50%);
+  transform: translate(-50%, -50%);
 }
 
 .filter-window>.box {
@@ -164,3 +164,18 @@ body {
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
+
+
+@media (max-width: 1500px) {
+  .filter-window>.section{
+    width: 60%;
+  }
+  
+}
+
+@media (max-width: 900px) {
+  .filter-window>.section{
+    width: 80%;
+  }
+}
+  

@@ -96,8 +96,12 @@ export default class NapicuServer {
   private noble_discover = (peripheral: noble.Peripheral) => {
     const device: Device = {
       id: peripheral.id,
+      uuids: peripheral.advertisement.serviceUuids,
       name: peripheral.advertisement.localName || "Unknown",
     };
+
+    console.log(peripheral.advertisement.serviceUuids);
+    
 
     this.devices.push(device);
     this.io.emit("device", device);
