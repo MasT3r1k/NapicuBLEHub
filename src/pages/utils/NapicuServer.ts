@@ -4,6 +4,9 @@ import { NextApiResponseServerIO } from "@/types/next";
 import { DefaultEventsMap, Server as SocketIOServer } from "socket.io";
 import noble from "@abandonware/noble";
 import { Device } from "@/types/ble_device";
+import NapicuLOG from "./NapicuLogger";
+import { log } from "console";
+
 
 export default class NapicuServer {
   private io:  SocketIOServer<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
@@ -14,9 +17,11 @@ export default class NapicuServer {
 
   private found_peripheral: noble.Peripheral[] = [];
 
+  private connected_peripheral_index: number | null = null;
+
 
   constructor(req: NextApiRequest, res: NextApiResponseServerIO) {
-    console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - Starting...\x1b[0m");
+    NapicuLOG.LOG_I("Starting...");
 
     const httpServer: NetServer = res.socket.server as any;
     this.io = new SocketIOServer(httpServer, {
@@ -29,7 +34,7 @@ export default class NapicuServer {
   public init(): void {
     //On client connect
     this.io.on("connection", (socket) => {
-      console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - New client connected.\x1b[0m");
+      NapicuLOG.LOG_I("New client connected.");
   
       for(const device of this.cast_noble_peripherals_to_device(this.found_peripheral)) {
         socket.emit("device", device);
@@ -45,9 +50,11 @@ export default class NapicuServer {
 
       socket.on("disconnect", () => {
         const client_count: number = this.io.sockets.sockets.size;
-        console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - Client has disconnected. Number of connected clients:\x1b[0m", client_count);
+        NapicuLOG.LOG_I("Client has disconnected. Number of connected clients:", client_count);
+        
         if (client_count === 0) {
-          console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - No clients connected.\x1b[0m");
+          NapicuLOG.LOG_I("No clients connected.");
+
           this.stop_scan();
           this.found_peripheral = [];
         }
@@ -56,21 +63,68 @@ export default class NapicuServer {
 
     //On noble change
     noble.on("stateChange", this.noble_change);
-    //On noble discover
-    noble.on("discover", this.noble_discover);
   }
 
-  private connect = (address: any): void => {
-    for(const peripheral of this.found_peripheral) {
+  private connect = (address: string): void => {
+    for (let index = 0; index < this.found_peripheral.length; index++) {
+      const peripheral: noble.Peripheral = this.found_peripheral[index];
       if(peripheral.address === address) {
+        NapicuLOG.LOG_I("Connecting to:", peripheral.advertisement.localName);
+        this.stop_scan();
+        noble.startScanning([], true);
+        noble.removeListener("discover", this.noble_discover);
 
+        let connection_timeout: NodeJS.Timeout = setTimeout(() => {
+          noble.stopScanning();
+          NapicuLOG.LOG_E("Failed to connect to:", peripheral.advertisement.localName);
+        }, 5000);
+
+        noble.on('discover', (found_peripheral: noble.Peripheral) => {
+          if(found_peripheral.address == peripheral.address && found_peripheral.connectable) {
+            clearTimeout(connection_timeout);
+            noble.removeListener("discover", this.noble_discover);
+            noble.stopScanning();
+
+            peripheral.connect();
+
+            peripheral.on("connect", () => {
+              NapicuLOG.LOG_I("Successfully connected to:", peripheral.advertisement.localName);
+              this.on_peripheral_connected();
+            });
+
+            peripheral.on("disconnect", () => {
+              NapicuLOG.LOG_I("Disconnected from:", peripheral.advertisement.localName);
+              this.on_peripheral_disconnect();
+              this.connected_peripheral_index = null;
+            });
+
+            peripheral.on("rssiUpdate", (rssi: number) => {
+              this.on_peripheral_rssi_update(rssi);
+            });
+          }
+        });
       }
     }
   }
 
+  private on_peripheral_connected(): void {
+    
+  }
+
+  private on_peripheral_disconnect(): void {
+
+  }
+
+  private on_peripheral_rssi_update(rssi: number): void {
+
+  }
+
   private start_scan = (): void => {
     if (!this.is_scanning) {
-      console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - Starting BLE scan...\x1b[0m");
+      //On noble discover
+      noble.on("discover", this.noble_discover);
+      NapicuLOG.LOG_I("Starting BLE scan...");
+
       this.is_scanning = true;
     
       noble.startScanning([], true);
@@ -84,7 +138,7 @@ export default class NapicuServer {
 
   private stop_scan = (): void => {
     if (this.is_scanning) {
-      console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - Stopping BLE scan...\x1b[0m");
+      NapicuLOG.LOG_I("Stopping BLE scan...");
       noble.stopScanning();
       this.is_scanning = false;
       this.emit_scan_status();
@@ -96,10 +150,12 @@ export default class NapicuServer {
   private noble_change = (state: string): void => {
     if (state === "poweredOn") {
       //TODO EMIT
-      console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[34m - BLE adapter powered on.\x1b[0m");
+      NapicuLOG.LOG_I("BLE adapter powered on.");
+
     } else {
       //TODO EMIT
-      console.log("\x1b[33m[NapicuServer]\x1b[0m\x1b[31m - BLE adapter powered on.\x1b[0m");
+      NapicuLOG.LOG_E("BLE adapter is not powered on.");
+
       noble.stopScanning();
     }
   }

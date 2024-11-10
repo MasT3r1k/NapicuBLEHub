@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NOBLE_MULTI_ROLE=1  next dev -p 6969 -H 0.0.0.0",
+    "dev": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next dev -p 6969 -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

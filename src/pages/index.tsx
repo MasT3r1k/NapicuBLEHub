@@ -31,6 +31,10 @@ const Home = () => {
       });
     });
 
+    socket.on("fail_connect", (status) => {
+        alert("fail");
+    });
+
     socket.on("scan_status", (status) => {
       setScanning(status);
     });
