@@ -71,8 +71,8 @@ export default class NapicuServer {
       if(peripheral.address === address) {
         NapicuLOG.LOG_I("Connecting to:", peripheral.advertisement.localName);
         this.stop_scan();
-        noble.startScanning([], true);
         noble.removeListener("discover", this.noble_discover);
+        noble.startScanning([], true);
 
         let connection_timeout: NodeJS.Timeout = setTimeout(() => {
           noble.stopScanning();
