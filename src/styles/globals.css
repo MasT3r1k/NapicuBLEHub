@@ -7,6 +7,10 @@ body {
   overflow-x: hidden; 
 }
 
+#__next {
+  height: 100%;
+}
+
 body {
   background: white;
   font-family: Arial, Helvetica, sans-serif;
@@ -42,9 +46,12 @@ body {
   color: rgba(230, 230, 230, 0.7);
 }
 
+.main-view-content-list {
+  height: 70%
+}
+
 .box-device-list{
   width: 50%;
-  max-height: 50vh;
   overflow-y: auto;
   display: block;
   margin-left: auto;
