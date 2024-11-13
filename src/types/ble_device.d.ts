@@ -4,3 +4,7 @@ export interface Device {
     address: string
 }
   
+export interface ConnectingDevice {
+    address: string,
+    local_name: string
+}

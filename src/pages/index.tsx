@@ -1,4 +1,4 @@
-import { Device } from "@/types/ble_device";
+import { ConnectingDevice, Device } from "@/types/ble_device";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 
@@ -9,6 +9,7 @@ const Home = () => {
   const [scanning, setScanning] = useState(false);
   const [socket, setSocket] = useState<any>(null);
   const [is_filter_menu, setFilter] = useState<boolean>(false);
+  const [connecting_data, setConnectingData] = useState<ConnectingDevice>();
   //Settings filter
   const [filter_allow_unknown_name, setIsChecked] = useState(true);
 
@@ -31,12 +32,25 @@ const Home = () => {
       });
     });
 
-    socket.on("fail_connect", (status) => {
-        alert("fail");
+    socket.on("fail_connect", (data) => {
+      //TODO FAIL ALERT
+      alert("fail");
     });
 
-    socket.on("scan_status", (status) => {
-      setScanning(status);
+    socket.on("scan_status", (data) => {
+      setScanning(data);
+    });
+
+    socket.on("connecting", (data: ConnectingDevice) => {
+      setConnectingData(data);
+    });
+
+    socket.on("connected", (data: any) => {
+
+    });
+
+    socket.on("connected_device_rssi", (value: number) => {
+      
     });
 
     return () => {
@@ -78,24 +92,27 @@ const Home = () => {
   };
 
   return (
-    <div className="section">
+    <div className="section is-fullheight"  style={{'height': 0}}>
       <div className="box box-bg">
         <div className="is-size-1 has-text-weight-bold has-text-white">NapicuBLE</div>
 
       </div>
 
-      <div className="section">
+      <div className="section main-view-content-list" >
+      {!connecting_data ? (
         <div className="box-device-list">
           {devices.map((device) => (
             (filter_allow_unknown_name || !filter_allow_unknown_name && device.name != "Unknown") && (!uuid_filter_value.length || uuid_filter_value.length  && device.uuids?.indexOf(uuid_filter_value) != -1 ) ? (
               <div className="box box-bg has-text-white is-size-6 has-text-weight-bold is-clickable is-unselectable" onClick={() => {connect(device.address)}} key={device.address}>{device.name}
-              
                 <span className="device-adress"> ({device.address})</span>
-               
               </div>    
             ) : null
           ))}
         </div>
+      ) : (
+        <div className="has-text-centered is-size-3 has-text-weight-medium">Connecting to {connecting_data.local_name}...</div>
+      )}
+
       </div>
 
       <div className="buttons-op is-flex is-justify-content-center">

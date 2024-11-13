@@ -3,9 +3,8 @@ import { NextApiRequest } from "next";
 import { NextApiResponseServerIO } from "@/types/next";
 import { DefaultEventsMap, Server as SocketIOServer } from "socket.io";
 import noble from "@abandonware/noble";
-import { Device } from "@/types/ble_device";
+import { ConnectingDevice, Device } from "@/types/ble_device";
 import NapicuLOG from "./NapicuLogger";
-import { log } from "console";
 
 
 export default class NapicuServer {
@@ -14,6 +13,8 @@ export default class NapicuServer {
   private is_scanning: boolean = false;
 
   private time_id: NodeJS.Timeout | null = null;
+
+  private rssi_update_time_id: NodeJS.Timeout | null = null;
 
   private found_peripheral: noble.Peripheral[] = [];
 
@@ -54,7 +55,7 @@ export default class NapicuServer {
         
         if (client_count === 0) {
           NapicuLOG.LOG_I("No clients connected.");
-
+          if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
           this.stop_scan();
           this.found_peripheral = [];
         }
@@ -66,10 +67,13 @@ export default class NapicuServer {
   }
 
   private connect = (address: string): void => {
+    //TODO IF connected
     for (let index = 0; index < this.found_peripheral.length; index++) {
       const peripheral: noble.Peripheral = this.found_peripheral[index];
       if(peripheral.address === address) {
         NapicuLOG.LOG_I("Connecting to:", peripheral.advertisement.localName);
+        const emit_data: ConnectingDevice = {address: peripheral.address, local_name: peripheral.advertisement.localName};
+        this.io.emit("connecting", emit_data);
         this.stop_scan();
         noble.removeListener("discover", this.noble_discover);
         noble.startScanning([], true);
@@ -86,20 +90,28 @@ export default class NapicuServer {
             noble.stopScanning();
 
             peripheral.connect();
-
+          
             peripheral.on("connect", () => {
               NapicuLOG.LOG_I("Successfully connected to:", peripheral.advertisement.localName);
+              this.connected_peripheral_index = index;
               this.on_peripheral_connected();
-            });
 
-            peripheral.on("disconnect", () => {
-              NapicuLOG.LOG_I("Disconnected from:", peripheral.advertisement.localName);
-              this.on_peripheral_disconnect();
-              this.connected_peripheral_index = null;
-            });
+              peripheral.on("rssiUpdate", (rssi: number) => {
+                this.io.emit("connected_device_rssi", rssi);
+                this.on_peripheral_rssi_update(rssi);
+              });
 
-            peripheral.on("rssiUpdate", (rssi: number) => {
-              this.on_peripheral_rssi_update(rssi);
+              peripheral.updateRssi();
+              this.rssi_update_time_id = setInterval(() => {
+                peripheral.updateRssi();
+              }, 2000);
+         
+              peripheral.on("disconnect", () => {
+                NapicuLOG.LOG_I("Disconnected from:", peripheral.advertisement.localName);
+                this.on_peripheral_disconnect();
+                if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
+                this.connected_peripheral_index = null;
+              });
             });
           }
         });
@@ -116,7 +128,7 @@ export default class NapicuServer {
   }
 
   private on_peripheral_rssi_update(rssi: number): void {
-
+    
   }
 
   private start_scan = (): void => {

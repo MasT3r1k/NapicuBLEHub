@@ -52,6 +52,7 @@ body {
 
 .box-device-list{
   width: 50%;
+  max-height: 100%;
   overflow-y: auto;
   display: block;
   margin-left: auto;
