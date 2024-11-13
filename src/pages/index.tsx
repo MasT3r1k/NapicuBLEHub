@@ -1,15 +1,17 @@
-import { ConnectingDevice, Device } from "@/types/ble_device";
+import { ConnectedDevice, ConnectingDevice, Device } from "@/types/ble_device";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
+import DeviceView from "./device";
 
 
 
-const Home = () => {
+const Home = (): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
   const [scanning, setScanning] = useState(false);
   const [socket, setSocket] = useState<any>(null);
   const [is_filter_menu, setFilter] = useState<boolean>(false);
   const [connecting_data, setConnectingData] = useState<ConnectingDevice>();
+  const [connected_device, setConnectedDevice] = useState<ConnectedDevice>();
   //Settings filter
   const [filter_allow_unknown_name, setIsChecked] = useState(true);
 
@@ -45,12 +47,13 @@ const Home = () => {
       setConnectingData(data);
     });
 
-    socket.on("connected", (data: any) => {
-
+    socket.on("connected_device", (data: ConnectedDevice) => {
+      setConnectedDevice(data);
+      setConnectingData(undefined);
     });
 
-    socket.on("connected_device_rssi", (value: number) => {
-      
+    socket.on("connected_device_rssi", (data: number) => {
+      setConnectedDevice(device_data => device_data ? { ...device_data, rssi: data } : undefined);
     });
 
     return () => {
@@ -93,70 +96,72 @@ const Home = () => {
 
   return (
     <div className="section is-fullheight"  style={{'height': 0}}>
-      <div className="box box-bg">
-        <div className="is-size-1 has-text-weight-bold has-text-white">NapicuBLE</div>
-
-      </div>
-
-      <div className="section main-view-content-list" >
-      {!connecting_data ? (
-        <div className="box-device-list">
-          {devices.map((device) => (
-            (filter_allow_unknown_name || !filter_allow_unknown_name && device.name != "Unknown") && (!uuid_filter_value.length || uuid_filter_value.length  && device.uuids?.indexOf(uuid_filter_value) != -1 ) ? (
-              <div className="box box-bg has-text-white is-size-6 has-text-weight-bold is-clickable is-unselectable" onClick={() => {connect(device.address)}} key={device.address}>{device.name}
-                <span className="device-adress"> ({device.address})</span>
-              </div>    
-            ) : null
-          ))}
+      {!connected_device ? (
+        <div style={{'height': '100%'}}>
+        <div className="box box-bg">
+          <div className="is-size-1 has-text-weight-bold has-text-white">NapicuBLE</div>
         </div>
-      ) : (
-        <div className="has-text-centered is-size-3 has-text-weight-medium">Connecting to {connecting_data.local_name}...</div>
-      )}
+        <div className="section main-view-content-list" >
+          {!connecting_data ? (
+            <div className="box-device-list">
+              {devices.map((device) => (
+                (filter_allow_unknown_name || !filter_allow_unknown_name && device.name != "Unknown") && (!uuid_filter_value.length || uuid_filter_value.length  && device.uuids?.indexOf(uuid_filter_value) != -1 ) ? (
+                  <div className="box box-bg has-text-white is-size-6 has-text-weight-bold is-clickable is-unselectable" onClick={() => {connect(device.address)}} key={device.address}>{device.name}
+                    <span className="device-adress"> ({device.address})</span>
+                  </div>    
+                ) : null
+              ))}
+            </div>
+          ) : (
+            <div className="has-text-centered is-size-3 has-text-weight-medium">Connecting to {connecting_data.local_name}...</div>
+          )}
+        </div>
 
-      </div>
+        <div className="buttons-op is-flex is-justify-content-center">
+          <button className={`has-text-weight-bold has-text-white is-size-5 ${scanning ? "stop-scan-button" : "scan-button"}`} onClick={scanning ? stopScan : startScan}>
+              {scanning ? "Stop scan" : "Start scan"}
+          </button>
+          <button className="filter-button has-text-weight-bold has-text-white is-size-5" onClick={on_click_filter_button}>
+              Filter results
+          </button>
+        </div>      
+        
+        {is_filter_menu &&
+          <div className="filter-window">
+            <div className="section">
+                <div className="box has-background-white">
+                  <div className="has-text-centered is-size-4 has-text-black has-text-weight-bold">Filters</div>
 
-      <div className="buttons-op is-flex is-justify-content-center">
-        <button className={`has-text-weight-bold has-text-white is-size-5 ${scanning ? "stop-scan-button" : "scan-button"}`} onClick={scanning ? stopScan : startScan}>
-            {scanning ? "Stop scan" : "Start scan"}
-        </button>
-        <button className="filter-button has-text-weight-bold has-text-white is-size-5" onClick={on_click_filter_button}>
-            Filter results
-        </button>
-      </div>
-    
-      {is_filter_menu &&
-        <div className="filter-window">
-          <div className="section">
-              <div className="box has-background-white">
-                <div className="has-text-centered is-size-4 has-text-black has-text-weight-bold">Filters</div>
-
-                <div className="filters-options">
-                  <div className="container is-flex is-justify-content-space-between is-align-items-center">
-                    <div>Allow Unknown name</div>
-                    <div className="chck-input">
-                      <input type="checkbox" id="custom-checkbox" checked={filter_allow_unknown_name} onChange={handle_unknown_checkbox_change} />
-                      <label htmlFor="custom-checkbox" className="checkmark"></label>
+                  <div className="filters-options">
+                    <div className="container is-flex is-justify-content-space-between is-align-items-center">
+                      <div>Allow Unknown name</div>
+                      <div className="chck-input">
+                        <input type="checkbox" id="custom-checkbox" checked={filter_allow_unknown_name} onChange={handle_unknown_checkbox_change} />
+                        <label htmlFor="custom-checkbox" className="checkmark"></label>
+                      </div>
+                    </div>
+                    <div className="container is-flex is-justify-content-space-between is-align-items-center">
+                      <div>Filter by service UUID: </div>
+                      <div className="uuid-input">
+                        <input type="text" value={uuid_filter_value} onChange={handle_uuid_input_change} onKeyDown={handle_input_key_down}/>
+                      </div>
                     </div>
                   </div>
-                  <div className="container is-flex is-justify-content-space-between is-align-items-center">
-                    <div>Filter by service UUID: </div>
-                    <div className="uuid-input">
-                      <input type="text" value={uuid_filter_value} onChange={handle_uuid_input_change} onKeyDown={handle_input_key_down}/>
-                    </div>
+                  <div className="buttons-op is-flex is-justify-content-center">
+                    <button className="filter-button has-text-weight-bold has-text-white is-size-6" onClick={on_click_filter_button}>
+                        Ok
+                    </button>
                   </div>
-                </div>
-                <div className="buttons-op is-flex is-justify-content-center">
-                  <button className="filter-button has-text-weight-bold has-text-white is-size-6" onClick={on_click_filter_button}>
-                      Ok
-                  </button>
-                </div>
 
-              </div>
+                </div>
+            </div>
+        
           </div>
-      
-        </div>
-      }
-
+        }
+      </div>
+      ) : (
+        <DeviceView device={connected_device}/>
+      )}
     </div>
   );
 };

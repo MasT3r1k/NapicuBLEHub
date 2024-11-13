@@ -3,7 +3,7 @@ import { NextApiRequest } from "next";
 import { NextApiResponseServerIO } from "@/types/next";
 import { DefaultEventsMap, Server as SocketIOServer } from "socket.io";
 import noble from "@abandonware/noble";
-import { ConnectingDevice, Device } from "@/types/ble_device";
+import { ConnectedDevice, ConnectingDevice, Device } from "@/types/ble_device";
 import NapicuLOG from "./NapicuLogger";
 
 
@@ -55,6 +55,7 @@ export default class NapicuServer {
         
         if (client_count === 0) {
           NapicuLOG.LOG_I("No clients connected.");
+          
           if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
           this.stop_scan();
           this.found_peripheral = [];
@@ -94,8 +95,14 @@ export default class NapicuServer {
             peripheral.on("connect", () => {
               NapicuLOG.LOG_I("Successfully connected to:", peripheral.advertisement.localName);
               this.connected_peripheral_index = index;
-              this.on_peripheral_connected();
+              const connected_device_data: ConnectedDevice = {
+                address: peripheral.address,
+                local_name: peripheral.advertisement.localName,
+                rssi: peripheral.rssi
+              }
+              this.io.emit("connected_device", connected_device_data);
 
+              this.on_peripheral_connected();
               peripheral.on("rssiUpdate", (rssi: number) => {
                 this.io.emit("connected_device_rssi", rssi);
                 this.on_peripheral_rssi_update(rssi);
