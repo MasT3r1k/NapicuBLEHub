@@ -18,7 +18,7 @@ export default class NapicuServer {
 
   private found_peripheral: noble.Peripheral[] = [];
 
-  private connected_peripheral_index: number | null = null;
+  private connected_device: noble.Peripheral | null = null;
 
 
   constructor(req: NextApiRequest, res: NextApiResponseServerIO) {
@@ -55,7 +55,7 @@ export default class NapicuServer {
         
         if (client_count === 0) {
           NapicuLOG.LOG_I("No clients connected.");
-          
+          if(this.connected_device) this.connected_device.disconnect();
           if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
           this.stop_scan();
           this.found_peripheral = [];
@@ -94,15 +94,13 @@ export default class NapicuServer {
           
             peripheral.on("connect", () => {
               NapicuLOG.LOG_I("Successfully connected to:", peripheral.advertisement.localName);
-              this.connected_peripheral_index = index;
+  
               const connected_device_data: ConnectedDevice = {
                 address: peripheral.address,
                 local_name: peripheral.advertisement.localName,
                 rssi: peripheral.rssi
               }
-              this.io.emit("connected_device", connected_device_data);
 
-              this.on_peripheral_connected();
               peripheral.on("rssiUpdate", (rssi: number) => {
                 this.io.emit("connected_device_rssi", rssi);
                 this.on_peripheral_rssi_update(rssi);
@@ -117,8 +115,15 @@ export default class NapicuServer {
                 NapicuLOG.LOG_I("Disconnected from:", peripheral.advertisement.localName);
                 this.on_peripheral_disconnect();
                 if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
-                this.connected_peripheral_index = null;
+                this.connected_device?.removeAllListeners();
+                this.connected_device = null;
               });
+
+              this.connected_device = peripheral;
+              this.found_peripheral = [];
+              //TODO Emit
+              this.io.emit("connected_device", connected_device_data);
+              this.on_peripheral_connected();
             });
           }
         });

@@ -47,7 +47,7 @@ const Home = (): JSX.Element => {
       setConnectingData(data);
     });
 
-    socket.on("connected_device", (data: ConnectedDevice) => {
+    socket.on("connected_device ", (data: ConnectedDevice) => {
       setConnectedDevice(data);
       setConnectingData(undefined);
     });
