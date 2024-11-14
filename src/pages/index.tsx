@@ -10,8 +10,8 @@ const Home = (): JSX.Element => {
   const [scanning, setScanning] = useState(false);
   const [socket, setSocket] = useState<any>(null);
   const [is_filter_menu, setFilter] = useState<boolean>(false);
-  const [connecting_data, setConnectingData] = useState<ConnectingDevice>();
-  const [connected_device, setConnectedDevice] = useState<ConnectedDevice>();
+  const [connecting_data, setConnectingData] = useState<ConnectingDevice | undefined>();
+  const [connected_device, setConnectedDevice] = useState<ConnectedDevice | undefined>({address: "address", local_name: "NapicuHome", rssi: 69});
   //Settings filter
   const [filter_allow_unknown_name, setIsChecked] = useState(true);
 
@@ -47,7 +47,7 @@ const Home = (): JSX.Element => {
       setConnectingData(data);
     });
 
-    socket.on("connected_device ", (data: ConnectedDevice) => {
+    socket.on("connected_device", (data: ConnectedDevice) => {
       setConnectedDevice(data);
       setConnectingData(undefined);
     });
@@ -95,7 +95,7 @@ const Home = (): JSX.Element => {
   };
 
   return (
-    <div className="section is-fullheight"  style={{'height': 0}}>
+    <div className={connected_device ? "" : "section is-fullheight"} style={{'height': 0}}>
       {!connected_device ? (
         <div style={{'height': '100%'}}>
         <div className="box box-bg">

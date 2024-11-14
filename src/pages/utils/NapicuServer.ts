@@ -58,7 +58,10 @@ export default class NapicuServer {
           if(this.connected_device) this.connected_device.disconnect();
           if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
           this.stop_scan();
+          NapicuLOG.LOG_I("Setting found_peripheral to []...");
           this.found_peripheral = [];
+          // NapicuLOG.LOG_I("Restarting Noble.");
+          // noble.reset();
         }
       });
     });
@@ -121,7 +124,7 @@ export default class NapicuServer {
 
               this.connected_device = peripheral;
               this.found_peripheral = [];
-              //TODO Emit
+              NapicuLOG.LOG_I("Setting found_peripheral to []...");
               this.io.emit("connected_device", connected_device_data);
               this.on_peripheral_connected();
             });
