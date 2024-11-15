@@ -94,8 +94,8 @@ const Home = (): JSX.Element => {
     }
   };
 
-  return (
-    <div className={connected_device ? "" : "section is-fullheight"} style={{'height': 0}}>
+  return ( //TODO FIX this fcking css
+    <div className={connected_device ? "" : "section is-fullheight"} style={connected_device ? {'height': '100%'} :  {'height': 0} }>
       {!connected_device ? (
         <div style={{'height': '100%'}}>
         <div className="box box-bg">

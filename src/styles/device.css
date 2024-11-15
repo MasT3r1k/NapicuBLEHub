@@ -16,6 +16,7 @@
     background-color: rgba(0, 0, 0, 0.719) !important;
     border-radius: 5px;
     margin-left: 6px;
+    min-height: auto;
 }
 
 .device-navbar {
@@ -32,20 +33,60 @@
 }
 
 .box-device-view {
-    width: 60%;
+    width: 100%;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
 }
   
 .box-device-view > .box {
-    background-color: rgba(0, 0, 0, 0.24);
+    /* background-color: rgba(185, 175, 175, 0.24); */
 }
 
 .box-inspect-view > div {
-    border: 2px solid rgba(102, 102, 102, 0.7);
+    /* border: 2px solid rgba(143, 143, 143, 0.6); */
     padding: 10px;
+}
+
+.inspect-items-view {
+    
+}
+
+.more-option-img {
+    vertical-align: middle;
+    width: 25px;
+    height: 25px;
+    transition: transform 0.125s ease;
+}
+
+.more-option-img-rotated {
+    transform: rotate(90deg);
+}
+
+.more-option-view {
+    border-top: 1px solid rgba(143, 143, 143, 0.6);
+    margin: 10px;
+    padding: 5px 0;
+}
+
+.inspect-item {
+    border: 1px solid rgba(143, 143, 143, 0.6);
     border-radius: 10px;
 
-    
+    margin: 10px 0;
+    padding: 12px; 
+}
+
+.left-view-bar {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 25%;
+    padding: 8px;
+    /* background: black; */
+    overflow-y: auto;
+    height: inherit;
+    left: 0;
+}
+
+.device-section-view {
+    height: 100%
 }
