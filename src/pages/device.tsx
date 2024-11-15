@@ -93,11 +93,11 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                     <div className="box-device-view">
                         <div className="has-background-white box-inspect-view has-text-white">
                             <div className="view">
-                                <div className="has-text-black is-size-6 has-text-weight-bold">Services:</div>
+                                <div className="has-text-black is-size-6 has-text-weight-bold is-unselectable">Services:</div>
                                 <div className="inspect-items-view">
                                     {deviceCharDEBUG?.map((uuid, index) => (
                                         <div className="inspect-item has-text-black">
-                                            <div className="is-flex is-justify-content-space-between is-align-items-center">
+                                            <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
                                                 <div className="is-size-6 has-text-weight-medium">
                                                     {uuid}
                                                 </div>
@@ -122,7 +122,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                     <div className="box-device-view">
                         <div className="has-background-white box-inspect-view has-text-white">
                             <div className="view">
-                                <div className="has-text-black is-size-6 has-text-weight-bold">Characteristics:</div>
+                                <div className="has-text-black is-size-6 has-text-weight-bold is-unselectable">Characteristics:</div>
                                 <div className="inspect-items-view">
                                     {deviceCharDEBUG?.map((uuid) => (
                                         <div>
