@@ -78,7 +78,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
 
     const onClickService = (index: number): void => {
         setSelectedServiceIndex(index);
-        setSelectedCharacteristicIndex(0);
+        setSelectedCharacteristicIndex(-1);
         setDeviceCharacteristic(device.services[index].chars);
         if(selectedServiceIndex != index) setExpandedServiceIndex(-1);
     }
