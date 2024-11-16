@@ -7,6 +7,11 @@
     border: 0;
 }
 
+.rename-button {
+    background-color: #1897ff !important;
+    border: 0;
+}
+
 .navbar-menu > .navbar-start .navbar-item:hover {
     background-color: rgba(255, 255, 255, 0.16) !important;
     border-radius: 5px;
@@ -42,7 +47,7 @@
 }
 
 .box-inspect-view > div {
-    /* border: 2px solid rgba(143, 143, 143, 0.6); */
+    /* border: 2px solid var(--border-color); */
     padding: 10px;
 }
 
@@ -62,18 +67,53 @@
 }
 
 .more-option-view {
-    border-top: 1px solid rgba(143, 143, 143, 0.6);
-    margin: 10px;
-    padding: 5px 0;
+    border-top: 1px solid var(--border-color);
+    margin: 10px 0;
+    padding: 10px;
+    pointer-events: auto;
+    cursor: default;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background-color: white !important;
+}
+
+.inspect-item>div {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    margin: 10px 0;
+    padding: 12px;
 }
 
 .inspect-item {
-    border: 1px solid rgba(143, 143, 143, 0.6);
     border-radius: 10px;
-
-    margin: 10px 0;
-    padding: 12px; 
 }
+
+.inspect-item input {
+    width: 90%;
+}
+
+.inspect-item input[type=text], select {
+    padding: 7px 10px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid rgba(0, 0, 0, 0.171);
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.inspect-item input:focus{
+    outline: none;
+  }
+  
+
+
+.inspect-item:hover {
+    background-color: rgba(212, 211, 211, 0.4) ; 
+}
+
+
+/* .inspect-item:has(.more-option-view:nth-of-type(2):hover) {
+    background: none;
+} */
 
 .left-view-bar {
     position: absolute;
@@ -85,8 +125,14 @@
     overflow-y: auto;
     height: inherit;
     left: 0;
+    border-right: 1px solid var(--border-color);
 }
 
 .device-section-view {
     height: 100%
+}
+
+.view-bar-section-name {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
 }

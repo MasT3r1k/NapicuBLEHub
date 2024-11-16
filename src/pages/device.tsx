@@ -1,37 +1,67 @@
 import { ConnectedDevice } from "@/types/ble_device";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface DeviceViewProps {
     device: ConnectedDevice;
 }
 
+interface DeviceServiceUUID {
+    uuid: string, 
+    alias: string | null
+}
+
 const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     const [favorited, setFavorited] = useState<boolean>(false);
+    const [expandedServiceIndex, setExpandedServiceIndex] = useState<number>(0);
 
-    const [expandedServiceIndex, setExpandedServiceIndex] = useState<number[]>([0]);
+    const serviceEditInput = useRef<HTMLInputElement>(null); 
 
+    const [serviceNameInput, setServiceNameInput] = useState<string>("");
 
-    const [deviceCharDEBUG, setdeviceCharDEBUG] = useState<string[] | undefined>([
-        "fa01395c-164d-467f-9ecd-986688c14b36",
-        "fafe310f-d81a-4157-8203-a7527590707d",
-        "6dd406ab-1f6b-452a-a467-951bcae64201",
-        "8989d4eb-9623-4d0b-a2b4-a918e1ff8437",
-        "8a40b40f-dd50-474c-b3b9-4dfc94d7f527",
-        "e347f3af-8b52-4d8c-8d7b-40663eff8de7"
+    const [deviceCharDEBUG, setdeviceCharDEBUG] = useState<DeviceServiceUUID[]>([
+        { uuid: "fa01395c-164d-467f-9ecd-986688c14b36", alias: null },
+        { uuid: "fafe310f-d81a-4157-8203-a7527590707d", alias: null },
+        { uuid: "6dd406ab-1f6b-452a-a467-951bcae64201", alias: null },
+        { uuid: "8989d4eb-9623-4d0b-a2b4-a918e1ff8437", alias: null },
+        { uuid: "8a40b40f-dd50-474c-b3b9-4dfc94d7f527", alias: null },
+        { uuid: "e347f3af-8b52-4d8c-8d7b-40663eff8de7", alias: null }
     ]);
-
+    
 
     const handleStarClick = (): void => {
         setFavorited(!favorited);
     };
 
-    const onClickServices = (index: number): void => {
-        setExpandedServiceIndex((prevState: number[]) => {
-            if (prevState.includes(index)) return prevState.filter(item => item !== index);
-            else return [...prevState, index];
-        });
+    const onClickService = (index: number): void => {
+        setExpandedServiceIndex(expandedServiceIndex == index ? -1 : index);
+        if(expandedServiceIndex > -1) setServiceNameInput(deviceCharDEBUG[index].alias || deviceCharDEBUG[index].uuid);
     }
 
+    // const handleExpandedViewButtonClick = (event: any) => {
+    //     event.stopPropagation();
+    // };
+
+    const handleServiceNameKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
+        if (event.key === "Enter") {
+            setdeviceCharDEBUG((prevState) =>
+                prevState.map((item) =>
+                    item.uuid === uuid ? { ...item, alias: serviceNameInput } : item
+                )
+            );
+            setServiceNameInput(serviceNameInput);
+        }
+    };
+
+    const handleServiceNameInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setServiceNameInput(event.target.value); 
+    };
+
+
+    useEffect(() => {
+        if (expandedServiceIndex !== -1 && serviceEditInput.current) {
+            serviceEditInput.current.select(); 
+        }
+    }, [expandedServiceIndex]); 
 
 
     return (
@@ -91,27 +121,44 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                 <div className="left-view-bar">
                     {/* Services */}
                     <div className="box-device-view">
-                        <div className="has-background-white box-inspect-view has-text-white">
+                        <div className=" box-inspect-view has-text-white">
                             <div className="view">
-                                <div className="has-text-black is-size-6 has-text-weight-bold is-unselectable">Services:</div>
+                                <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Services</div>
                                 <div className="inspect-items-view">
-                                    {deviceCharDEBUG?.map((uuid, index) => (
-                                        <div className="inspect-item has-text-black">
-                                            <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
-                                                <div className="is-size-6 has-text-weight-medium">
-                                                    {uuid}
+                                    {deviceCharDEBUG?.map((service, index) => (
+                                        <div className="inspect-item">   
+                                            <div className=" has-text-black is-clickable" >
+                                                <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
+                                                    {expandedServiceIndex == index ? (
+                                                       <input
+                                                       ref={serviceEditInput}
+                                                       type="text"
+                                                       className="is-size-6 has-text-weight-bold"
+                                                       onChange={handleServiceNameInputChange}
+                                                       value={serviceNameInput || ""}
+                                                       onKeyDown={(e) => handleServiceNameKeyDownInput(e, service.uuid)}
+                                                        />
+                                                    ) : (
+                                                        <div className="is-size-6 has-text-weight-bold">
+                                                            {service.alias || service.uuid}
+                                                        </div>
+                                                    )}
+                                         
+                                                    <div className="has-text-weight-bold is-clickable" >
+                                                        <img onClick={() => onClickService(index)} title="Edit the name of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
+                                                    </div>
                                                 </div>
-                                                <div className="has-text-weight-bold is-clickable" onClick={() => onClickServices(index)}>
-                                                    <img className={`more-option-img ${expandedServiceIndex.includes(index) ? 'more-option-img-rotated' : ''}`} src="more-icon.svg" alt="More option" />
-                                                </div>
-                                            </div>
 
-                                            {expandedServiceIndex.includes(index) ? (
-                                                <div className="more-option-view">
-                                                    Ahoj
-                                                </div>
-                                            ) : null}
-                                        </div>                                        
+                                                {/* {expandedServiceIndex.includes(index) ? (
+                                                    <div className="more-option-view" onClick={handleExpandedViewButtonClick}>
+                                                        <div>Number of characteristics: 69</div>
+                                                        <button className="button rename-button has-text-white has-text-weight-bold">
+                                                            Rename
+                                                        </button>
+                                                    </div>
+                                                ) : null} */}
+                                            </div>   
+                                        </div>
                                     ))}
                                 </div>
                             </div>
@@ -122,13 +169,13 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                     <div className="box-device-view">
                         <div className="has-background-white box-inspect-view has-text-white">
                             <div className="view">
-                                <div className="has-text-black is-size-6 has-text-weight-bold is-unselectable">Characteristics:</div>
+                                <div className="has-text-black is-size-5 has-text-weight-bold is-unselectable">Characteristics:</div>
                                 <div className="inspect-items-view">
                                     {deviceCharDEBUG?.map((uuid) => (
                                         <div>
                                             <div className="is-flex inspect-item has-text-black">
                                                 <div className="has-text-black is-size-6 has-text-weight-medium">
-                                                    {uuid}
+                                                    {uuid.alias || uuid.uuid}
                                                 </div>
                                                 <div>
 

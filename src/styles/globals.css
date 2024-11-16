@@ -8,6 +8,10 @@ body {
   overflow: auto;
 }
 
+:root {
+  --border-color: rgba(143, 143, 143, 0.6);
+}
+
 /* * {
   margin: 0;
   padding: 0;
