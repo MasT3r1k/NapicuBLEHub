@@ -23,7 +23,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     const [selectedServiceIndex, setSelectedServiceIndex] = useState<number>(0);
 
     const [expandedCharacteristicIndex, setExpandedCharacteristicIndex] = useState<number>(-1);
-    const [selectedCharacteristicIndex, setSelectedCharacteristicIndex] = useState<number>(0);
+    const [selectedCharacteristicIndex, setSelectedCharacteristicIndex] = useState<number>(-1);
 
 
     const serviceEditInput = useRef<HTMLInputElement>(null); 
@@ -226,7 +226,8 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                 </div>
                             </div>
                             {/* Characteristics */}
-                            <div className="box-device-view">
+                            {selectedCharacteristicIndex > -1 && (
+                                <div className="box-device-view">
                                 <div className=" box-inspect-view has-text-white">
                                     <div className="view">
                                         <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Characteristics</div>
@@ -252,15 +253,17 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                     </div>
                                 </div>
                             </div>
+                            )}
                         </div>
                     </div>
  
                 </div>
 
 
-                <div>
-                    k   okot
-                    </div>
+                <div className="right-view-bar">
+                   <div className="main-view">Ahoj</div>
+                   <div className="bottom-console">{device.local_name}{'>'} </div>
+                </div>
     
             </div>
 
