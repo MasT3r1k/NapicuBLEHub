@@ -92,6 +92,7 @@
     width: 90%;
 }
 
+
 .inspect-item input[type=text], select {
     padding: 7px 10px;
     margin: 8px 0;
@@ -102,8 +103,12 @@
 }
 .inspect-item input:focus{
     outline: none;
-  }
+}
   
+
+.inspect-item-selected>div {
+    border: 2px solid #1897ff;
+}
 
 
 .inspect-item:hover {

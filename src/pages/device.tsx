@@ -1,5 +1,5 @@
 import { ConnectedDevice } from "@/types/ble_device";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 interface DeviceViewProps {
     device: ConnectedDevice;
@@ -12,12 +12,12 @@ interface DeviceServiceUUID {
 
 const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     const [favorited, setFavorited] = useState<boolean>(false);
-    const [expandedServiceIndex, setExpandedServiceIndex] = useState<number>(0);
-
+    //Services variables
+    const [expandedServiceIndex, setExpandedServiceIndex] = useState<number>(-1);
+    const [selectedServiceIndex, setSelectedServiceIndex] = useState<number>(-1);
     const serviceEditInput = useRef<HTMLInputElement>(null); 
-
     const [serviceNameInput, setServiceNameInput] = useState<string>("");
-
+    
     const [deviceCharDEBUG, setdeviceCharDEBUG] = useState<DeviceServiceUUID[]>([
         { uuid: "fa01395c-164d-467f-9ecd-986688c14b36", alias: null },
         { uuid: "fafe310f-d81a-4157-8203-a7527590707d", alias: null },
@@ -26,6 +26,8 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
         { uuid: "8a40b40f-dd50-474c-b3b9-4dfc94d7f527", alias: null },
         { uuid: "e347f3af-8b52-4d8c-8d7b-40663eff8de7", alias: null }
     ]);
+
+    //Char variables
     
 
     const handleStarClick = (): void => {
@@ -33,8 +35,15 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     };
 
     const onClickService = (index: number): void => {
+        setSelectedServiceIndex(index);
+        if(selectedServiceIndex != index) setExpandedServiceIndex(-1);
+    }
+
+    const onClickServiceEdit = (event: React.MouseEvent<HTMLImageElement, MouseEvent>, index: number): void => {
+        event.stopPropagation();
+        onClickService(index);
         setExpandedServiceIndex(expandedServiceIndex == index ? -1 : index);
-        if(expandedServiceIndex > -1) setServiceNameInput(deviceCharDEBUG[index].alias || deviceCharDEBUG[index].uuid);
+        setServiceNameInput(deviceCharDEBUG[index].alias || deviceCharDEBUG[index].uuid);
     }
 
     const handleServiceNameKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
@@ -44,7 +53,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                     item.uuid === uuid ? { ...item, alias: serviceNameInput } : item
                 )
             );
-            setServiceNameInput(serviceNameInput);
+            setExpandedServiceIndex(-1);
         }
     };
 
@@ -122,7 +131,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                 <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Services</div>
                                 <div className="inspect-items-view">
                                     {deviceCharDEBUG?.map((service, index) => (
-                                        <div className="inspect-item">   
+                                        <div className={`inspect-item ${selectedServiceIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickService(index)}>   
                                             <div className=" has-text-black is-clickable" >
                                                 <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
                                                     {expandedServiceIndex == index ? (
@@ -144,7 +153,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                                     )}
                                          
                                                     <div className="has-text-weight-bold is-clickable" >
-                                                        <img onClick={() => onClickService(index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
+                                                        <img onClick={(e) => onClickServiceEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
                                                     </div>
                                                 </div>
                                             </div>   
@@ -153,40 +162,13 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     {/* Characteristics */}
-                    <div className="box-device-view">
-                        <div className="has-background-white box-inspect-view has-text-white">
-                            <div className="view">
-                                <div className="has-text-black is-size-5 has-text-weight-bold is-unselectable">Characteristics:</div>
-                                <div className="inspect-items-view">
-                                    {deviceCharDEBUG?.map((uuid) => (
-                                        <div>
-                                            <div className="is-flex inspect-item has-text-black">
-                                                <div className="has-text-black is-size-6 has-text-weight-medium">
-                                                    {uuid.alias || uuid.uuid}
-                                                </div>
-                                                <div>
+      
 
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
                 </div>
-
-
-
             </div>
-
-
         </div>
-
     )
 }
 
