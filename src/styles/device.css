@@ -124,13 +124,29 @@
     position: absolute;
     top: 0;
     height: 100%;
-    width: 25%;
+    /* min-width: 240px; */
     padding: 8px;
-    /* background: black; */
     overflow-y: auto;
     height: inherit;
     left: 0;
     border-right: 1px solid var(--border-color);
+}
+
+.left-view-bar-resizer::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 100%;
+    background-color: transparent;
+    cursor: w-resize; 
+    transition: background-color 0.3s ease; 
+}
+  
+.left-view-bar-resizer-selected::after,
+.left-view-bar-resizer:hover::after {
+    background-color: var(--border-color); 
 }
 
 .device-section-view {

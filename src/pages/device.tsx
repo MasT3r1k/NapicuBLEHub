@@ -11,6 +11,9 @@ interface DeviceServiceUUID {
 }
 
 const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
+    const [letfPanelWidth, setLetfPanelWidth] = useState<number>(300); 
+    const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
+
     const [favorited, setFavorited] = useState<boolean>(false);
     //Services variables
     const [expandedServiceIndex, setExpandedServiceIndex] = useState<number>(-1);
@@ -29,6 +32,30 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
 
     //Char variables
     
+
+
+    const handleMouseDownLeftResizer = (event: React.MouseEvent) => {
+        event.preventDefault();
+
+        setLeftPanelResizing(true);
+    
+        const startX: number = event.clientX;
+        const startWidth: number = letfPanelWidth;
+    
+        const handleMouseMove = (moveEvent: MouseEvent): void => {
+          const newWidth = startWidth + (moveEvent.clientX - startX);
+          if(newWidth >= 240) setLetfPanelWidth(newWidth);
+        };
+     
+        const handleMouseUp = (): void => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+            setLeftPanelResizing(false);
+        };
+    
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+    };
 
     const handleStarClick = (): void => {
         setFavorited(!favorited);
@@ -122,8 +149,9 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
             </div>
 
 
-            <div className="section device-section-view is-relative">
-                <div className="left-view-bar">
+            <div className="device-section-view is-relative">
+                <div className="left-view-bar" style={{ width: `${letfPanelWidth}px` }}>
+                    <div className={`left-view-bar-resizer ${leftPanelResizing ? 'left-view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
                     {/* Services */}
                     <div className="box-device-view">
                         <div className=" box-inspect-view has-text-white">
