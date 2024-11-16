@@ -37,10 +37,6 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
         if(expandedServiceIndex > -1) setServiceNameInput(deviceCharDEBUG[index].alias || deviceCharDEBUG[index].uuid);
     }
 
-    // const handleExpandedViewButtonClick = (event: any) => {
-    //     event.stopPropagation();
-    // };
-
     const handleServiceNameKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
             setdeviceCharDEBUG((prevState) =>
@@ -148,15 +144,6 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                                         <img onClick={() => onClickService(index)} title="Edit the name of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
                                                     </div>
                                                 </div>
-
-                                                {/* {expandedServiceIndex.includes(index) ? (
-                                                    <div className="more-option-view" onClick={handleExpandedViewButtonClick}>
-                                                        <div>Number of characteristics: 69</div>
-                                                        <button className="button rename-button has-text-white has-text-weight-bold">
-                                                            Rename
-                                                        </button>
-                                                    </div>
-                                                ) : null} */}
                                             </div>   
                                         </div>
                                     ))}
