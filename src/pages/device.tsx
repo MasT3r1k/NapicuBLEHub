@@ -126,14 +126,17 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                             <div className=" has-text-black is-clickable" >
                                                 <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
                                                     {expandedServiceIndex == index ? (
-                                                       <input
-                                                       ref={serviceEditInput}
-                                                       type="text"
-                                                       className="is-size-6 has-text-weight-bold"
-                                                       onChange={handleServiceNameInputChange}
-                                                       value={serviceNameInput || ""}
-                                                       onKeyDown={(e) => handleServiceNameKeyDownInput(e, service.uuid)}
-                                                        />
+                                                        <div>
+                                                            <div className="is-italic light-text">You can set the alias for this characteristic:</div>  
+                                                            <input
+                                                            ref={serviceEditInput}
+                                                            type="text"
+                                                            className="is-size-6 has-text-weight-bold"
+                                                            onChange={handleServiceNameInputChange}
+                                                            value={serviceNameInput || ""}
+                                                            onKeyDown={(e) => handleServiceNameKeyDownInput(e, service.uuid)}
+                                                                />
+                                                        </div>
                                                     ) : (
                                                         <div className="is-size-6 has-text-weight-bold">
                                                             {service.alias || service.uuid}
@@ -141,7 +144,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                                     )}
                                          
                                                     <div className="has-text-weight-bold is-clickable" >
-                                                        <img onClick={() => onClickService(index)} title="Edit the name of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
+                                                        <img onClick={() => onClickService(index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
                                                     </div>
                                                 </div>
                                             </div>   

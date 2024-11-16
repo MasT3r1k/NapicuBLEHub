@@ -10,7 +10,14 @@ body {
 
 :root {
   --border-color: rgba(143, 143, 143, 0.6);
+  --text-light-text: rgba(135, 135, 135, 0.9);
 }
+
+.light-text {
+  color: var(--text-light-text);
+}
+
+
 
 /* * {
   margin: 0;
