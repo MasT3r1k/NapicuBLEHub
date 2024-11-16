@@ -1,4 +1,4 @@
-import { ConnectedDevice, ConnectingDevice, Device } from "@/types/ble_device";
+import { ConnectedDevice, ConnectedDeviceService, ConnectingDevice, Device } from "@/types/ble_device";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import DeviceView from "./device";
@@ -11,7 +11,7 @@ const Home = (): JSX.Element => {
   const [socket, setSocket] = useState<any>(null);
   const [is_filter_menu, setFilter] = useState<boolean>(false);
   const [connecting_data, setConnectingData] = useState<ConnectingDevice | undefined>();
-  const [connected_device, setConnectedDevice] = useState<ConnectedDevice | undefined>({address: "address", local_name: "NapicuHome", rssi: 69});
+  const [connected_device, setConnectedDevice] = useState<ConnectedDevice | undefined>(); //{address: "address", local_name: "NapicuHome", rssi: 69}
   //Settings filter
   const [filter_allow_unknown_name, setIsChecked] = useState(true);
 
@@ -50,6 +50,8 @@ const Home = (): JSX.Element => {
     socket.on("connected_device", (data: ConnectedDevice) => {
       setConnectedDevice(data);
       setConnectingData(undefined);
+
+      console.log(data);
     });
 
     socket.on("connected_device_rssi", (data: number) => {

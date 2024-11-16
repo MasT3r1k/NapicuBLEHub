@@ -3,7 +3,7 @@ import { NextApiRequest } from "next";
 import { NextApiResponseServerIO } from "@/types/next";
 import { DefaultEventsMap, Server as SocketIOServer } from "socket.io";
 import noble from "@abandonware/noble";
-import { ConnectedDevice, ConnectingDevice, Device } from "@/types/ble_device";
+import { ConnectedDevice, ConnectedDeviceChar, ConnectedDeviceService, ConnectingDevice, Device } from "@/types/ble_device";
 import NapicuLOG from "./NapicuLogger";
 
 
@@ -97,36 +97,61 @@ export default class NapicuServer {
           
             peripheral.on("connect", () => {
               NapicuLOG.LOG_I("Successfully connected to:", peripheral.advertisement.localName);
+              NapicuLOG.LOG_I("Discovering all services and characteristics...");
+
+              peripheral.discoverAllServicesAndCharacteristicsAsync().then((value: noble.ServicesAndCharacteristics) => {
+                NapicuLOG.LOG_I("Successfully discovered all services and characteristics.");
+
+                const peripheral_services: ConnectedDeviceService[] = value.services.map<ConnectedDeviceService>((service: noble.Service) => {
+                  return {
+                    uuid: service.uuid,
+                    name: service.name,
+                    type: service.type,
+                    char_length: service.characteristics.length,
+                    chars: service.characteristics.map<ConnectedDeviceChar>((characteristic: noble.Characteristic) => {
+                      return {
+                        uuid: characteristic.uuid,
+                        properties: characteristic.properties
+                      }
+                    })
+                  }
+                });
+
+                const connected_device_data: ConnectedDevice = {
+                  address: peripheral.address,
+                  local_name: peripheral.advertisement.localName,
+                  rssi: peripheral.rssi,
+                  services: peripheral_services
+                }
   
-              const connected_device_data: ConnectedDevice = {
-                address: peripheral.address,
-                local_name: peripheral.advertisement.localName,
-                rssi: peripheral.rssi
-              }
-
-              peripheral.on("rssiUpdate", (rssi: number) => {
-                this.io.emit("connected_device_rssi", rssi);
-                this.on_peripheral_rssi_update(rssi);
-              });
-
-              peripheral.updateRssi();
-              this.rssi_update_time_id = setInterval(() => {
+                peripheral.on("rssiUpdate", (rssi: number) => {
+                  this.io.emit("connected_device_rssi", rssi);
+                  this.on_peripheral_rssi_update(rssi);
+                });
+  
                 peripheral.updateRssi();
-              }, 2000);
-         
-              peripheral.on("disconnect", () => {
-                NapicuLOG.LOG_I("Disconnected from:", peripheral.advertisement.localName);
-                this.on_peripheral_disconnect();
-                if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
-                this.connected_device?.removeAllListeners();
-                this.connected_device = null;
-              });
+                this.rssi_update_time_id = setInterval(() => {
+                  peripheral.updateRssi();
+                }, 2000);
+           
+                peripheral.on("disconnect", () => {
+                  NapicuLOG.LOG_I("Disconnected from:", peripheral.advertisement.localName);
+                  this.on_peripheral_disconnect();
+                  if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
+                  this.connected_device?.removeAllListeners();
+                  this.connected_device = null;
+                });
+  
+                this.connected_device = peripheral;
+                this.found_peripheral = [];
+                NapicuLOG.LOG_I("Setting found_peripheral to []...");
+                this.io.emit("connected_device", connected_device_data);
+                this.on_peripheral_connected();
 
-              this.connected_device = peripheral;
-              this.found_peripheral = [];
-              NapicuLOG.LOG_I("Setting found_peripheral to []...");
-              this.io.emit("connected_device", connected_device_data);
-              this.on_peripheral_connected();
+              }).catch((e: any) => {
+                //TODO EMIT
+                NapicuLOG.LOG_E("Failed to discover services and characteristics:", e);
+              });
             });
           }
         });

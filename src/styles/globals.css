@@ -38,7 +38,7 @@ body {
 
 ::-webkit-scrollbar {
   width: 18px;
-  background-color: #ffffff;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
