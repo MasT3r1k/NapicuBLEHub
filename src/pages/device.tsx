@@ -180,78 +180,91 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
             </div>
 
 
-            <div className="device-section-view is-relative">
-                <div className="left-view-bar" style={{ width: `${letfPanelWidth}px` }}>
-                    <div className={`left-view-bar-resizer ${leftPanelResizing ? 'left-view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
-                    {/* Services */}
-                    <div className="box-device-view">
-                        <div className=" box-inspect-view has-text-white">
-                            <div className="view">
-                                <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Services</div>
-                                <div className="inspect-items-view">
-                                    {deviceServices?.map((service, index) => (
-                                        <div className={`inspect-item ${selectedServiceIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickService(index)}>   
-                                            <div className=" has-text-black is-clickable" >
-                                                <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
-                                                    {expandedServiceIndex == index ? (
-                                                        <div>
-                                                            <div className="is-italic light-text">You can set the alias for this characteristic:</div>  
-                                                            <input
-                                                            ref={serviceEditInput}
-                                                            type="text"
-                                                            className="is-size-6 has-text-weight-bold"
-                                                            onChange={handleServiceNameInputChange}
-                                                            value={serviceNameInput || ""}
-                                                            onKeyDown={(e) => handleServiceNameKeyDownInput(e, service.uuid)}
-                                                                />
+            <div className="device-section-view device-option-view is-relative">
+                <div className="is-contents">
+                    <div className="left-view-bar" style={{ width: `${letfPanelWidth}px` }}>
+                        <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'left-view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
+                        <div>
+                    
+                            {/* Services */}
+                            <div className="box-device-view">
+                                <div className=" box-inspect-view has-text-white">
+                                    <div className="view">
+                                        <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Services</div>
+                                        <div className="inspect-items-view">
+                                            {deviceServices?.map((service, index) => (
+                                                <div className={`inspect-item ${selectedServiceIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickService(index)}>   
+                                                    <div className=" has-text-black is-clickable" >
+                                                        <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
+                                                            {expandedServiceIndex == index ? (
+                                                                <div>
+                                                                    <div className="is-italic light-text">You can set the alias for this characteristic:</div>  
+                                                                    <input
+                                                                    ref={serviceEditInput}
+                                                                    type="text"
+                                                                    className="is-size-6 has-text-weight-bold"
+                                                                    onChange={handleServiceNameInputChange}
+                                                                    value={serviceNameInput || ""}
+                                                                    onKeyDown={(e) => handleServiceNameKeyDownInput(e, service.uuid)}
+                                                                        />
+                                                                </div>
+                                                            ) : (
+                                                                <div className="is-size-6 has-text-weight-bold uuid-text">
+                                                                    {service.alias || service.uuid}
+                                                                </div>
+                                                            )}
+                                                
+                                                            <div className="has-text-weight-bold is-clickable" >
+                                                                <img onClick={(e) => onClickServiceEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
+                                                            </div>
                                                         </div>
-                                                    ) : (
-                                                        <div className="is-size-6 has-text-weight-bold uuid-text">
-                                                            {service.alias || service.uuid}
-                                                        </div>
-                                                    )}
-                                         
-                                                    <div className="has-text-weight-bold is-clickable" >
-                                                        <img onClick={(e) => onClickServiceEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
-                                                    </div>
+                                                    </div>   
                                                 </div>
-                                            </div>   
+                                            ))}
                                         </div>
-                                    ))}
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Characteristics */}
+                            <div className="box-device-view">
+                                <div className=" box-inspect-view has-text-white">
+                                    <div className="view">
+                                        <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Characteristics</div>
+                                        <div className="inspect-items-view">
+                                            {deviceCharacteristic?.map((characteristic, index) => (
+                                                <div className={`inspect-item ${selectedCharacteristicIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickCharacteristic(index)}>   
+                                                    <div className=" has-text-black is-clickable" >
+                                                        <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
+
+                                                            <div className="is-size-6 has-text-weight-bold uuid-text">
+                                                                {characteristic.uuid}
+                                                            </div>
+                                            
+                                                
+                                                            <div className="has-text-weight-bold is-clickable" >
+                                                                <img onClick={(e) => onClickCharacteristicEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
+                                                            </div>
+                                                        </div>
+                                                    </div>   
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {/* Characteristics */}
-                    <div className="box-device-view">
-                        <div className=" box-inspect-view has-text-white">
-                            <div className="view">
-                                <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Characteristics</div>
-                                <div className="inspect-items-view">
-                                    {deviceCharacteristic?.map((characteristic, index) => (
-                                        <div className={`inspect-item ${selectedCharacteristicIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickCharacteristic(index)}>   
-                                            <div className=" has-text-black is-clickable" >
-                                                <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
-
-                                                    <div className="is-size-6 has-text-weight-bold uuid-text">
-                                                        {characteristic.uuid}
-                                                    </div>
-                                    
-                                         
-                                                    <div className="has-text-weight-bold is-clickable" >
-                                                        <img onClick={(e) => onClickCharacteristicEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
-                                                    </div>
-                                                </div>
-                                            </div>   
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+ 
                 </div>
+
+
+                <div>
+                    k   okot
+                    </div>
+    
             </div>
+
+
         </div>
     )
 }

@@ -51,6 +51,9 @@ body {
   background-color: #8e9b9e;
 }
 
+.is-contents {
+  display: contents;
+}
 
 .box-bg{
   background-color: #1897ff;
