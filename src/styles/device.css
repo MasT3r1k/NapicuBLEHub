@@ -181,7 +181,7 @@
 }
 
 .bottom-console {
-    height: 100% !important;
+    flex: 1;
     border-top: 1px solid var(--border-color);
     font-family: 'Source Code Pro', monospace;
     background-color: #1E2127;

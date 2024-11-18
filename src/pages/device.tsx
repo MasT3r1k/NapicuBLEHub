@@ -75,25 +75,29 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
 
     const handleMouseDownConsoleResizer = (event: React.MouseEvent) => {
         event.preventDefault();
-
+    
         setConsolePanelResizing(true);
     
-        const startY: number = event.pageY;
+        const startY: number = event.clientY;
         const startHeight: number = consolePanelHeight;
     
         const handleMouseMove = (moveEvent: MouseEvent): void => {
-          const newHeight = startHeight + (moveEvent.pageY - startY);
-          setConsolePanelHeight(newHeight);
+            const newHeight = startHeight + (moveEvent.clientY - startY);
+    
+       
+            if (newHeight >= 100) {
+                setConsolePanelHeight(newHeight);
+            }
         };
-     
+    
         const handleMouseUp = (): void => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", handleMouseUp);
             setConsolePanelResizing(false);
         };
     
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
     };
 
     const handleStarClick = (): void => {
@@ -205,7 +209,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
 
 
             <div className="device-section-view device-option-view is-relative">
-                <div className="is-contents">
+                <div className="is-inline-flex">
                     <div className="left-view-bar" style={{ width: `${letfPanelWidth}px` }}>
                         <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
                         <div>
@@ -283,19 +287,19 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
  
                 </div>
 
-
+             
                 <div className="right-view-bar">
                     
-                   <div className="main-view" style={{ height: `${consolePanelHeight}px` }}>Ahoj</div>
-                   <div className="bottom-console" >
-                   <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
-                        {device.local_name}{'>'}                   
+                    <div className="main-view" style={{ height: `${consolePanelHeight}px` }}>Ahoj</div>
+                    <div>
+ 
                     </div>
-                </div>
-    
+                    <div className="bottom-console" >
+                         <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
+                         {device.local_name}{'>'}                   
+                     </div>
+                 </div>    
             </div>
-
-
         </div>
     )
 }
