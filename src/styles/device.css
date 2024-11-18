@@ -151,6 +151,7 @@
 
 .device-section-view {
     height: 100%;
+    overflow: auto;
     display: flex;
 }
 
@@ -206,6 +207,8 @@
     border: 0;
     height: auto;
     min-height: auto;
+    max-height: 200px;
+    overflow-y: auto;
     font-family: 'Source Code Pro', monospace;
     outline: none;
     color: white;

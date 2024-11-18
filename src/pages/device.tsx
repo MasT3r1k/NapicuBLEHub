@@ -85,7 +85,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
             const newHeight = startHeight + (moveEvent.clientY - startY);
 
 
-            if (newHeight >= 100) {
+            if (newHeight >= 100 && newHeight <= window.innerHeight - 50) {
                 setConsolePanelHeight(newHeight);
             }
         };
@@ -206,6 +206,9 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                     </div>
                 </div>
             </div>
+
+
+    
 
 
             <div className="device-section-view device-option-view is-relative">
