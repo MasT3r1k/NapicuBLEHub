@@ -294,7 +294,29 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                     </div>
                     <div className="bottom-console" >
                         <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
-                        {device.local_name}{'>'}
+                        
+                        <div className="is-flex">
+                            <div>
+                                {'['}{device.local_name}{']'}{'>'}
+                            </div>
+                            <div className="console">
+
+
+                            <div
+                   
+                                accept="txt"
+                                autocapitalize="off"
+                                autocomplete="off"
+                                autocorrect="off"
+                                class="input"
+                                contenteditable="true"
+                 
+                                spellcheck="false"
+                            ></div>
+
+                           
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
