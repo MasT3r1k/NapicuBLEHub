@@ -8,13 +8,13 @@ interface DeviceViewProps {
 }
 
 interface DeviceServiceUUID {
-    uuid: string, 
+    uuid: string,
     alias: string | null
 }
 
 const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
-    const [letfPanelWidth, setLetfPanelWidth] = useState<number>(300); 
-    const [consolePanelHeight, setConsolePanelHeight] = useState<number>(300); 
+    const [letfPanelWidth, setLetfPanelWidth] = useState<number>(300);
+    const [consolePanelHeight, setConsolePanelHeight] = useState<number>(300);
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
     const [consolePanelResizing, setConsolePanelResizing] = useState<boolean>(false);
 
@@ -27,9 +27,9 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     const [selectedCharacteristicIndex, setSelectedCharacteristicIndex] = useState<number>(-1);
 
 
-    const serviceEditInput = useRef<HTMLInputElement>(null); 
+    const serviceEditInput = useRef<HTMLInputElement>(null);
     const [serviceNameInput, setServiceNameInput] = useState<string>("");
-    
+
     const [deviceServices, setDeviceServices] = useState<DeviceServiceUUID[]>(device.services.map<DeviceServiceUUID>((service: ConnectedDeviceService) => {
         return {
             uuid: service.uuid,
@@ -47,55 +47,55 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     // { uuid: "e347f3af-8b52-4d8c-8d7b-40663eff8de7", alias: null }
 
     //Char variables
-    
+
 
 
     const handleMouseDownLeftResizer = (event: React.MouseEvent) => {
         event.preventDefault();
 
         setLeftPanelResizing(true);
-    
+
         const startX: number = event.clientX;
         const startWidth: number = letfPanelWidth;
-    
+
         const handleMouseMove = (moveEvent: MouseEvent): void => {
-          const newWidth = startWidth + (moveEvent.clientX - startX);
-          if(newWidth >= 240) setLetfPanelWidth(newWidth);
+            const newWidth = startWidth + (moveEvent.clientX - startX);
+            if (newWidth >= 240) setLetfPanelWidth(newWidth);
         };
-     
+
         const handleMouseUp = (): void => {
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
             setLeftPanelResizing(false);
         };
-    
+
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
     };
 
     const handleMouseDownConsoleResizer = (event: React.MouseEvent) => {
         event.preventDefault();
-    
+
         setConsolePanelResizing(true);
-    
+
         const startY: number = event.clientY;
         const startHeight: number = consolePanelHeight;
-    
+
         const handleMouseMove = (moveEvent: MouseEvent): void => {
             const newHeight = startHeight + (moveEvent.clientY - startY);
-    
-       
+
+
             if (newHeight >= 100) {
                 setConsolePanelHeight(newHeight);
             }
         };
-    
+
         const handleMouseUp = (): void => {
             document.removeEventListener("mousemove", handleMouseMove);
             document.removeEventListener("mouseup", handleMouseUp);
             setConsolePanelResizing(false);
         };
-    
+
         document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
     };
@@ -108,7 +108,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
         setSelectedServiceIndex(index);
         setSelectedCharacteristicIndex(-1);
         setDeviceCharacteristic(device.services[index].chars);
-        if(selectedServiceIndex != index) setExpandedServiceIndex(-1);
+        if (selectedServiceIndex != index) setExpandedServiceIndex(-1);
     }
 
     const onClickServiceEdit = (event: React.MouseEvent<HTMLImageElement, MouseEvent>, index: number): void => {
@@ -120,7 +120,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
 
     const onClickCharacteristic = (index: number): void => {
         setSelectedCharacteristicIndex(index);
-        if(selectedCharacteristicIndex != index) setExpandedCharacteristicIndex(-1);
+        if (selectedCharacteristicIndex != index) setExpandedCharacteristicIndex(-1);
     }
 
     const onClickCharacteristicEdit = (event: React.MouseEvent<HTMLImageElement, MouseEvent>, index: number): void => {
@@ -144,15 +144,15 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     };
 
     const handleServiceNameInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setServiceNameInput(event.target.value); 
+        setServiceNameInput(event.target.value);
     };
 
 
     useEffect(() => {
-       if (expandedServiceIndex !== -1 && serviceEditInput.current) {
-            serviceEditInput.current.select(); 
+        if (expandedServiceIndex !== -1 && serviceEditInput.current) {
+            serviceEditInput.current.select();
         }
-    }, [expandedServiceIndex]); 
+    }, [expandedServiceIndex]);
 
 
     return (
@@ -213,7 +213,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                     <div className="left-view-bar" style={{ width: `${letfPanelWidth}px` }}>
                         <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
                         <div>
-                    
+
                             {/* Services */}
                             <div className="box-device-view">
                                 <div className=" box-inspect-view has-text-white">
@@ -221,32 +221,32 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                         <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Services</div>
                                         <div className="inspect-items-view">
                                             {deviceServices?.map((service, index) => (
-                                                <div className={`inspect-item ${selectedServiceIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickService(index)}>   
+                                                <div className={`inspect-item ${selectedServiceIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickService(index)}>
                                                     <div className=" has-text-black is-clickable" >
                                                         <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
                                                             {expandedServiceIndex == index ? (
                                                                 <div>
-                                                                    <div className="is-italic light-text">You can set the alias for this characteristic:</div>  
+                                                                    <div className="is-italic light-text">You can set the alias for this characteristic:</div>
                                                                     <input
-                                                                    ref={serviceEditInput}
-                                                                    type="text"
-                                                                    className="is-size-6 has-text-weight-bold"
-                                                                    onChange={handleServiceNameInputChange}
-                                                                    value={serviceNameInput || ""}
-                                                                    onKeyDown={(e) => handleServiceNameKeyDownInput(e, service.uuid)}
-                                                                        />
+                                                                        ref={serviceEditInput}
+                                                                        type="text"
+                                                                        className="is-size-6 has-text-weight-bold"
+                                                                        onChange={handleServiceNameInputChange}
+                                                                        value={serviceNameInput || ""}
+                                                                        onKeyDown={(e) => handleServiceNameKeyDownInput(e, service.uuid)}
+                                                                    />
                                                                 </div>
                                                             ) : (
                                                                 <div className="is-size-6 has-text-weight-bold uuid-text">
                                                                     {service.alias || service.uuid}
                                                                 </div>
                                                             )}
-                                                
+
                                                             <div className="has-text-weight-bold is-clickable" >
                                                                 <img onClick={(e) => onClickServiceEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
                                                             </div>
                                                         </div>
-                                                    </div>   
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -254,51 +254,49 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                 </div>
                             </div>
                             {/* Characteristics */}
-                            {selectedCharacteristicIndex > -1 && (
-                                <div className="box-device-view">
+                            <div className="box-device-view">
                                 <div className=" box-inspect-view has-text-white">
                                     <div className="view">
                                         <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Characteristics</div>
                                         <div className="inspect-items-view">
                                             {deviceCharacteristic?.map((characteristic, index) => (
-                                                <div className={`inspect-item ${selectedCharacteristicIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickCharacteristic(index)}>   
+                                                <div className={`inspect-item ${selectedCharacteristicIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickCharacteristic(index)}>
                                                     <div className=" has-text-black is-clickable" >
                                                         <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
 
                                                             <div className="is-size-6 has-text-weight-bold uuid-text">
                                                                 {characteristic.uuid}
                                                             </div>
-                                            
-                                                
+
+
                                                             <div className="has-text-weight-bold is-clickable" >
                                                                 <img onClick={(e) => onClickCharacteristicEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
                                                             </div>
                                                         </div>
-                                                    </div>   
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            )}
                         </div>
                     </div>
- 
+
                 </div>
 
-             
+
                 <div className="right-view-bar">
-                    
+
                     <div className="main-view" style={{ height: `${consolePanelHeight}px` }}>Ahoj</div>
                     <div>
- 
+
                     </div>
                     <div className="bottom-console" >
-                         <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
-                         {device.local_name}{'>'}                   
-                     </div>
-                 </div>    
+                        <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
+                        {device.local_name}{'>'}
+                    </div>
+                </div>
             </div>
         </div>
     )
