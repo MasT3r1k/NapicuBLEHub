@@ -174,6 +174,8 @@ export default class NapicuServer {
   private start_scan = (): void => {
     if (!this.is_scanning) {
       //On noble discover
+      noble.reset();
+      NapicuLOG.LOG_I("Restarting BLE.");
       noble.on("discover", this.noble_discover);
       NapicuLOG.LOG_I("Starting BLE scan...");
 

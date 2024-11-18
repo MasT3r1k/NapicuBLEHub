@@ -14,8 +14,9 @@ interface DeviceServiceUUID {
 
 const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     const [letfPanelWidth, setLetfPanelWidth] = useState<number>(300); 
+    const [consolePanelHeight, setConsolePanelHeight] = useState<number>(300); 
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
-    const [initialized, setInitialized] = useState(false);
+    const [consolePanelResizing, setConsolePanelResizing] = useState<boolean>(false);
 
     const [favorited, setFavorited] = useState<boolean>(false);
     //Services variables
@@ -66,6 +67,29 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
             setLeftPanelResizing(false);
+        };
+    
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+    };
+
+    const handleMouseDownConsoleResizer = (event: React.MouseEvent) => {
+        event.preventDefault();
+
+        setConsolePanelResizing(true);
+    
+        const startY: number = event.pageY;
+        const startHeight: number = consolePanelHeight;
+    
+        const handleMouseMove = (moveEvent: MouseEvent): void => {
+          const newHeight = startHeight + (moveEvent.pageY - startY);
+          setConsolePanelHeight(newHeight);
+        };
+     
+        const handleMouseUp = (): void => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+            setConsolePanelResizing(false);
         };
     
         document.addEventListener('mousemove', handleMouseMove);
@@ -183,7 +207,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
             <div className="device-section-view device-option-view is-relative">
                 <div className="is-contents">
                     <div className="left-view-bar" style={{ width: `${letfPanelWidth}px` }}>
-                        <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'left-view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
+                        <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
                         <div>
                     
                             {/* Services */}
@@ -261,8 +285,12 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
 
 
                 <div className="right-view-bar">
-                   <div className="main-view">Ahoj</div>
-                   <div className="bottom-console">{device.local_name}{'>'} </div>
+                    
+                   <div className="main-view" style={{ height: `${consolePanelHeight}px` }}>Ahoj</div>
+                   <div className="bottom-console" >
+                   <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
+                        {device.local_name}{'>'}                   
+                    </div>
                 </div>
     
             </div>
