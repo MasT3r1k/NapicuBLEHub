@@ -1,7 +1,7 @@
 import { ConnectedDevice, ConnectedDeviceChar, ConnectedDeviceService } from "@/types/ble_device";
-import { log } from "console";
 import React, { useState, useRef, useEffect } from "react";
-import { useFormState } from "react-dom";
+import NapicuCookies from "./Cookies";
+
 
 interface DeviceViewProps {
     device: ConnectedDevice;
@@ -12,9 +12,14 @@ interface DeviceServiceUUID {
     alias: string | null
 }
 
+const COOKIES_LEFT_PANEL_WIDTH_NAME: string = "left_panel_width";
+const COOKIES_CONSOLE_PANEL_HEIGHT_NAME: string = "console_panel_height";
+
 const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
-    const [letfPanelWidth, setLetfPanelWidth] = useState<number>(300);
-    const [consolePanelHeight, setConsolePanelHeight] = useState<number>(300);
+    const [letfPanelWidth, setLetfPanelWidth] = useState<number>(
+        () => NapicuCookies.getCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME) || 300);
+    const [consolePanelHeight, setConsolePanelHeight] = useState<number>(
+        () => NapicuCookies.getCookies<number>(COOKIES_CONSOLE_PANEL_HEIGHT_NAME) || 300);
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
     const [consolePanelResizing, setConsolePanelResizing] = useState<boolean>(false);
 
@@ -39,14 +44,6 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
 
     const [deviceCharacteristic, setDeviceCharacteristic] = useState<ConnectedDeviceChar[]>([]);
 
-    // { uuid: "fa01395c-164d-467f-9ecd-986688c14b36", alias: null },
-    // { uuid: "fafe310f-d81a-4157-8203-a7527590707d", alias: null },
-    // { uuid: "6dd406ab-1f6b-452a-a467-951bcae64201", alias: null },
-    // { uuid: "8989d4eb-9623-4d0b-a2b4-a918e1ff8437", alias: null },
-    // { uuid: "8a40b40f-dd50-474c-b3b9-4dfc94d7f527", alias: null },
-    // { uuid: "e347f3af-8b52-4d8c-8d7b-40663eff8de7", alias: null }
-
-    //Char variables
 
 
 
@@ -67,6 +64,8 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
             setLeftPanelResizing(false);
+
+            NapicuCookies.setCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME, letfPanelWidth);
         };
 
         document.addEventListener('mousemove', handleMouseMove);
@@ -84,16 +83,15 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
         const handleMouseMove = (moveEvent: MouseEvent): void => {
             const newHeight = startHeight + (moveEvent.clientY - startY);
 
-
-            if (newHeight >= 100 && newHeight <= window.innerHeight - 50) {
-                setConsolePanelHeight(newHeight);
-            }
+            if (newHeight >= 100 && newHeight <= window.innerHeight - 50) setConsolePanelHeight(newHeight);
         };
 
         const handleMouseUp = (): void => {
             document.removeEventListener("mousemove", handleMouseMove);
             document.removeEventListener("mouseup", handleMouseUp);
             setConsolePanelResizing(false);
+
+            NapicuCookies.setCookies<number>(COOKIES_CONSOLE_PANEL_HEIGHT_NAME, consolePanelHeight);
         };
 
         document.addEventListener("mousemove", handleMouseMove);
@@ -303,21 +301,15 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                 {'['}{device.local_name}{']'}{'>'}
                             </div>
                             <div className="console">
-
-
-                            <div
-                   
-                                accept="txt"
-                                autocapitalize="off"
-                                autocomplete="off"
-                                autocorrect="off"
-                                class="input"
-                                contenteditable="true"
-                 
-                                spellcheck="false"
-                            ></div>
-
-                           
+                                <div
+                                    accept="txt"
+                                    autoCapitalize="off"
+                                    autoComplete="off"
+                                    autoCorrect="off"
+                                    className="input"
+                                    contentEditable="true"
+                                    spellCheck="false"
+                                ></div>
                             </div>
                         </div>
                     </div>
