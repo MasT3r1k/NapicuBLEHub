@@ -302,6 +302,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                             </div>
                             <div className="console">
                                 <div
+                                    // @ts-ignore
                                     accept="txt"
                                     autoCapitalize="off"
                                     autoComplete="off"
