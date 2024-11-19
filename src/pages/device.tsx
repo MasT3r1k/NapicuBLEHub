@@ -31,6 +31,8 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     const [expandedCharacteristicIndex, setExpandedCharacteristicIndex] = useState<number>(-1);
     const [selectedCharacteristicIndex, setSelectedCharacteristicIndex] = useState<number>(-1);
 
+    //Console
+    const consoleInputDivRef = useRef<HTMLDivElement>(null);
 
     const serviceEditInput = useRef<HTMLInputElement>(null);
     const [serviceNameInput, setServiceNameInput] = useState<string>("");
@@ -66,6 +68,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
             setLeftPanelResizing(false);
 
             NapicuCookies.setCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME, letfPanelWidth);
+            console.log("save");
         };
 
         document.addEventListener('mousemove', handleMouseMove);
@@ -92,6 +95,8 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
             setConsolePanelResizing(false);
 
             NapicuCookies.setCookies<number>(COOKIES_CONSOLE_PANEL_HEIGHT_NAME, consolePanelHeight);
+            console.log("save");
+
         };
 
         document.addEventListener("mousemove", handleMouseMove);
@@ -144,6 +149,12 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     const handleServiceNameInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setServiceNameInput(event.target.value);
     };
+
+    const focusConsoleInput = (): void => {
+        if (consoleInputDivRef.current) {
+            consoleInputDivRef.current.focus();
+          }
+    }
 
 
     useEffect(() => {
@@ -300,7 +311,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                             <div>
                                 {'['}{device.local_name}{']'}{'>'}
                             </div>
-                            <div className="console">
+                            <div className="console" onClick={focusConsoleInput}>
                                 <div
                                     // @ts-ignore
                                     accept="txt"
@@ -310,6 +321,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                     className="input"
                                     contentEditable="true"
                                     spellCheck="false"
+                                    ref={consoleInputDivRef}
                                 ></div>
                             </div>
                         </div>
