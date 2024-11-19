@@ -50,8 +50,6 @@ const Home = (): JSX.Element => {
     socket.on("connected_device", (data: ConnectedDevice) => {
       setConnectedDevice(data);
       setConnectingData(undefined);
-
-      console.log(data);
     });
 
     socket.on("connected_device_rssi", (data: number) => {

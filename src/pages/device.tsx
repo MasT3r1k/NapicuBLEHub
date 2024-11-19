@@ -222,7 +222,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                         <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Services</div>
                                         <div className="inspect-items-view">
                                             {deviceServices?.map((service, index) => (
-                                                <div className={`inspect-item ${selectedServiceIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickService(index)}>
+                                                <div key={index} className={`inspect-item ${selectedServiceIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickService(index)}>
                                                     <div className=" has-text-black is-clickable" >
                                                         <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
                                                             {expandedServiceIndex == index ? (
