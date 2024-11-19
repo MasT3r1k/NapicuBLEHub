@@ -1,16 +1,9 @@
 import { ConnectedDevice, ConnectedDeviceChar, ConnectedDeviceService } from "@/types/ble_device";
 import React, { useState, useRef, useEffect } from "react";
 import NapicuCookies from "./Cookies";
+import ConsoleView from "./console";
+import { DeviceServiceUUID, DeviceViewProps } from "./interfaces/Idevice";
 
-
-interface DeviceViewProps {
-    device: ConnectedDevice;
-}
-
-interface DeviceServiceUUID {
-    uuid: string,
-    alias: string | null
-}
 
 const COOKIES_LEFT_PANEL_WIDTH_NAME: string = "left_panel_width";
 const COOKIES_CONSOLE_PANEL_HEIGHT_NAME: string = "console_panel_height";
@@ -31,8 +24,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     const [expandedCharacteristicIndex, setExpandedCharacteristicIndex] = useState<number>(-1);
     const [selectedCharacteristicIndex, setSelectedCharacteristicIndex] = useState<number>(-1);
 
-    //Console
-    const consoleInputDivRef = useRef<HTMLDivElement>(null);
+
 
     const serviceEditInput = useRef<HTMLInputElement>(null);
     const [serviceNameInput, setServiceNameInput] = useState<string>("");
@@ -68,7 +60,6 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
             setLeftPanelResizing(false);
 
             NapicuCookies.setCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME, letfPanelWidth);
-            console.log("save");
         };
 
         document.addEventListener('mousemove', handleMouseMove);
@@ -95,8 +86,6 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
             setConsolePanelResizing(false);
 
             NapicuCookies.setCookies<number>(COOKIES_CONSOLE_PANEL_HEIGHT_NAME, consolePanelHeight);
-            console.log("save");
-
         };
 
         document.addEventListener("mousemove", handleMouseMove);
@@ -150,11 +139,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
         setServiceNameInput(event.target.value);
     };
 
-    const focusConsoleInput = (): void => {
-        if (consoleInputDivRef.current) {
-            consoleInputDivRef.current.focus();
-          }
-    }
+
 
 
     useEffect(() => {
@@ -306,25 +291,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                     </div>
                     <div className="bottom-console" >
                         <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
-                        
-                        <div className="is-flex">
-                            <div>
-                                {'['}{device.local_name}{']'}{'>'}
-                            </div>
-                            <div className="console" onClick={focusConsoleInput}>
-                                <div
-                                    // @ts-ignore
-                                    accept="txt"
-                                    autoCapitalize="off"
-                                    autoComplete="off"
-                                    autoCorrect="off"
-                                    className="input"
-                                    contentEditable="true"
-                                    spellCheck="false"
-                                    ref={consoleInputDivRef}
-                                ></div>
-                            </div>
-                        </div>
+                        <ConsoleView device={device}/>
                     </div>
                 </div>
             </div>
