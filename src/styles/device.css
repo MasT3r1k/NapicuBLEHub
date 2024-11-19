@@ -183,6 +183,7 @@
 
 .bottom-console {
     flex: 1;
+    overflow-y: auto;
     border-top: 1px solid var(--border-color);
     font-family: 'Source Code Pro', monospace;
     background-color: #1E2127;
@@ -192,7 +193,6 @@
 
 .console-view-bar-resizer {
     left: 0 !important;
-    top: 0;
     width: 100%;
     height: 10px !important;
     cursor: ns-resize !important;

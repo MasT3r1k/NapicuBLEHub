@@ -285,12 +285,14 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
 
                 <div className="right-view-bar">
 
-                    <div className="main-view" style={{ height: `${consolePanelHeight}px` }}>Ahoj</div>
-                    <div>
-
-                    </div>
-                    <div className="bottom-console" >
+                    <div className="main-view is-relative" style={{ height: `${consolePanelHeight}px` }}>
                         <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
+                        <div>
+                            Hello World!
+                        </div>
+                    </div>
+
+                    <div className="bottom-console" >
                         <ConsoleView device={device}/>
                     </div>
                 </div>
