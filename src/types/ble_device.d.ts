@@ -17,6 +17,12 @@ export interface ConnectedDeviceService {
     chars: ConnectedDeviceChar[]
 }
 
+
+export interface ConnectedDeviceCharViewProps {
+    characteristic: ConnectedDeviceChar;
+}
+
+
 export interface ConnectedDeviceChar {
     uuid: string
     properties: string[]

@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import NapicuCookies from "./Cookies";
 import ConsoleView from "./console";
 import { DeviceServiceUUID, DeviceViewProps } from "./interfaces/Idevice";
+import CharacteristicsView from "./characteristics";
 
 
 const COOKIES_LEFT_PANEL_WIDTH_NAME: string = "left_panel_width";
@@ -22,7 +23,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     const [selectedServiceIndex, setSelectedServiceIndex] = useState<number>(0);
 
     const [expandedCharacteristicIndex, setExpandedCharacteristicIndex] = useState<number>(-1);
-    const [selectedCharacteristicIndex, setSelectedCharacteristicIndex] = useState<number>(-1);
+    const [selectedCharacteristicIndex, setSelectedCharacteristicIndex] = useState<number>(0);
 
 
 
@@ -36,7 +37,6 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
         }
     }));
 
-    const [deviceCharacteristic, setDeviceCharacteristic] = useState<ConnectedDeviceChar[]>([]);
 
 
 
@@ -98,8 +98,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
 
     const onClickService = (index: number): void => {
         setSelectedServiceIndex(index);
-        setSelectedCharacteristicIndex(-1);
-        setDeviceCharacteristic(device.services[index].chars);
+        setSelectedCharacteristicIndex(0);
         if (selectedServiceIndex != index) setExpandedServiceIndex(-1);
     }
 
@@ -120,6 +119,10 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
         onClickCharacteristic(index);
         setExpandedCharacteristicIndex(expandedServiceIndex == index ? -1 : index);
         //setServiceNameInput(deviceServices[index].alias || deviceServices[index].uuid);
+    }
+
+    const getSelectedServiceCharacteristics = (): ConnectedDeviceChar[] => {
+        return device.services[selectedServiceIndex].chars;
     }
 
 
@@ -256,7 +259,7 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                     <div className="view">
                                         <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Characteristics</div>
                                         <div className="inspect-items-view">
-                                            {deviceCharacteristic?.map((characteristic, index) => (
+                                            {getSelectedServiceCharacteristics()?.map((characteristic, index) => (
                                                 <div className={`inspect-item ${selectedCharacteristicIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickCharacteristic(index)}>
                                                     <div className=" has-text-black is-clickable" >
                                                         <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
@@ -292,9 +295,9 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
 
                     <div className="main-view is-relative" style={{ height: `${consolePanelHeight}px` }}>
                         <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
-                        <div>
-                            Hello World!
-                        </div>
+                        {getSelectedServiceCharacteristics().length && (
+                            <CharacteristicsView characteristic={getSelectedServiceCharacteristics()[selectedCharacteristicIndex]} />
+                        )}
                     </div>
 
                     <div className="bottom-console" >
