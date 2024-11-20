@@ -270,6 +270,11 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                                                                 <img onClick={(e) => onClickCharacteristicEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
                                                             </div>
                                                         </div>
+                                                        <div className="characteristics-properties is-flex">
+                                                            <div className={`characteristics-properties-read ${!characteristic.properties.includes("read") ? 'characteristics-properties-unabled' : ''}`} title="Read">R</div>
+                                                            <div className={`characteristics-properties-write ${!characteristic.properties.includes("write") ? 'characteristics-properties-unabled' : ''}`} title="Write">W</div>
+                                                            <div className={`characteristics-properties-notify ${!characteristic.properties.includes("notify") ? 'characteristics-properties-unabled' : ''}`} title="Notify">N</div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             ))}

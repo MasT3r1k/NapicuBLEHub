@@ -223,3 +223,34 @@
     word-break: break-all;
     border-radius: 0;
 }
+
+.characteristics-properties>div {
+    padding: 5px;
+    font-size: 0.75rem;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: flex; /* Flexbox pro centrování obsahu */
+    align-items: center; /* Svislé centrování */
+    justify-content: center; /* Vodorovné centrování */
+    font-weight: bold;
+    margin: 0 3px;
+    user-select: none;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.characteristics-properties-write {
+    background-color: #2fbaff;
+}
+
+.characteristics-properties-read {
+    background-color: #f1552e;
+}
+
+.characteristics-properties-notify {
+    background-color: #fdd008;
+}
+
+.characteristics-properties-unabled {
+    opacity: 0.17;
+}
