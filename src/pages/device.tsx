@@ -4,6 +4,7 @@ import NapicuCookies from "./Cookies";
 import ConsoleView from "./console";
 import { DeviceServiceUUID, DeviceViewProps } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
+import NapicuServiceAliasManager from "./AliasManager/ServiceAliasManager";
 
 
 const COOKIES_LEFT_PANEL_WIDTH_NAME: string = "left_panel_width";
@@ -33,12 +34,9 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     const [deviceServices, setDeviceServices] = useState<DeviceServiceUUID[]>(device.services.map<DeviceServiceUUID>((service: ConnectedDeviceService) => {
         return {
             uuid: service.uuid,
-            alias: null
+            alias: NapicuServiceAliasManager.get_alias_by_key(service.uuid)
         }
     }));
-
-
-
 
 
     const handleMouseDownLeftResizer = (event: React.MouseEvent) => {
@@ -134,6 +132,8 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
                     item.uuid === uuid ? { ...item, alias: serviceNameInput } : item
                 )
             );
+
+            NapicuServiceAliasManager.set_alias(uuid, serviceNameInput);
             setExpandedServiceIndex(-1);
         }
     };
