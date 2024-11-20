@@ -28,7 +28,7 @@ export default class NapicuServiceAliasManager {
     }
 
     public static is_alias_duplicate(alias: string): boolean {
-        return NapicuCookies.getCookies<IServicesAliasesTable[]>(NapicuServiceAliasManager.COOKIES_SERVICES_ALIASES_TABLE_NAME)?.some(item => item.alias === alias) ?? false;
+        return NapicuCookies.getCookies<IServicesAliasesTable[]>(NapicuServiceAliasManager.COOKIES_SERVICES_ALIASES_TABLE_NAME)?.some(item => item.alias.toLowerCase() === alias.toLowerCase()) ?? false;
     }
 
     public static get_aliases(): IServicesAliasesTable[] | null {

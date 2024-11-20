@@ -127,14 +127,20 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
 
     const handleServiceNameKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
-            setDeviceServices((prevState) =>
-                prevState.map((item) =>
-                    item.uuid === uuid ? { ...item, alias: serviceNameInput } : item
-                )
-            );
+  
+            if(!NapicuServiceAliasManager.is_alias_duplicate(serviceNameInput) || NapicuServiceAliasManager.get_alias_by_key(uuid)?.toLowerCase() === serviceNameInput.toLowerCase()) {
+                setDeviceServices((prevState) =>
+                    prevState.map((item) =>
+                        item.uuid === uuid ? { ...item, alias: serviceNameInput } : item
+                    )
+                );
+    
+                NapicuServiceAliasManager.set_alias(uuid, serviceNameInput);
+                setExpandedServiceIndex(-1);
+            } else {
+                //TODO ERROR
+            }
 
-            NapicuServiceAliasManager.set_alias(uuid, serviceNameInput);
-            setExpandedServiceIndex(-1);
         }
     };
 
