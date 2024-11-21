@@ -3,7 +3,7 @@ import { NextApiRequest } from "next";
 import { NextApiResponseServerIO } from "@/types/next";
 import { DefaultEventsMap, Server as SocketIOServer } from "socket.io";
 import noble from "@abandonware/noble";
-import { ConnectedDevice, ConnectedDeviceChar, ConnectedDeviceService, ConnectingDevice, Device } from "@/types/ble_device";
+import { ConnectedDevice, ConnectedDeviceChar, BLEDeviceService, ConnectingDevice, Device } from "@/types/ble_device";
 import NapicuLOG from "./NapicuLogger";
 
 
@@ -102,7 +102,7 @@ export default class NapicuServer {
               peripheral.discoverAllServicesAndCharacteristicsAsync().then((value: noble.ServicesAndCharacteristics) => {
                 NapicuLOG.LOG_I("Successfully discovered all services and characteristics.");
 
-                const peripheral_services: ConnectedDeviceService[] = value.services.map<ConnectedDeviceService>((service: noble.Service) => {
+                const peripheral_services: BLEDeviceService[] = value.services.map<BLEDeviceService>((service: noble.Service) => {
                   return {
                     uuid: service.uuid,
                     name: service.name,

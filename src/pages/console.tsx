@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DeviceViewProps } from "./interfaces/Idevice";
+import { DeviceReactViewProps } from "./interfaces/Idevice";
 import { IConsoleCommand } from "./interfaces/IConsole";
 
 
-const ConsoleView = ({ device }: DeviceViewProps): JSX.Element => {
+const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
     const [consoleLines, setConsoleLines] = useState<IConsoleCommand[]>([]);
 

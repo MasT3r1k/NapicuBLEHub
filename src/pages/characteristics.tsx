@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DeviceViewProps } from "./interfaces/Idevice";
+import { DeviceReactViewProps } from "./interfaces/Idevice";
 import { ConnectedDeviceCharViewProps } from "@/types/ble_device";
 
 

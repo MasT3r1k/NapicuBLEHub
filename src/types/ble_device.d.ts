@@ -9,7 +9,7 @@ export interface ConnectingDevice {
     local_name: string
 }
 
-export interface ConnectedDeviceService {
+export interface BLEDeviceService {
     uuid: string,
     name: string,
     type: string,
@@ -32,5 +32,5 @@ export interface ConnectedDevice {
     address: string,
     local_name: string,
     rssi: number,
-    services: ConnectedDeviceService[]
+    services: BLEDeviceService[]
 }

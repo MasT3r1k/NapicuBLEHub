@@ -1,10 +1,15 @@
-import { ConnectedDevice } from "@/types/ble_device";
+import { ConnectedDevice, ConnectedDeviceChar } from "@/types/ble_device";
 
-export interface DeviceViewProps {
+export interface DeviceReactViewProps {
     device: ConnectedDevice;
 }
 
-export interface DeviceServiceUUID {
+export interface ConnectedDeviceCharacteristicData extends ConnectedDeviceChar {
+    alias: string | null;
+}
+
+export interface ConnectedDeviceServiceData {
     uuid: string,
-    alias: string | null
+    alias: string | null,
+    chars: ConnectedDeviceCharacteristicData[]
 }

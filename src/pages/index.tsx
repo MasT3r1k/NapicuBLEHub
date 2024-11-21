@@ -1,4 +1,4 @@
-import { ConnectedDevice, ConnectedDeviceService, ConnectingDevice, Device } from "@/types/ble_device";
+import { ConnectedDevice, BLEDeviceService, ConnectingDevice, Device } from "@/types/ble_device";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import DeviceView from "./device";

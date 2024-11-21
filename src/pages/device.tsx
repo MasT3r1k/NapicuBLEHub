@@ -1,16 +1,20 @@
-import { ConnectedDevice, ConnectedDeviceChar, ConnectedDeviceService } from "@/types/ble_device";
+import { ConnectedDevice, ConnectedDeviceChar, BLEDeviceService } from "@/types/ble_device";
 import React, { useState, useRef, useEffect } from "react";
 import NapicuCookies from "./Cookies";
 import ConsoleView from "./console";
-import { DeviceServiceUUID, DeviceViewProps } from "./interfaces/Idevice";
+import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
-import NapicuServiceAliasManager from "./AliasManager/ServiceAliasManager";
+import NapicuAliasManager from "./AliasManager/AliasManager";
 
 
 const COOKIES_LEFT_PANEL_WIDTH_NAME: string = "left_panel_width";
 const COOKIES_CONSOLE_PANEL_HEIGHT_NAME: string = "console_panel_height";
 
-const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
+const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
+
+    const service_aliases_table: NapicuAliasManager = new NapicuAliasManager("services_aliases");
+    const characteristics_aliases_table: NapicuAliasManager = new NapicuAliasManager("characteristics_aliases");
+
     const [letfPanelWidth, setLetfPanelWidth] = useState<number>(
         () => NapicuCookies.getCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME) || 300);
     const [consolePanelHeight, setConsolePanelHeight] = useState<number>(
@@ -31,10 +35,13 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
     const serviceEditInput = useRef<HTMLInputElement>(null);
     const [serviceNameInput, setServiceNameInput] = useState<string>("");
 
-    const [deviceServices, setDeviceServices] = useState<DeviceServiceUUID[]>(device.services.map<DeviceServiceUUID>((service: ConnectedDeviceService) => {
+    const [deviceServices, setDeviceServices] = useState<ConnectedDeviceServiceData[]>(device.services.map<ConnectedDeviceServiceData>((service: BLEDeviceService) => {
         return {
             uuid: service.uuid,
-            alias: NapicuServiceAliasManager.get_alias_by_key(service.uuid)
+            alias: service_aliases_table.get_alias_by_key(service.uuid),
+            chars: service.chars.map((characteristic: ConnectedDeviceChar) => {
+              return {...characteristic, alias: null}  
+            })
         }
     }));
 
@@ -119,23 +126,17 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
         //setServiceNameInput(deviceServices[index].alias || deviceServices[index].uuid);
     }
 
-    const getSelectedServiceCharacteristics = (): ConnectedDeviceChar[] => {
-        return device.services[selectedServiceIndex].chars;
-    }
-
-
-
     const handleServiceNameKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
   
-            if(!NapicuServiceAliasManager.is_alias_duplicate(serviceNameInput) || NapicuServiceAliasManager.get_alias_by_key(uuid)?.toLowerCase() === serviceNameInput.toLowerCase()) {
+            if(!service_aliases_table.is_alias_duplicate(serviceNameInput) || service_aliases_table.get_alias_by_key(uuid)?.toLowerCase() === serviceNameInput.toLowerCase()) {
                 setDeviceServices((prevState) =>
                     prevState.map((item) =>
                         item.uuid === uuid ? { ...item, alias: serviceNameInput } : item
                     )
                 );
     
-                NapicuServiceAliasManager.set_alias(uuid, serviceNameInput);
+                service_aliases_table.set_alias(uuid, serviceNameInput);
                 setExpandedServiceIndex(-1);
             } else {
                 //TODO ERROR
@@ -150,6 +151,9 @@ const DeviceView = ({ device }: DeviceViewProps): JSX.Element => {
 
 
 
+    const getSelectedServiceCharacteristics = (): ConnectedDeviceCharacteristicData[] => {
+        return deviceServices[selectedServiceIndex].chars;
+    }
 
     useEffect(() => {
         if (expandedServiceIndex !== -1 && serviceEditInput.current) {
