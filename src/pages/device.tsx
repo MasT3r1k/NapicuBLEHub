@@ -5,15 +5,20 @@ import ConsoleView from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
 import NapicuAliasManager from "./AliasManager/AliasManager";
+import { log } from "console";
 
-
+//TODO
 const COOKIES_LEFT_PANEL_WIDTH_NAME: string = "left_panel_width";
 const COOKIES_CONSOLE_PANEL_HEIGHT_NAME: string = "console_panel_height";
 
+export const COOKIES_SERVICES_ALIASES_NAME: string = "services_aliases";
+export const COOKIES_CHARACTERISTICS_ALIASES_NAME: string = "characteristics_aliases";
+
 const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
-    const service_aliases_table: NapicuAliasManager = new NapicuAliasManager("services_aliases");
-    const characteristics_aliases_table: NapicuAliasManager = new NapicuAliasManager("characteristics_aliases");
+    //Cookies tables
+    const service_aliases_table: NapicuAliasManager = new NapicuAliasManager(COOKIES_SERVICES_ALIASES_NAME);
+    const characteristics_aliases_table: NapicuAliasManager = new NapicuAliasManager(COOKIES_CHARACTERISTICS_ALIASES_NAME);
 
     const [letfPanelWidth, setLetfPanelWidth] = useState<number>(
         () => NapicuCookies.getCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME) || 300);
@@ -21,26 +26,27 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         () => NapicuCookies.getCookies<number>(COOKIES_CONSOLE_PANEL_HEIGHT_NAME) || 300);
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
     const [consolePanelResizing, setConsolePanelResizing] = useState<boolean>(false);
-
     const [favorited, setFavorited] = useState<boolean>(false);
+
     //Services variables
     const [expandedServiceIndex, setExpandedServiceIndex] = useState<number>(-1);
     const [selectedServiceIndex, setSelectedServiceIndex] = useState<number>(0);
-
+    //Characteristic variables
     const [expandedCharacteristicIndex, setExpandedCharacteristicIndex] = useState<number>(-1);
     const [selectedCharacteristicIndex, setSelectedCharacteristicIndex] = useState<number>(0);
+    //Input for alias
+    const aliasEditInput = useRef<HTMLInputElement>(null);
+    const [aliasInputValue, setAliasInputValue] = useState<string>("");
 
 
 
-    const serviceEditInput = useRef<HTMLInputElement>(null);
-    const [serviceNameInput, setServiceNameInput] = useState<string>("");
-
+    //Init cookies
     const [deviceServices, setDeviceServices] = useState<ConnectedDeviceServiceData[]>(device.services.map<ConnectedDeviceServiceData>((service: BLEDeviceService) => {
         return {
             uuid: service.uuid,
             alias: service_aliases_table.get_alias_by_key(service.uuid),
             chars: service.chars.map((characteristic: ConnectedDeviceChar) => {
-              return {...characteristic, alias: null}  
+              return {...characteristic, alias: characteristics_aliases_table.get_alias_by_key(characteristic.uuid)}  
             })
         }
     }));
@@ -104,6 +110,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const onClickService = (index: number): void => {
         setSelectedServiceIndex(index);
         setSelectedCharacteristicIndex(0);
+        setExpandedCharacteristicIndex(-1);
         if (selectedServiceIndex != index) setExpandedServiceIndex(-1);
     }
 
@@ -111,11 +118,12 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         event.stopPropagation();
         onClickService(index);
         setExpandedServiceIndex(expandedServiceIndex == index ? -1 : index);
-        setServiceNameInput(deviceServices[index].alias || deviceServices[index].uuid);
+        setAliasInputValue(deviceServices[index].alias || deviceServices[index].uuid);
     }
 
     const onClickCharacteristic = (index: number): void => {
         setSelectedCharacteristicIndex(index);
+        setExpandedServiceIndex(-1);
         if (selectedCharacteristicIndex != index) setExpandedCharacteristicIndex(-1);
     }
 
@@ -123,20 +131,20 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         event.stopPropagation();
         onClickCharacteristic(index);
         setExpandedCharacteristicIndex(expandedServiceIndex == index ? -1 : index);
-        //setServiceNameInput(deviceServices[index].alias || deviceServices[index].uuid);
+        setAliasInputValue(deviceServices[selectedServiceIndex].chars[index].alias || deviceServices[selectedServiceIndex].chars[index].uuid);
     }
 
     const handleServiceNameKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
   
-            if(!service_aliases_table.is_alias_duplicate(serviceNameInput) || service_aliases_table.get_alias_by_key(uuid)?.toLowerCase() === serviceNameInput.toLowerCase()) {
+            if(!service_aliases_table.is_alias_duplicate(aliasInputValue) || service_aliases_table.get_alias_by_key(uuid)?.toLowerCase() === aliasInputValue.toLowerCase()) {
                 setDeviceServices((prevState) =>
                     prevState.map((item) =>
-                        item.uuid === uuid ? { ...item, alias: serviceNameInput } : item
+                        item.uuid === uuid ? { ...item, alias: aliasInputValue } : item
                     )
                 );
     
-                service_aliases_table.set_alias(uuid, serviceNameInput);
+                service_aliases_table.set_alias(uuid, aliasInputValue);
                 setExpandedServiceIndex(-1);
             } else {
                 //TODO ERROR
@@ -145,21 +153,61 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         }
     };
 
-    const handleServiceNameInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setServiceNameInput(event.target.value);
+    const handleCharacteristicNameKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
+        if (event.key === "Enter") {
+  
+            if(!characteristics_aliases_table.is_alias_duplicate(aliasInputValue) || characteristics_aliases_table.get_alias_by_key(uuid)?.toLowerCase() === aliasInputValue.toLowerCase()) {
+                setDeviceServices((prevState) => {
+                    return prevState.map((service, index) => {
+                        if (index == selectedServiceIndex) {
+                            return {
+                                ...service,
+                                chars: service.chars.map((char) => {
+                                    if (char.uuid === uuid) {
+                                        return {
+                                            ...char,
+                                            alias: aliasInputValue, 
+                                        };
+                                    }
+                                    return char; 
+                                }),
+                            };
+                        }
+                        return service; 
+                    });
+                });
+
+                characteristics_aliases_table.set_alias(uuid, aliasInputValue);
+                setExpandedCharacteristicIndex(-1);
+            } else {
+
+                //TODO ERROR
+            }
+
+        }
     };
 
-
+    const handleAliasInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setAliasInputValue(event.target.value);
+    };
 
     const getSelectedServiceCharacteristics = (): ConnectedDeviceCharacteristicData[] => {
         return deviceServices[selectedServiceIndex].chars;
     }
 
+
+    //TODO 
     useEffect(() => {
-        if (expandedServiceIndex !== -1 && serviceEditInput.current) {
-            serviceEditInput.current.select();
+        if (expandedServiceIndex !== -1 && aliasEditInput.current) {
+            aliasEditInput.current.select();
         }
     }, [expandedServiceIndex]);
+    
+    useEffect(() => {
+        if (expandedCharacteristicIndex !== -1 && aliasEditInput.current) {
+            aliasEditInput.current.select();
+        }
+    }, [expandedCharacteristicIndex]);
 
 
     return (
@@ -236,13 +284,13 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                                                         <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
                                                             {expandedServiceIndex == index ? (
                                                                 <div>
-                                                                    <div className="is-italic light-text">You can set the alias for this characteristic:</div>
+                                                                    <div className="is-italic light-text">You can set the alias for this service:</div>
                                                                     <input
-                                                                        ref={serviceEditInput}
+                                                                        ref={aliasEditInput}
                                                                         type="text"
                                                                         className="is-size-6 has-text-weight-bold"
-                                                                        onChange={handleServiceNameInputChange}
-                                                                        value={serviceNameInput || ""}
+                                                                        onChange={handleAliasInputChange}
+                                                                        value={aliasInputValue || ""}
                                                                         onKeyDown={(e) => handleServiceNameKeyDownInput(e, service.uuid)}
                                                                     />
                                                                 </div>
@@ -273,10 +321,23 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                                                 <div className={`inspect-item ${selectedCharacteristicIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickCharacteristic(index)}>
                                                     <div className=" has-text-black is-clickable" >
                                                         <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
-
-                                                            <div className="is-size-6 has-text-weight-bold uuid-text">
-                                                                {characteristic.uuid}
-                                                            </div>
+                                                            {expandedCharacteristicIndex == index ? (
+                                                                    <div>
+                                                                        <div className="is-italic light-text">You can set the alias for this characteristic:</div>
+                                                                        <input
+                                                                            ref={aliasEditInput}
+                                                                            type="text"
+                                                                            className="is-size-6 has-text-weight-bold"
+                                                                            onChange={handleAliasInputChange}
+                                                                            value={aliasInputValue || ""}
+                                                                            onKeyDown={(e) => handleCharacteristicNameKeyDownInput(e, characteristic.uuid)}
+                                                                        />
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className="is-size-6 has-text-weight-bold uuid-text">
+                                                                        {characteristic.alias || characteristic.uuid}
+                                                                    </div>
+                                                                )}
 
 
                                                             <div className="has-text-weight-bold is-clickable" >
