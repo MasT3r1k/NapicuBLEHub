@@ -1,18 +1,12 @@
-import { ConnectedDevice, ConnectedDeviceChar, BLEDeviceService } from "@/types/ble_device";
+import { ConnectedDeviceChar, BLEDeviceService } from "@/types/ble_device";
 import React, { useState, useRef, useEffect } from "react";
 import NapicuCookies from "./Cookies";
 import ConsoleView from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
 import NapicuAliasManager from "./AliasManager/AliasManager";
-import { log } from "console";
+import { COOKIES_SERVICES_ALIASES_NAME, COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME } from "./config";
 
-//TODO
-const COOKIES_LEFT_PANEL_WIDTH_NAME: string = "left_panel_width";
-const COOKIES_CONSOLE_PANEL_HEIGHT_NAME: string = "console_panel_height";
-
-export const COOKIES_SERVICES_ALIASES_NAME: string = "services_aliases";
-export const COOKIES_CHARACTERISTICS_ALIASES_NAME: string = "characteristics_aliases";
 
 const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
