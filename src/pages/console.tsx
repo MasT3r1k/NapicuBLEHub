@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DeviceReactViewProps } from "./interfaces/Idevice";
 import { IConsoleCommand } from "./interfaces/IConsole";
+import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_SERVICES_ALIASES_NAME } from "./config";
+import NapicuCookies from "./Cookies";
 
 
 const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
@@ -23,10 +25,26 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
             
             if(console_input.length) {
                 const command_parts: string[] = console_input.split(" ");
+               
 
-                switch (console_input.toLowerCase()) {
+                switch (command_parts[0].toLowerCase()) {
                     case "clear":
                         clearConsole();
+                        break;
+
+                    case "delete":
+
+                        if(command_parts[1] == "aliases") {
+                            NapicuCookies.deleteCookies(COOKIES_SERVICES_ALIASES_NAME);
+                            NapicuCookies.deleteCookies(COOKIES_CHARACTERISTICS_ALIASES_NAME);
+                            consolePrint("Aliases successfully deleted! Please refresh the page.");
+                        } else {
+                            //TODO
+                            consolePrint(`Usage: [OPTION]`);
+                            consolePrint(`\t aliases - Removes aliases for services and characteristics.`);
+                            consolePrint(`\t sizes - Removes window sizes.`);
+                        }
+
                         break;
                     default:
                         
@@ -88,7 +106,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
                     )}
 
                     <div className={`console ${line.color === "red" ? 'console-red-line' : ''}`}>
-                        <div>{line.command}</div>
+                        <pre>{line.command}</pre>
                     </div>
                 </div>
             ))}
