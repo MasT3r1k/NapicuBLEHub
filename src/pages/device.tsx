@@ -294,7 +294,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                                                                 </div>
                                                             )}
 
-                                                            <div className="has-text-weight-bold is-clickable" >
+                                                            <div className="has-text-weight-bold is-clickable more-option-edt" >
                                                                 <img onClick={(e) => onClickServiceEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
                                                             </div>
                                                         </div>
@@ -334,7 +334,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                                                                 )}
 
 
-                                                            <div className="has-text-weight-bold is-clickable" >
+                                                            <div className="has-text-weight-bold is-clickable more-option-edt">
                                                                 <img onClick={(e) => onClickCharacteristicEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
                                                             </div>
                                                         </div>

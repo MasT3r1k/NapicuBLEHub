@@ -55,6 +55,10 @@
     
 }
 
+.more-option-edt {
+    min-width: 25px;
+}
+
 .more-option-img {
     vertical-align: middle;
     width: 25px;
@@ -165,8 +169,8 @@
 }
 
 .uuid-text {
-    max-width: 80%;
-    overflow: auto;
+    max-width: 100%;
+    overflow-y: auto;
 }
 
 .right-view-bar {
