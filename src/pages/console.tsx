@@ -10,7 +10,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const [consoleLines, setConsoleLines] = useState<IConsoleCommand[]>([]);
 
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
-    const [letfPanelWidth, setLetfPanelWidth] = useState<number>(500);
+    const [leftPanelWidth, setLeftPanelWidth] = useState<number>(500);
 
     const inputDivRef = useRef<HTMLDivElement>(null);
 
@@ -104,11 +104,11 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
         setLeftPanelResizing(true);
 
         const startX: number = event.clientX;
-        const width: number = letfPanelWidth;
+        const width: number = leftPanelWidth;
 
         const handleMouseMove = (moveEvent: MouseEvent): void => {
             const newWidth = width + (moveEvent.clientX - startX);
-            if (newWidth >= 240 && window.innerWidth - moveEvent.screenX >= 150) setLetfPanelWidth(newWidth);
+            if (newWidth >= 240 && window.innerWidth - moveEvent.screenX >= 150) setLeftPanelWidth(newWidth);
 
 
         };
@@ -128,7 +128,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
     return (
         <div className="console-split"> 
             {/* Left panel */}
-            <div style={{ width: `${letfPanelWidth}px` }}>
+            <div style={{ width: `${leftPanelWidth}px` }}>
 
                 {consoleLines.map((line: IConsoleCommand, index: number) => (
                     <div key={index} className="is-flex">

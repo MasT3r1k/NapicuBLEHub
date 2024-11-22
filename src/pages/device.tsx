@@ -14,7 +14,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const service_aliases_table: NapicuAliasManager = new NapicuAliasManager(COOKIES_SERVICES_ALIASES_NAME);
     const characteristics_aliases_table: NapicuAliasManager = new NapicuAliasManager(COOKIES_CHARACTERISTICS_ALIASES_NAME);
 
-    const [letfPanelWidth, setLetfPanelWidth] = useState<number>(
+    const [letfPanelWidth, setLeftPanelWidth] = useState<number>(
         () => NapicuCookies.getCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME) || 300);
     const [consolePanelHeight, setConsolePanelHeight] = useState<number>(
         () => NapicuCookies.getCookies<number>(COOKIES_CONSOLE_PANEL_HEIGHT_NAME) || 300);
@@ -51,12 +51,13 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
         setLeftPanelResizing(true);
 
+        let newWidth: number;
         const startX: number = event.clientX;
         const startWidth: number = letfPanelWidth;
 
         const handleMouseMove = (moveEvent: MouseEvent): void => {
-            const newWidth = startWidth + (moveEvent.clientX - startX);
-            if (newWidth >= 240) setLetfPanelWidth(newWidth);
+            newWidth = startWidth + (moveEvent.clientX - startX);
+            if (newWidth >= 240) setLeftPanelWidth(newWidth);
         };
 
         const handleMouseUp = (): void => {
@@ -64,7 +65,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
             document.removeEventListener('mouseup', handleMouseUp);
             setLeftPanelResizing(false);
 
-            NapicuCookies.setCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME, letfPanelWidth);
+            NapicuCookies.setCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME, newWidth);
         };
 
         document.addEventListener('mousemove', handleMouseMove);
@@ -76,11 +77,12 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
         setConsolePanelResizing(true);
 
+        let newHeight: number;
         const startY: number = event.clientY;
         const startHeight: number = consolePanelHeight;
 
         const handleMouseMove = (moveEvent: MouseEvent): void => {
-            const newHeight = startHeight + (moveEvent.clientY - startY);
+            newHeight = startHeight + (moveEvent.clientY - startY);
 
             if (newHeight >= 100 && newHeight <= window.innerHeight - 50) setConsolePanelHeight(newHeight);
         };
@@ -90,7 +92,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
             document.removeEventListener("mouseup", handleMouseUp);
             setConsolePanelResizing(false);
 
-            NapicuCookies.setCookies<number>(COOKIES_CONSOLE_PANEL_HEIGHT_NAME, consolePanelHeight);
+            NapicuCookies.setCookies<number>(COOKIES_CONSOLE_PANEL_HEIGHT_NAME, newHeight);
         };
 
         document.addEventListener("mousemove", handleMouseMove);
