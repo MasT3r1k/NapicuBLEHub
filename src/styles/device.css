@@ -186,6 +186,9 @@
 }
 
 .bottom-console {
+    width: 0;
+    min-width: 100%;
+    max-width: 100%;
     flex: 1;
     overflow-y: auto;
     border-top: 1px solid var(--border-color);
@@ -271,9 +274,9 @@
 .console-right {
     border-left: 1px solid var(--border-color);
     flex: 1 1;
+    overflow: auto;
 }
 
 .console-right> .left-view-bar-resizer {
     left: 0 !important;
-    transform: translateX(-50%);
 }

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DeviceReactViewProps } from "./interfaces/Idevice";
-import { IConsoleCommand } from "./interfaces/IConsole";
+import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
 import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SERVICES_ALIASES_NAME } from "./config";
 import NapicuCookies from "./Cookies";
 
@@ -8,6 +8,8 @@ import NapicuCookies from "./Cookies";
 const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
     const [consoleLines, setConsoleLines] = useState<IConsoleCommand[]>([]);
+
+    const [logLines, setLogLines] = useState<ILogLine[]>([{name: "NapicuChar", message: "Connected!", color: "white"}]);
 
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
     const [leftPanelWidth, setLeftPanelWidth] = useState<number>(
@@ -171,7 +173,21 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
             {/* Right panel */}
             <div className="console-right is-relative">
                 <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
-                Hello World!
+                <div>
+                    {logLines.map((line: ILogLine, index: number) => (
+                        <div key={index} className="is-flex">
+                            {line.name && (
+                                <div>
+                                    {'['}{device.local_name}{']'}{'>'}
+                                </div>
+                            )}
+
+                            <div className={`console ${line.color === "red" ? 'console-red-line' : ''}`}>
+                                <pre>{line.message}</pre>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
 
         </div>
