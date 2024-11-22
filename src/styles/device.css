@@ -160,7 +160,7 @@
 }
 
 .device-option-view {
-    height: 100%;
+    overflow: hidden !important;
 }
 
 .view-bar-section-name {
@@ -262,16 +262,18 @@
 .console-split {
     display: flex;
     height: 100%;
-    justify-content: space-between;
 }
 
 .console-split>div {
-    width: 100%;
     padding: 10px 15px;
 }
 
 .console-right {
     border-left: 1px solid var(--border-color);
-    width: 30% !important;
+    flex: 1 1;
+}
 
+.console-right> .left-view-bar-resizer {
+    left: 0 !important;
+    transform: translateX(-50%);
 }

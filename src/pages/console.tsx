@@ -9,6 +9,9 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
     const [consoleLines, setConsoleLines] = useState<IConsoleCommand[]>([]);
 
+    const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
+    const [letfPanelWidth, setLetfPanelWidth] = useState<number>(500);
+
     const inputDivRef = useRef<HTMLDivElement>(null);
 
     const focusConsoleInput = (): void => {
@@ -95,9 +98,38 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
         setConsoleLines([]);
     }
 
+    const handleMouseDownLeftResizer = (event: React.MouseEvent) => {
+        event.preventDefault();
+
+        setLeftPanelResizing(true);
+
+        const startX: number = event.clientX;
+        const width: number = letfPanelWidth;
+
+        const handleMouseMove = (moveEvent: MouseEvent): void => {
+            const newWidth = width + (moveEvent.clientX - startX);
+            if (newWidth >= 240 && window.innerWidth - moveEvent.screenX >= 150) setLetfPanelWidth(newWidth);
+
+
+        };
+
+        const handleMouseUp = (): void => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+            setLeftPanelResizing(false);
+
+            //NapicuCookies.setCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME, letfPanelWidth);
+        };
+
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+    };
+
     return (
-        <div className="console-split">
-            <div>
+        <div className="console-split"> 
+            {/* Left panel */}
+            <div style={{ width: `${letfPanelWidth}px` }}>
+
                 {consoleLines.map((line: IConsoleCommand, index: number) => (
                     <div key={index} className="is-flex">
                         {line.show_name && (
@@ -133,8 +165,10 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
                     </div>
                 </div>
             </div>
-            <div className="console-right">
-                Ahoij
+            {/* Right panel */}
+            <div className="console-right is-relative">
+                <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
+                Hello World!
             </div>
 
         </div>
