@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DeviceReactViewProps } from "./interfaces/Idevice";
 import { IConsoleCommand } from "./interfaces/IConsole";
-import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_SERVICES_ALIASES_NAME } from "./config";
+import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SERVICES_ALIASES_NAME } from "./config";
 import NapicuCookies from "./Cookies";
 
 
@@ -10,7 +10,8 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const [consoleLines, setConsoleLines] = useState<IConsoleCommand[]>([]);
 
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
-    const [leftPanelWidth, setLeftPanelWidth] = useState<number>(500);
+    const [leftPanelWidth, setLeftPanelWidth] = useState<number>(
+        () => NapicuCookies.getCookies<number>(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME) || 500);
 
     const inputDivRef = useRef<HTMLDivElement>(null);
 
@@ -40,6 +41,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
                         if (command_parts[1] == "aliases") {
                             NapicuCookies.deleteCookies(COOKIES_SERVICES_ALIASES_NAME);
                             NapicuCookies.deleteCookies(COOKIES_CHARACTERISTICS_ALIASES_NAME);
+                            NapicuCookies.deleteCookies(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME);
                             consolePrint("Aliases successfully deleted! Please refresh the page.");
                         } else {
                             //TODO
@@ -103,14 +105,15 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
         setLeftPanelResizing(true);
 
+        let newWidth: number;
         const startX: number = event.clientX;
         const width: number = leftPanelWidth;
 
         const handleMouseMove = (moveEvent: MouseEvent): void => {
-            const newWidth = width + (moveEvent.clientX - startX);
+            newWidth = width + (moveEvent.clientX - startX);
             if (newWidth >= 240 && window.innerWidth - moveEvent.screenX >= 150) setLeftPanelWidth(newWidth);
 
-
+            NapicuCookies.setCookies<number>(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, newWidth);
         };
 
         const handleMouseUp = (): void => {
