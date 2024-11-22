@@ -20,6 +20,8 @@ export default class NapicuServer {
 
   private connected_device: noble.Peripheral | null = null;
 
+  private client_connected_device_data: ConnectedDevice | null = null;
+
 
   constructor(req: NextApiRequest, res: NextApiResponseServerIO) {
     NapicuLOG.LOG_I("Starting...");
@@ -40,6 +42,8 @@ export default class NapicuServer {
       for(const device of this.cast_noble_peripherals_to_device(this.found_peripheral)) {
         socket.emit("device", device);
       }
+
+      if(this.connected_device) this.io.emit("connected_device", this.client_connected_device_data);
       
       socket.emit("scan_status", this.is_scanning);
 
@@ -120,7 +124,7 @@ export default class NapicuServer {
                 const connected_device_data: ConnectedDevice = {
                   address: peripheral.address,
                   local_name: peripheral.advertisement.localName,
-                  rssi: peripheral.rssi,
+                  rssi: peripheral.rssi, //TODO delete
                   services: peripheral_services
                 }
   
@@ -140,12 +144,15 @@ export default class NapicuServer {
                   if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
                   this.connected_device?.removeAllListeners();
                   this.connected_device = null;
+                  this.client_connected_device_data = null;
+                  //TODO Emit
                 });
   
                 this.connected_device = peripheral;
                 this.found_peripheral = [];
                 NapicuLOG.LOG_I("Setting found_peripheral to []...");
                 this.io.emit("connected_device", connected_device_data);
+                this.client_connected_device_data = connected_device_data;
                 this.on_peripheral_connected();
 
               }).catch((e: any) => {
