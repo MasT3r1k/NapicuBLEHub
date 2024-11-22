@@ -124,7 +124,6 @@ export default class NapicuServer {
                 const connected_device_data: ConnectedDevice = {
                   address: peripheral.address,
                   local_name: peripheral.advertisement.localName,
-                  rssi: peripheral.rssi, //TODO delete
                   services: peripheral_services
                 }
   

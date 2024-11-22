@@ -11,7 +11,8 @@ const Home = (): JSX.Element => {
   const [socket, setSocket] = useState<any>(null);
   const [is_filter_menu, setFilter] = useState<boolean>(false);
   const [connecting_data, setConnectingData] = useState<ConnectingDevice | undefined>();
-  const [connected_device, setConnectedDevice] = useState<ConnectedDevice | undefined>(); //{address: "address", local_name: "NapicuHome", rssi: 69}
+  const [connected_device, setConnectedDevice] = useState<ConnectedDevice | undefined>();
+  const [connected_device_rssi, setConnectedDeviceRSSI] = useState<number | undefined>();
   //Settings filter
   const [filter_allow_unknown_name, setIsChecked] = useState(true);
 
@@ -53,7 +54,7 @@ const Home = (): JSX.Element => {
     });
 
     socket.on("connected_device_rssi", (data: number) => {
-      setConnectedDevice(device_data => device_data ? { ...device_data, rssi: data } : undefined);
+      setConnectedDeviceRSSI(data);
     });
 
     return () => {

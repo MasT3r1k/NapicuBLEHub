@@ -31,6 +31,5 @@ export interface ConnectedDeviceChar {
 export interface ConnectedDevice {
     address: string,
     local_name: string,
-    rssi: number,
     services: BLEDeviceService[]
 }
