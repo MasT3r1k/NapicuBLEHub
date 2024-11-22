@@ -22,10 +22,10 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
         else if (event.key === "Enter") {
             const console_input: string = inputDivRef.current?.innerText || "";
             consolePrint(console_input, true);
-            
-            if(console_input.length) {
+
+            if (console_input.length) {
                 const command_parts: string[] = console_input.split(" ");
-               
+
 
                 switch (command_parts[0].toLowerCase()) {
                     case "clear":
@@ -34,7 +34,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
                     case "delete":
 
-                        if(command_parts[1] == "aliases") {
+                        if (command_parts[1] == "aliases") {
                             NapicuCookies.deleteCookies(COOKIES_SERVICES_ALIASES_NAME);
                             NapicuCookies.deleteCookies(COOKIES_CHARACTERISTICS_ALIASES_NAME);
                             consolePrint("Aliases successfully deleted! Please refresh the page.");
@@ -47,7 +47,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
                         break;
                     default:
-                        
+
                         consolePrintWrongCommand(command_parts);
                         break;
                 }
@@ -55,7 +55,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
             }
 
             //consolePrint(inputText, true);
-        
+
             if (inputDivRef.current) inputDivRef.current.innerHTML = "";
 
             // if (onEnterPress) {
@@ -68,11 +68,11 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
     };
 
     const consolePrint = (msg: string, show_name: boolean = false) => {
-        setConsoleLines((prevLines) => [...prevLines, {command: msg, color: "white", show_name}]);
+        setConsoleLines((prevLines) => [...prevLines, { command: msg, color: "white", show_name }]);
     }
 
     const consolePrintError = (msg: string) => {
-        setConsoleLines((prevLines) => [...prevLines, {command: msg, color: "red", show_name: false}]);
+        setConsoleLines((prevLines) => [...prevLines, { command: msg, color: "red", show_name: false }]);
     }
 
     const consolePrintWrongCommand = (command_parts: string[]) => {
@@ -96,41 +96,47 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
     }
 
     return (
-        <div>
-            {consoleLines.map((line: IConsoleCommand, index: number) => (
-                <div key={index} className="is-flex">
-                    {line.show_name && (
-                        <div>
-                            {'['}{device.local_name}{']'}{'>'}
-                        </div>
-                    )}
+        <div className="console-split">
+            <div>
+                {consoleLines.map((line: IConsoleCommand, index: number) => (
+                    <div key={index} className="is-flex">
+                        {line.show_name && (
+                            <div>
+                                {'['}{device.local_name}{']'}{'>'}
+                            </div>
+                        )}
 
-                    <div className={`console ${line.color === "red" ? 'console-red-line' : ''}`}>
-                        <pre>{line.command}</pre>
+                        <div className={`console ${line.color === "red" ? 'console-red-line' : ''}`}>
+                            <pre>{line.command}</pre>
+                        </div>
+                    </div>
+                ))}
+
+                <div className="is-flex">
+                    <div>
+                        {'['}{device.local_name}{']'}{'>'}
+                    </div>
+                    <div className="console" onClick={focusConsoleInput}>
+                        <div
+                            // @ts-ignore
+                            accept="txt"
+                            autoCapitalize="off"
+                            autoComplete="off"
+                            autoCorrect="off"
+                            className="input"
+                            contentEditable="true"
+                            spellCheck="false"
+                            ref={inputDivRef}
+                            onKeyDown={handleKeyDown}
+                            onInput={handleInput}
+                        ></div>
                     </div>
                 </div>
-            ))}
-
-            <div className="is-flex">
-                <div>
-                    {'['}{device.local_name}{']'}{'>'}
-                </div>
-                <div className="console" onClick={focusConsoleInput}>
-                    <div
-                        // @ts-ignore
-                        accept="txt"
-                        autoCapitalize="off"
-                        autoComplete="off"
-                        autoCorrect="off"
-                        className="input"
-                        contentEditable="true"
-                        spellCheck="false"
-                        ref={inputDivRef}
-                        onKeyDown={handleKeyDown}
-                        onInput={handleInput}
-                    ></div>
-                </div>
             </div>
+            <div className="console-right">
+                Ahoij
+            </div>
+
         </div>
     );
 }

@@ -191,7 +191,6 @@
     border-top: 1px solid var(--border-color);
     font-family: 'Source Code Pro', monospace;
     background-color: #1E2127;
-    padding: 10px 15px;
     position: relative;
 }
 
@@ -258,4 +257,21 @@
 
 .characteristics-properties-unabled {
     opacity: 0.17;
+}
+
+.console-split {
+    display: flex;
+    height: 100%;
+    justify-content: space-between;
+}
+
+.console-split>div {
+    width: 100%;
+    padding: 10px 15px;
+}
+
+.console-right {
+    border-left: 1px solid var(--border-color);
+    width: 30% !important;
+
 }
