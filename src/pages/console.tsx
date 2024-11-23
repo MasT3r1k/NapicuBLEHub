@@ -5,7 +5,25 @@ import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDT
 import NapicuCookies from "./Cookies";
 
 
-export let consoleLogLines: ILogLine[] = [];
+
+
+
+export class NapicuLogView {
+    private static consoleLogLines: ILogLine[] = [];
+
+    public static get_lines(): ILogLine[] {
+        return this.consoleLogLines;
+    }
+
+    public static print(value: ILogLine): void {
+        this.consoleLogLines.push(value);
+    }
+
+    public static clear(): void {
+        this.consoleLogLines = [];
+    }
+}
+
 
 const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
@@ -175,7 +193,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
             <div className="console-right is-relative">
                 <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
                 <div>
-                    {consoleLogLines.map((line: ILogLine, index: number) => (
+                    {NapicuLogView.get_lines().map((line: ILogLine, index: number) => (
                         <div key={index} className="is-flex">
                             {line.name && (
                                 <div>

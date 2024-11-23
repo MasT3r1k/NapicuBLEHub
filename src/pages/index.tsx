@@ -2,7 +2,7 @@ import { ConnectedDevice, BLEDeviceService, ConnectingDevice, Device } from "@/t
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import DeviceView from "./device";
-import { consoleLogLines } from "./console";
+import { NapicuLogView } from "./console";
 
 
 
@@ -48,12 +48,12 @@ const Home = (): JSX.Element => {
     socket.on("connecting", (data: ConnectingDevice) => {
       setConnectingData(data);
     });
-
+  
     socket.on("connected_device", (data: ConnectedDevice) => {
       setConnectedDevice(data);
       setConnectingData(undefined);
-      consoleLogLines = [];
-      consoleLogLines.push({name: data.address, message: "Connected", color: "white"});
+      NapicuLogView.clear();
+      NapicuLogView.print({name: data.address, message: "Connected", color: "white"});
     });
 
     socket.on("connected_device_rssi", (data: number) => {
