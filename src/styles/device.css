@@ -262,6 +262,10 @@
     opacity: 0.17;
 }
 
+.button:hover {
+    transform: scale(1.1);
+}
+
 .console-split {
     display: flex;
     height: 100%;
