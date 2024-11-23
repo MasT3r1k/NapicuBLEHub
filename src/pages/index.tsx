@@ -52,6 +52,7 @@ const Home = (): JSX.Element => {
     socket.on("connected_device", (data: ConnectedDevice) => {
       setConnectedDevice(data);
       setConnectingData(undefined);
+      consoleLogLines = [];
       consoleLogLines.push({name: data.address, message: "Connected", color: "white"});
     });
 

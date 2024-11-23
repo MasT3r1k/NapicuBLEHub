@@ -5,7 +5,7 @@ import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDT
 import NapicuCookies from "./Cookies";
 
 
-export const consoleLogLines: ILogLine[] = [];
+export let consoleLogLines: ILogLine[] = [];
 
 const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
