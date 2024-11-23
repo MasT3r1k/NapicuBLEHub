@@ -5,7 +5,7 @@ import ConsoleView from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
 import NapicuAliasManager from "./AliasManager/AliasManager";
-import { COOKIES_SERVICES_ALIASES_NAME, COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME } from "./config";
+import { COOKIES_SERVICES_ALIASES_NAME, COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT } from "./config";
 
 
 const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
@@ -15,9 +15,9 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const characteristics_aliases_table: NapicuAliasManager = new NapicuAliasManager(COOKIES_CHARACTERISTICS_ALIASES_NAME);
 
     const [letfPanelWidth, setLeftPanelWidth] = useState<number>(
-        () => NapicuCookies.getCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME) || 300);
+        () => NapicuCookies.getCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME) || SIZE_LEFT_PANEL_DEFAULT_WIDTH);
     const [consolePanelHeight, setConsolePanelHeight] = useState<number>(
-        () => NapicuCookies.getCookies<number>(COOKIES_CONSOLE_PANEL_HEIGHT_NAME) || 300);
+        () => NapicuCookies.getCookies<number>(COOKIES_CONSOLE_PANEL_HEIGHT_NAME) || SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT);
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
     const [consolePanelResizing, setConsolePanelResizing] = useState<boolean>(false);
     const [favorited, setFavorited] = useState<boolean>(false);
@@ -57,7 +57,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
         const handleMouseMove = (moveEvent: MouseEvent): void => {
             newWidth = startWidth + (moveEvent.clientX - startX);
-            if (newWidth >= 240) setLeftPanelWidth(newWidth);
+            if (newWidth >= SIZE_LEFT_PANEL_MIN_WIDTH) setLeftPanelWidth(newWidth);
         };
 
         const handleMouseUp = (): void => {
@@ -84,7 +84,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         const handleMouseMove = (moveEvent: MouseEvent): void => {
             newHeight = startHeight + (moveEvent.clientY - startY);
 
-            if (newHeight >= 100 && newHeight <= window.innerHeight - 50) setConsolePanelHeight(newHeight);
+            if (newHeight >= SIZE_CONSOLE_PANEL_MIN_HEIGHT && newHeight <= window.innerHeight - SIZE_CONSOLE_PANEL_MAX_HEIGHT) setConsolePanelHeight(newHeight);
         };
 
         const handleMouseUp = (): void => {

@@ -280,3 +280,42 @@
 .console-right> .left-view-bar-resizer {
     left: 0 !important;
 }
+
+.characteristics-options {
+    height: 100%;
+    overflow-y: auto;
+}
+.characteristics-options>div {
+    height: 100%;
+    padding: 1rem 1.5rem;
+}
+
+
+.characteristics-read-view {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    color: black;
+    font-family: 'Source Code Pro', monospace;
+}
+
+.characteristics-read-view-time{
+    user-select: none;
+    margin-right: 4px;
+}
+
+.characteristics-read-view-value {
+    opacity: 0.5;
+}
+
+.characteristics-options button {
+    border: 0;
+}
+
+.characteristics-options-buttons {
+    padding: 10px 0;
+
+}

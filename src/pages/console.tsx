@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DeviceReactViewProps } from "./interfaces/Idevice";
 import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
-import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SERVICES_ALIASES_NAME } from "./config";
+import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SERVICES_ALIASES_NAME, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
 
 
@@ -32,7 +32,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
     const [leftPanelWidth, setLeftPanelWidth] = useState<number>(
-        () => NapicuCookies.getCookies<number>(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME) || 500);
+        () => NapicuCookies.getCookies<number>(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME) || SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH);
 
     const inputDivRef = useRef<HTMLDivElement>(null);
 
@@ -132,7 +132,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
         const handleMouseMove = (moveEvent: MouseEvent): void => {
             newWidth = width + (moveEvent.clientX - startX);
-            if (newWidth >= 240 && window.innerWidth - moveEvent.screenX >= 150) setLeftPanelWidth(newWidth);
+            if (newWidth >= SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH && window.innerWidth - moveEvent.screenX >= SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH) setLeftPanelWidth(newWidth);
 
             NapicuCookies.setCookies<number>(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, newWidth);
         };
