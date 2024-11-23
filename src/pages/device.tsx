@@ -258,10 +258,6 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                 </div>
             </div>
 
-
-    
-
-
             <div className="device-section-view device-option-view is-relative">
                 <div className="is-inline-flex">
                     <div className="left-view-bar" style={{ width: `${letfPanelWidth}px` }}>
@@ -314,7 +310,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                                         <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Characteristics</div>
                                         <div className="inspect-items-view">
                                             {getSelectedServiceCharacteristics()?.map((characteristic, index) => (
-                                                <div className={`inspect-item ${selectedCharacteristicIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickCharacteristic(index)}>
+                                                <div key={index} className={`inspect-item ${selectedCharacteristicIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickCharacteristic(index)}>
                                                     <div className=" has-text-black is-clickable" >
                                                         <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
                                                             {expandedCharacteristicIndex == index ? (
