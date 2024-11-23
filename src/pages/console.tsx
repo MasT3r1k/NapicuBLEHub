@@ -5,11 +5,12 @@ import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDT
 import NapicuCookies from "./Cookies";
 
 
+export const consoleLogLines: ILogLine[] = [];
+
 const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
     const [consoleLines, setConsoleLines] = useState<IConsoleCommand[]>([]);
 
-    const [logLines, setLogLines] = useState<ILogLine[]>([{name: "NapicuChar", message: "Connected!", color: "white"}]);
 
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
     const [leftPanelWidth, setLeftPanelWidth] = useState<number>(
@@ -174,11 +175,11 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
             <div className="console-right is-relative">
                 <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
                 <div>
-                    {logLines.map((line: ILogLine, index: number) => (
+                    {consoleLogLines.map((line: ILogLine, index: number) => (
                         <div key={index} className="is-flex">
                             {line.name && (
                                 <div>
-                                    {'['}{device.local_name}{']'}{'>'}
+                                    {'['}{line.name}{']'}{'>'}
                                 </div>
                             )}
 

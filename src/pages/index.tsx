@@ -2,6 +2,7 @@ import { ConnectedDevice, BLEDeviceService, ConnectingDevice, Device } from "@/t
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import DeviceView from "./device";
+import { consoleLogLines } from "./console";
 
 
 
@@ -51,6 +52,7 @@ const Home = (): JSX.Element => {
     socket.on("connected_device", (data: ConnectedDevice) => {
       setConnectedDevice(data);
       setConnectingData(undefined);
+      consoleLogLines.push({name: data.address, message: "Connected", color: "white"});
     });
 
     socket.on("connected_device_rssi", (data: number) => {
