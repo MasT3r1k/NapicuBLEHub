@@ -237,9 +237,9 @@
     border-radius: 50%;
     width: 25px;
     height: 25px;
-    display: flex; /* Flexbox pro centrování obsahu */
-    align-items: center; /* Svislé centrování */
-    justify-content: center; /* Vodorovné centrování */
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
     font-weight: bold;
     margin: 0 3px;
     user-select: none;
