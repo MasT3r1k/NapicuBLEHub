@@ -23,31 +23,33 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
 
 
-                <div className="characteristics-read-view">
+                <div className="characteristics-read-view is-relative">
                     <div className="is-flex has-text-weight-bold">
                         <div className="characteristics-read-view-time">15:30:45{'>'}</div>
                         <div className="characteristics-read-view-value">Zařízení poslalo, že master je sigma! </div>
                     </div>
 
-
+                    <div className="characteristics-write-input uuid-input">
+                        <input type="text" placeholder="Write a message" />
+                    </div>
                 </div>
 
                 {/* Buttons */}
                 <div className="characteristics-options-buttons">
 
                     {/* Read */}
-                    <button className="button characteristics-properties-read has-text-white has-text-weight-bold">
+                    <button className="button characteristics-properties-read-button has-text-white has-text-weight-bold">
                         <span>Read</span>
                     </button>
 
                     {/* Write */}
 
-                    <button className="button characteristics-properties-write has-text-white has-text-weight-bold">
+                    <button className="button characteristics-properties-write-button has-text-white has-text-weight-bold">
                         <span>Write</span>
                     </button>
 
                     {/* Notify */}
-                    <button className="button characteristics-properties-notify has-text-white has-text-weight-bold">
+                    <button className="button characteristics-properties-notify-button has-text-white has-text-weight-bold">
                         <span>Notify</span>
                     </button>
 
