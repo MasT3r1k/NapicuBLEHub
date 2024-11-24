@@ -12,9 +12,7 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
     const handleWriteKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
-            
-  
-
+            on_click_write_button();
         }
     };
 
@@ -28,11 +26,17 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
     }
 
     const on_click_write_button = (): void => {
-        if(writeInputValue.length) {
-            
+        if (writeInputValue.length) {
+
         } else {
-           writeInput.current?.select();
-           setWriteButtonInputError(true);
+            writeInput.current?.select();
+
+
+            setWriteButtonInputError(false);
+            setTimeout(() => {
+                setWriteButtonInputError(true);
+            });
+
         }
     }
 
@@ -64,10 +68,10 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
                     </div>
 
                     <div className={`characteristics-write-input uuid-input ${writeButtonInputError ? 'characteristics-write-input-error' : ''}`}>
-                        <input 
-                            ref={writeInput} 
-                            type="text" 
-                            placeholder="Write a message" 
+                        <input
+                            ref={writeInput}
+                            type="text"
+                            placeholder="Write a message"
                             onChange={handleWriteInputChange}
                             value={writeInputValue || ""}
                             onKeyDown={(e) => handleWriteKeyDownInput(e, characteristic.uuid)}
