@@ -6,6 +6,7 @@ import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceRe
 import CharacteristicsView from "./characteristics";
 import NapicuAliasManager from "./AliasManager/AliasManager";
 import { COOKIES_SERVICES_ALIASES_NAME, COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT } from "./config";
+import { CharacteristicsReqHistory } from "./CharacteristicsReqHistory";
 
 
 const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
@@ -40,7 +41,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
             uuid: service.uuid,
             alias: service_aliases_table.get_alias_by_key(service.uuid),
             chars: service.chars.map((characteristic: ConnectedDeviceChar) => {
-              return {...characteristic, alias: characteristics_aliases_table.get_alias_by_key(characteristic.uuid)}  
+              return {...characteristic, alias: characteristics_aliases_table.get_alias_by_key(characteristic.uuid), history: new CharacteristicsReqHistory()}  
             })
         }
     }));

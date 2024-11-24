@@ -1,4 +1,5 @@
 import { ConnectedDevice, ConnectedDeviceChar } from "@/types/ble_device";
+import { CharacteristicsReqHistory } from "../CharacteristicsReqHistory";
 
 export interface DeviceReactViewProps {
     device: ConnectedDevice;
@@ -6,6 +7,7 @@ export interface DeviceReactViewProps {
 
 export interface ConnectedDeviceCharacteristicData extends ConnectedDeviceChar {
     alias: string | null;
+    history: CharacteristicsReqHistory
 }
 
 export interface ConnectedDeviceServiceData {

@@ -1,3 +1,5 @@
+import { ConnectedDeviceCharacteristicData } from "@/pages/interfaces/Idevice";
+
 export interface Device {
     uuids: string[]
     name: string;
@@ -19,7 +21,7 @@ export interface BLEDeviceService {
 
 
 export interface ConnectedDeviceCharViewProps {
-    characteristic: ConnectedDeviceChar;
+    characteristic: ConnectedDeviceCharacteristicData;
 }
 
 

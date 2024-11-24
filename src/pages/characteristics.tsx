@@ -12,6 +12,7 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
     const handleWriteKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
+
             on_click_write_button();
         }
     };
