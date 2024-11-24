@@ -310,6 +310,7 @@
 }
 
 
+
 .characteristics-properties-unabled {
     opacity: 0.17;
 }
@@ -355,7 +356,16 @@
 
 .characteristics-read-view-time{
     user-select: none;
-    margin-right: 4px;
+}
+
+.characteristics-write-span {
+    color: #64d63e;
+    margin: 0px 7px;
+}
+
+.characteristics-read-span {
+    color: #f1552e;
+    margin: 0px 7px;
 }
 
 .characteristics-read-view-value {

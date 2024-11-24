@@ -63,7 +63,18 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
                 <div className="characteristics-read-view is-relative">
                     <div className="is-flex has-text-weight-bold">
-                        <div className="characteristics-read-view-time">15:30:45{'>'}</div>
+                        <div className="characteristics-read-view-time">
+                            15:30:45
+                            <span className="characteristics-write-span">{'<<'}</span>
+                        </div>
+                        <div className="characteristics-read-view-value">Napsalo se zařízení, že master je sigma!</div>
+                    </div>
+
+                    <div className="is-flex has-text-weight-bold">
+                        <div className="characteristics-read-view-time">
+                            15:30:45
+                            <span className="characteristics-read-span">{'>>'}</span>
+                        </div>
                         <div className="characteristics-read-view-value">Zařízení poslalo, že master je sigma!</div>
                     </div>
 
