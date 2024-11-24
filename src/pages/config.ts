@@ -12,7 +12,7 @@ export const SIZE_LEFT_PANEL_MIN_WIDTH: number = 240;
 export const SIZE_LEFT_PANEL_MAX_WIDTH: number = 0; //UNUSED
 
 export const SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT: number = 430;
-export const SIZE_CONSOLE_PANEL_MIN_HEIGHT: number = 150;
+export const SIZE_CONSOLE_PANEL_MIN_HEIGHT: number = 200;
 export const SIZE_CONSOLE_PANEL_MAX_HEIGHT: number = 50; 
 
 export const SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH: number = 500;

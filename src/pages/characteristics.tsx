@@ -11,10 +11,22 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
             {/* {characteristic?.uuid || "null"} */}
 
             <div className="is-flex is-flex-direction-column">
+                <div className="mb-3 has-text-weight-bold">
+                    <div>
+                        UUID: {characteristic.uuid}
+
+                    </div>
+                    <div>
+                        Properties: {characteristic.properties.join(', ')}
+                    </div>
+                </div>
+
+
+
                 <div className="characteristics-read-view">
                     <div className="is-flex has-text-weight-bold">
                         <div className="characteristics-read-view-time">15:30:45{'>'}</div>
-                        <div className="characteristics-read-view-value">42 fd fd df df </div>
+                        <div className="characteristics-read-view-value">Zařízení poslalo, že master je sigma! </div>
                     </div>
 
 
@@ -25,18 +37,18 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
                     {/* Read */}
                     <button className="button characteristics-properties-read has-text-white has-text-weight-bold">
-                        Read
+                        <span>Read</span>
                     </button>
 
                     {/* Write */}
 
                     <button className="button characteristics-properties-write has-text-white has-text-weight-bold">
-                        Write
+                        <span>Write</span>
                     </button>
 
                     {/* Notify */}
                     <button className="button characteristics-properties-notify has-text-white has-text-weight-bold">
-                        Notify
+                        <span>Notify</span>
                     </button>
 
                 </div>

@@ -210,6 +210,33 @@ body {
 }
 
 
+.button {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
+.button span {
+  display: block;
+  padding: 5px 15px;
+  border-radius: 10px;
+  color: white;
+  transform: translateY(-5px);
+  will-change: transform;
+  transition: transform 100ms;
+}
+
+.button:hover span {
+  transform: translateY(-7px);
+}
+
+.button:active span {
+  transform: translateY(-2px);
+}
+
+
 @media (max-width: 1500px) {
   .filter-window>.section{
     width: 60%;

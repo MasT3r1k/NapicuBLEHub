@@ -2,10 +2,7 @@
     background-color: #1897ff !important;
 }
 
-.disconnect-button {
-    background-color: #f14e1b !important;
-    border: 0;
-}
+
 
 .rename-button {
     background-color: #1897ff !important;
@@ -247,24 +244,37 @@
 }
 
 .characteristics-properties-write {
+    background-color: #2c7ea7;
+}
+
+.characteristics-properties-write span {
     background-color: #2fbaff;
 }
 
+.disconnect-button ,
 .characteristics-properties-read {
+    background-color: #a11e1e;
+}
+
+.disconnect-button span,
+.characteristics-properties-read span{
     background-color: #f1552e;
 }
 
 .characteristics-properties-notify {
+    background-color: #c2a10f;
+}
+
+.characteristics-properties-notify span{
     background-color: #fdd008;
 }
+
 
 .characteristics-properties-unabled {
     opacity: 0.17;
 }
 
-.button:hover {
-    transform: scale(1.1);
-}
+
 
 .console-split {
     display: flex;
@@ -315,11 +325,11 @@
     opacity: 0.5;
 }
 
-.characteristics-options button {
+.characteristics-options-buttons button {
     border: 0;
+    margin: 0 10px;
 }
 
 .characteristics-options-buttons {
     padding: 10px 0;
-
 }

@@ -250,7 +250,9 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                         <div className="navbar-item">
                             <div className="buttons">
                                 <button className="button disconnect-button has-text-white has-text-weight-bold">
-                                    Disconnect
+                                    <span>
+                                        Disconnect
+                                    </span>
                                 </button>
                             </div>
                         </div>
