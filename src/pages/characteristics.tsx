@@ -5,6 +5,40 @@ import { ConnectedDeviceCharViewProps } from "@/types/ble_device";
 
 const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): JSX.Element => {
 
+    const writeInput = useRef<HTMLInputElement>(null);
+    const [writeInputValue, setWriteInputValue] = useState<string>("");
+
+    const [writeButtonInputError, setWriteButtonInputError] = useState<boolean>(false);
+
+    const handleWriteKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
+        if (event.key === "Enter") {
+            
+  
+
+        }
+    };
+
+    const handleWriteInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setWriteButtonInputError(false);
+        setWriteInputValue(event.target.value);
+    };
+
+    const on_click_read_button = (): void => {
+
+    }
+
+    const on_click_write_button = (): void => {
+        if(writeInputValue.length) {
+            
+        } else {
+           writeInput.current?.select();
+           setWriteButtonInputError(true);
+        }
+    }
+
+    const on_click_notify_button = (): void => {
+    }
+
 
     return (
         <div className="characteristics-options">
@@ -26,11 +60,18 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
                 <div className="characteristics-read-view is-relative">
                     <div className="is-flex has-text-weight-bold">
                         <div className="characteristics-read-view-time">15:30:45{'>'}</div>
-                        <div className="characteristics-read-view-value">Zařízení poslalo, že master je sigma! </div>
+                        <div className="characteristics-read-view-value">Zařízení poslalo, že master je sigma!</div>
                     </div>
 
-                    <div className="characteristics-write-input uuid-input">
-                        <input type="text" placeholder="Write a message" />
+                    <div className={`characteristics-write-input uuid-input ${writeButtonInputError ? 'characteristics-write-input-error' : ''}`}>
+                        <input 
+                            ref={writeInput} 
+                            type="text" 
+                            placeholder="Write a message" 
+                            onChange={handleWriteInputChange}
+                            value={writeInputValue || ""}
+                            onKeyDown={(e) => handleWriteKeyDownInput(e, characteristic.uuid)}
+                        />
                     </div>
                 </div>
 
@@ -44,7 +85,7 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
                     {/* Write */}
 
-                    <button className="button characteristics-properties-write-button has-text-white has-text-weight-bold">
+                    <button className="button characteristics-properties-write-button has-text-white has-text-weight-bold" onClick={on_click_write_button}>
                         <span>Write</span>
                     </button>
 

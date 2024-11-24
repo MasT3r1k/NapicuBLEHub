@@ -275,16 +275,38 @@
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100% !important;
- 
+    width: 100% !important; 
 }
 
-.characteristics-write-input input{
+.characteristics-write-input input {
     width: 100%;
     margin: 0 !important;
     border: 0 !important;
     border-radius: 0 !important;
     border-top: 1px solid rgba(0, 0, 0, 0.171) !important;
+    /* border-radius: 10px !important; */
+
+
+}
+
+
+@keyframes fadeIn {
+    0% {
+        background-color: rgba(255, 0, 0, 0.55);
+    }
+    50% {
+        background-color: rgb(241, 46, 46);
+
+    }
+    100% {
+        background-color: rgba(255, 0, 0, 0.55);
+    }
+}
+
+
+.characteristics-write-input-error input {
+    background-color: rgba(255, 0, 0, 0.55);
+    animation: fadeIn 0.5s ease;
 }
 
 
