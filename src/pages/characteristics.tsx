@@ -76,15 +76,19 @@ const [characteristicHistory, setCharacteristicHistory] = useState(characteristi
 
 
                 <div className="characteristics-read-view is-relative">
-                    {characteristicHistory.map((value: ICharacteristicsHistoryData) => (
-                        <div className="is-flex has-text-weight-bold">
-                            <div className="characteristics-read-view-time">
-                                {value.time}
-                                <span className="characteristics-write-span">{'<<'}</span>
+                    <div className="characteristics-read-view-lines">
+                        {characteristicHistory.map((value: ICharacteristicsHistoryData) => (
+                            <div className="is-flex has-text-weight-bold">
+                                <div className="characteristics-read-view-time">
+                                    {value.time}
+                                    <span className="characteristics-write-span">{'<<'}</span>
+                                </div>
+                                <div className="characteristics-read-view-value">{value.value}</div>
                             </div>
-                            <div className="characteristics-read-view-value">{value.value}</div>
-                        </div>
-                    ))}
+                        ))}
+
+                    </div>
+
 
 
                     {/* <div className="is-flex has-text-weight-bold">
