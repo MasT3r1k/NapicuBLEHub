@@ -49,8 +49,9 @@ const [characteristicHistory, setCharacteristicHistory] = useState(characteristi
             setTimeout(() => {
                 setWriteButtonInputError(true);
             });
-
         }
+
+        setWriteInputValue("");
     }
 
     const on_click_notify_button = (): void => {
