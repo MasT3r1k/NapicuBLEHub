@@ -12,12 +12,10 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
     const [writeButtonInputError, setWriteButtonInputError] = useState<boolean>(false);
 
 
-    const [characteristicHistory, setCharacteristicHistory] = useState(characteristic.history.history_list);
+const [characteristicHistory, setCharacteristicHistory] = useState(characteristic.history.history_list);
 
     const handleWriteKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
-            console.log("clicked");
-            addToHistory({ property: "write", time: formatTime(new Date()), value: writeInputValue });
             on_click_write_button();
         }
     };
@@ -27,6 +25,9 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
         setCharacteristicHistory([...characteristic.history.history_list]);
     };
 
+    useEffect(() => {
+        setCharacteristicHistory(characteristic.history.history_list);
+    }, [characteristic]);
 
     const handleWriteInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setWriteButtonInputError(false);
@@ -39,7 +40,7 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
     const on_click_write_button = (): void => {
         if (writeInputValue.length) {
-
+            addToHistory({ property: "write", time: formatTime(new Date()), value: writeInputValue });
         } else {
             writeInput.current?.select();
 
