@@ -217,16 +217,16 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                 </div>
                 <div className="navbar-menu device-navbar-items is-unselectable">
                     <div className="navbar-start">
-                        <div className="navbar-item has-text-white is-clickable">
-                            <strong>Inspect</strong>
+                        <div className="navbar-item is-clickable">
+                            <strong className="has-text-white">Inspect</strong>
                         </div>
 
                         <div className="navbar-item has-text-white is-clickable">
-                            <strong>Status</strong>
+                            <strong className="has-text-white">Status</strong>
                         </div>
 
                         <div className="navbar-item has-text-white is-clickable">
-                            <strong>Settings</strong>
+                            <strong className="has-text-white">Settings</strong>
                         </div>
                     </div>
                     <div className="navbar-end">
