@@ -1,15 +1,16 @@
 import { ConnectedDevice, BLEDeviceService, ConnectingDevice, Device } from "@/types/ble_device";
 import { useEffect, useState } from "react";
-import io from "socket.io-client";
+import io, { Socket, SocketOptions } from "socket.io-client";
 import DeviceView from "./device";
 import { NapicuLogView } from "./console";
-
+import { useSocket } from "./Socket";
 
 
 const Home = (): JSX.Element => {
+  const socket = useSocket();
+
   const [devices, setDevices] = useState<Device[]>([]);
   const [scanning, setScanning] = useState(false);
-  const [socket, setSocket] = useState<any>(null);
   const [is_filter_menu, setFilter] = useState<boolean>(false);
   const [connecting_data, setConnectingData] = useState<ConnectingDevice | undefined>();
   const [connected_device, setConnectedDevice] = useState<ConnectedDevice | undefined>();
@@ -21,9 +22,9 @@ const Home = (): JSX.Element => {
 
 
   useEffect(() => {
+    if (!socket) return; // Přidejte kontrolu, jestli socket není null
 
-    const socket = io({ path: "/api/socketio" });
-    setSocket(socket);
+    console.log("Update socket."); //TODO Debug
 
 
     socket.on("device", (device: Device) => {
@@ -36,12 +37,12 @@ const Home = (): JSX.Element => {
       });
     });
 
-    socket.on("fail_connect", (data) => {
+    socket.on("fail_connect", (data: any) => { //TODO Fix any
       //TODO FAIL ALERT
       alert("fail");
     });
 
-    socket.on("scan_status", (data) => {
+    socket.on("scan_status", (data: any) => { //TODO Fix any
       setScanning(data);
     });
 
@@ -63,7 +64,7 @@ const Home = (): JSX.Element => {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [socket]);
 
   const connect = (address: string): void => {
     if (socket) socket.emit("connect_device", address);

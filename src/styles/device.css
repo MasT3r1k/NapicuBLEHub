@@ -60,7 +60,11 @@
     vertical-align: middle;
     width: 25px;
     height: 25px;
-    transition: transform 0.125s ease;
+    transition: transform 100ms ease-out;
+}
+
+.more-option-img:hover{
+    transform: scale(1.2);
 }
 
 .more-option-img-rotated {
@@ -241,7 +245,13 @@
     margin: 0 3px;
     user-select: none;
     color: rgba(0, 0, 0, 0.7);
+    box-shadow: 0px 0px 8px 0px #989898;
+    transition: transform 1s ease;
 }
+
+.characteristics-properties>div:hover {
+    transform: scale(1.1);
+  }
 
 .characteristics-properties-write-button {
     background-color: #2c7ea7;
@@ -313,6 +323,10 @@
 
 .characteristics-properties-unabled {
     opacity: 0.17;
+}
+
+.characteristics-properties-unabled:hover {
+    transform: none !important;
 }
 
 .console-split {
