@@ -22,7 +22,7 @@ const Home = (): JSX.Element => {
 
 
   useEffect(() => {
-    if (!socket) return; // Přidejte kontrolu, jestli socket není null
+    if (!socket) return;
 
     console.log("Update socket."); //TODO Debug
 

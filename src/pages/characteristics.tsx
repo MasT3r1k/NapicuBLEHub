@@ -1,18 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
-import { DeviceReactViewProps } from "./interfaces/Idevice";
 import { ConnectedDeviceCharViewProps } from "@/types/ble_device";
 import { formatTime, ICharacteristicsHistoryData } from "./CharacteristicsReqHistory";
+import { useSocket } from "./Socket";
 
 
 const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): JSX.Element => {
+    const socket = useSocket();
 
     const writeInput = useRef<HTMLInputElement>(null);
     const [writeInputValue, setWriteInputValue] = useState<string>("");
-
     const [writeButtonInputError, setWriteButtonInputError] = useState<boolean>(false);
-
-
-const [characteristicHistory, setCharacteristicHistory] = useState(characteristic.history.history_list);
+    const [characteristicHistory, setCharacteristicHistory] = useState(characteristic.history.history_list);
 
     const handleWriteKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
@@ -29,13 +27,20 @@ const [characteristicHistory, setCharacteristicHistory] = useState(characteristi
         setCharacteristicHistory(characteristic.history.history_list);
     }, [characteristic]);
 
+    useEffect(() => {
+        if (!socket) return;
+       //TODO OFF reactStrictMode 
+        console.log("Socket in characteristics.tsx loaded");
+        console.log(socket);
+    }, []);
+
     const handleWriteInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setWriteButtonInputError(false);
         setWriteInputValue(event.target.value);
     };
 
     const on_click_read_button = (): void => {
-
+        
     }
 
     const on_click_write_button = (): void => {
@@ -43,7 +48,6 @@ const [characteristicHistory, setCharacteristicHistory] = useState(characteristi
             addToHistory({ property: "write", time: formatTime(new Date()), value: writeInputValue });
         } else {
             writeInput.current?.select();
-
 
             setWriteButtonInputError(false);
             setTimeout(() => {
@@ -115,7 +119,7 @@ const [characteristicHistory, setCharacteristicHistory] = useState(characteristi
                 <div className="characteristics-options-buttons">
 
                     {/* Read */}
-                    <button className="button characteristics-properties-read-button has-text-white has-text-weight-bold">
+                    <button className="button characteristics-properties-read-button has-text-white has-text-weight-bold" onClick={on_click_read_button}>
                         <span>Read</span>
                     </button>
 
@@ -126,7 +130,7 @@ const [characteristicHistory, setCharacteristicHistory] = useState(characteristi
                     </button>
 
                     {/* Notify */}
-                    <button className="button characteristics-properties-notify-button has-text-white has-text-weight-bold">
+                    <button className="button characteristics-properties-notify-button has-text-white has-text-weight-bold" onClick={on_click_notify_button}>
                         <span>Notify</span>
                     </button>
 
