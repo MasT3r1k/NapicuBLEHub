@@ -1,7 +1,7 @@
-export interface ICharacteristicsHistoryData {
-    property: "write" | "read",
-    time: string, 
-    value: string
+import { CharacteristicOperation } from "@/types/ble_device";
+
+export interface CharacteristicOperationHistory extends CharacteristicOperation {
+    timestamp: string;                     
 }
 
 export function formatTime(date: Date): string {
@@ -12,9 +12,9 @@ export function formatTime(date: Date): string {
 }
 
 export class CharacteristicsReqHistory {
-    public history_list: ICharacteristicsHistoryData[] = [];
+    public history_list: CharacteristicOperationHistory[] = [];
 
-    public add(value: ICharacteristicsHistoryData): void {
+    public add(value: CharacteristicOperationHistory): void {
         this.history_list.push(value);
     }
 

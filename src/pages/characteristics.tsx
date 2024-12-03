@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ConnectedDeviceCharViewProps } from "@/types/ble_device";
-import { formatTime, ICharacteristicsHistoryData } from "./CharacteristicsReqHistory";
+import { CharacteristicOperationHistory, formatTime } from "./CharacteristicsReqHistory";
 import { useSocket } from "./Socket";
 
 
@@ -18,7 +18,7 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
         }
     };
 
-    const addToHistory = (item: ICharacteristicsHistoryData) => {
+    const addToHistory = (item: CharacteristicOperationHistory) => {
         characteristic.history.add(item);
         setCharacteristicHistory([...characteristic.history.history_list]);
     };
@@ -45,7 +45,7 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
     const on_click_write_button = (): void => {
         if (writeInputValue.length) {
-            addToHistory({ property: "write", time: formatTime(new Date()), value: writeInputValue });
+            addToHistory({ type: "write", timestamp: formatTime(new Date()), value: writeInputValue });
         } else {
             writeInput.current?.select();
 
@@ -69,7 +69,6 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
                 <div className="mb-3 has-text-weight-bold">
                     <div>
                         UUID: {characteristic.uuid}
-
                     </div>
                     <div>
                         Properties: {characteristic.properties.join(', ')}
@@ -80,10 +79,10 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
                 <div className="characteristics-read-view is-relative">
                     <div className="characteristics-read-view-lines">
-                        {characteristicHistory.map((value: ICharacteristicsHistoryData) => (
+                        {characteristicHistory.map((value: CharacteristicOperationHistory) => (
                             <div className="is-flex has-text-weight-bold">
                                 <div className="characteristics-read-view-time">
-                                    {value.time}
+                                    {value.timestamp}
                                     <span className="characteristics-write-span">{'<<'}</span>
                                 </div>
                                 <div className="characteristics-read-view-value">{value.value}</div>

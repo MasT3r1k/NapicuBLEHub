@@ -35,3 +35,8 @@ export interface ConnectedDevice {
     local_name: string,
     services: BLEDeviceService[]
 }
+
+export interface CharacteristicOperation {
+    type: 'read' | 'write' | 'notify'; // | 'indicate';
+    value: string | number | Uint8Array;              
+}
