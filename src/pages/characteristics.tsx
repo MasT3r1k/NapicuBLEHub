@@ -53,12 +53,7 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
             setTimeout(() => {
                 setWriteButtonInputError(true);
             });
-
-            setTimeout(() => {
-               // setWriteButtonInputError(false);
-            }, 2000);
         }
-
         setWriteInputValue("");
     }
 
