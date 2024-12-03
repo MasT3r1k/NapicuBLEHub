@@ -40,25 +40,32 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
     };
 
     const on_click_read_button = (): void => {
-        const data: CharacteristicRequest = {type: "read", value: null, uuid: characteristic.uuid};
-        socket.emit("read", data);
+        if(characteristic.properties.includes("read")) {
+            const data: CharacteristicRequest = {type: "read", value: null, uuid: characteristic.uuid};
+            socket.emit("read", data);
+        }
     }
 
     const on_click_write_button = (): void => {
-        if (writeInputValue.length) {
-            addToHistory({ type: "write", timestamp: formatTime(new Date()), value: writeInputValue });
-        } else {
-            writeInput.current?.select();
+        if(characteristic.properties.includes("write")) {
+            if (writeInputValue.length) {
+                addToHistory({ type: "write", timestamp: formatTime(new Date()), value: writeInputValue });
+            } else {
+                writeInput.current?.select();
 
-            setWriteButtonInputError(false);
-            setTimeout(() => {
-                setWriteButtonInputError(true);
-            });
+                setWriteButtonInputError(false);
+                setTimeout(() => {
+                    setWriteButtonInputError(true);
+                });
+            }
+            setWriteInputValue("");
         }
-        setWriteInputValue("");
     }
 
     const on_click_notify_button = (): void => {
+        if(characteristic.properties.includes("notify")) {
+            
+        }
     }
 
 
@@ -118,18 +125,20 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
                 <div className="characteristics-options-buttons">
 
                     {/* Read */}
-                    <button className="button characteristics-properties-read-button has-text-white has-text-weight-bold" onClick={on_click_read_button}>
+                    <button className={`button characteristics-properties-read-button has-text-white has-text-weight-bold 
+                        ${!characteristic.properties.includes("read") ? 'button-unabled' : ''}`} onClick={on_click_read_button}>
                         <span>Read</span>
                     </button>
 
                     {/* Write */}
-
-                    <button className="button characteristics-properties-write-button has-text-white has-text-weight-bold" onClick={on_click_write_button}>
+                    <button className={`button characteristics-properties-write-button has-text-white has-text-weight-bold 
+                        ${!characteristic.properties.includes("write") ? 'button-unabled' : ''}`} onClick={on_click_write_button}>
                         <span>Write</span>
                     </button>
 
                     {/* Notify */}
-                    <button className="button characteristics-properties-notify-button has-text-white has-text-weight-bold" onClick={on_click_notify_button}>
+                    <button className={`button characteristics-properties-notify-button has-text-white has-text-weight-bold 
+                        ${!characteristic.properties.includes("notify") ? 'button-unabled' : ''}`} onClick={on_click_notify_button}>
                         <span>Notify</span>
                     </button>
 

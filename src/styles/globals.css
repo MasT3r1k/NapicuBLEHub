@@ -236,12 +236,23 @@ body {
   transform: translateY(-2px);
 }
 
+.button-unabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.button-unabled:hover span{
+  transform: translateY(-5px) !important;
+} 
+
+.button-unabled:active span {
+  transform: translateY(-5px) !important;
+}
 
 @media (max-width: 1500px) {
   .filter-window>.section{
     width: 60%;
   }
-  
 }
 
 @media (max-width: 900px) {
