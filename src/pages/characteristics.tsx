@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ConnectedDeviceCharViewProps } from "@/types/ble_device";
+import { CharacteristicOperation, CharacteristicRequest, ConnectedDeviceCharViewProps } from "@/types/ble_device";
 import { CharacteristicOperationHistory, formatTime } from "./CharacteristicsReqHistory";
 import { useSocket } from "./Socket";
 
@@ -40,7 +40,8 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
     };
 
     const on_click_read_button = (): void => {
-        
+        const data: CharacteristicRequest = {type: "read", value: null, uuid: characteristic.uuid};
+        socket.emit("read", data);
     }
 
     const on_click_write_button = (): void => {

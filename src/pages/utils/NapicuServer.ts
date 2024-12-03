@@ -3,8 +3,12 @@ import { NextApiRequest } from "next";
 import { NextApiResponseServerIO } from "@/types/next";
 import { DefaultEventsMap, Server as SocketIOServer } from "socket.io";
 import noble from "@abandonware/noble";
-import { ConnectedDevice, ConnectedDeviceChar, BLEDeviceService, ConnectingDevice, Device } from "@/types/ble_device";
+import { ConnectedDevice, ConnectedDeviceChar, BLEDeviceService, ConnectingDevice, Device, CharacteristicOperation, CharacteristicRequest } from "@/types/ble_device";
 import NapicuLOG from "./NapicuLogger";
+
+interface ConnectedDeviceCharacteristicsServerData {
+
+}
 
 
 export default class NapicuServer {
@@ -19,6 +23,8 @@ export default class NapicuServer {
   private found_peripheral: noble.Peripheral[] = [];
 
   private connected_device: noble.Peripheral | null = null;
+
+  private connected_device_characteristics: noble.Characteristic[] | null = null;
 
   private client_connected_device_data: ConnectedDevice | null = null;
 
@@ -52,6 +58,8 @@ export default class NapicuServer {
       socket.on("stop_scan", this.stop_scan);
 
       socket.on("connect_device", this.connect);
+
+      socket.on("read", this.characteristic_read);
 
       socket.on("disconnect", () => {
         const client_count: number = this.io.sockets.sockets.size;
@@ -103,10 +111,14 @@ export default class NapicuServer {
               NapicuLOG.LOG_I("Successfully connected to:", peripheral.advertisement.localName);
               NapicuLOG.LOG_I("Discovering all services and characteristics...");
 
+              //TODO -> func
               peripheral.discoverAllServicesAndCharacteristicsAsync().then((value: noble.ServicesAndCharacteristics) => {
                 NapicuLOG.LOG_I("Successfully discovered all services and characteristics.");
 
+                this.connected_device_characteristics = [];
                 const peripheral_services: BLEDeviceService[] = value.services.map<BLEDeviceService>((service: noble.Service) => {
+                  this.connected_device_characteristics?.push(...service.characteristics);
+
                   return {
                     uuid: service.uuid,
                     name: service.name,
@@ -144,6 +156,7 @@ export default class NapicuServer {
                   this.connected_device?.removeAllListeners();
                   this.connected_device = null;
                   this.client_connected_device_data = null;
+                  this.connected_device_characteristics = null;
                   //TODO Emit
                 });
   
@@ -175,6 +188,22 @@ export default class NapicuServer {
 
   private on_peripheral_rssi_update(rssi: number): void {
     
+  }
+
+  private characteristic_read = (data: CharacteristicRequest): void => {
+    const characteristic: noble.Characteristic | undefined = this.connected_device_characteristics?.find((characteristic: noble.Characteristic) => characteristic.uuid == data.uuid);
+    
+
+    if(characteristic) {
+      characteristic.read((error: string, data: Buffer) => {
+        //TODO EMIT
+        console.log('Data read:', data.toString('utf8'));
+      });
+
+    } else {
+      NapicuLOG.LOG_E(`characteristic with UUID: ${data.uuid} not found!`);
+    }
+
   }
 
   private start_scan = (): void => {

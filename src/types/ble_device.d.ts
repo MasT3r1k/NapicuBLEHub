@@ -38,5 +38,9 @@ export interface ConnectedDevice {
 
 export interface CharacteristicOperation {
     type: 'read' | 'write' | 'notify'; // | 'indicate';
-    value: string | number | Uint8Array;              
+    value: string | number | Uint8Array | null;              
+}
+
+export interface CharacteristicRequest extends CharacteristicOperation {
+    uuid: string
 }
