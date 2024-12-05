@@ -1,15 +1,17 @@
-import { ConnectedDeviceChar, BLEDeviceService } from "@/types/ble_device";
+import { ConnectedDeviceChar, BLEDeviceService, CharacteristicResponse } from "@/types/ble_device";
 import React, { useState, useRef, useEffect } from "react";
 import NapicuCookies from "./Cookies";
-import ConsoleView from "./console";
+import ConsoleView, { NapicuLogView } from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
 import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT } from "./config";
 import { CharacteristicsReqHistory } from "./CharacteristicsReqHistory";
 import { service_aliases_table, characteristics_aliases_table } from ".";
+import { useSocket } from "./Socket";
 
 
 const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
+    const socket = useSocket();
 
     const [letfPanelWidth, setLeftPanelWidth] = useState<number>(
         () => NapicuCookies.getCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME) || SIZE_LEFT_PANEL_DEFAULT_WIDTH);
@@ -39,7 +41,6 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
             })
         }
     }));
-
 
     const handleMouseDownLeftResizer = (event: React.MouseEvent) => {
         event.preventDefault();
@@ -199,6 +200,15 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
             aliasEditInput.current.select();
         }
     }, [expandedCharacteristicIndex]);
+
+    useEffect(() => {
+        socket.on("characteristic_response", (response: CharacteristicResponse) => {
+            
+            NapicuLogView.print({name: characteristics_aliases_table.get_alias_by_key(response.uuid) || response.uuid, message: response.data, color: "white"});
+            
+            deviceServices[2].chars[0].history.add_with_auto_date(response.data, "write");
+        });
+    }, [socket]);
 
 
     return (

@@ -63,11 +63,6 @@ const Home = (): JSX.Element => {
       NapicuLogView.print({name: data.address, message: "Connected", color: "white"});
     });
 
-
-    socket.on("characteristic_response", (response: CharacteristicResponse) => {
-      NapicuLogView.print({name: characteristics_aliases_table.get_alias_by_key(response.uuid) || response.uuid, message: response.data, color: "white"});
-    });
-
     socket.on("connected_device_rssi", (data: number) => {
       setConnectedDeviceRSSI(data);
     });

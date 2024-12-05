@@ -192,11 +192,13 @@ export default class NapicuServer {
 
   private characteristic_read = (data: CharacteristicRequest): void => {
     const characteristic: noble.Characteristic | undefined = this.connected_device_characteristics?.find((characteristic: noble.Characteristic) => characteristic.uuid == data.uuid);
-    
+    console.log("Try read");
 
     if(characteristic) {
       characteristic.read((error: string, buf: Buffer) => { //TODO IF error 
-        this.emit_data_response(buf, data.uuid);        
+        this.emit_data_response(buf, data.uuid);      
+        console.log("Readed");
+
       });
 
     } else {

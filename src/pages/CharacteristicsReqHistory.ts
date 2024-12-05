@@ -18,6 +18,10 @@ export class CharacteristicsReqHistory {
         this.history_list.push(value);
     }
 
+    public add_with_auto_date(value: string, type: 'read' | 'write' | 'notify'): void {
+        this.add({value: value, type: type, timestamp: formatTime(new Date)});
+    }
+
     public clear(): void {
         this.history_list = [];
     }
