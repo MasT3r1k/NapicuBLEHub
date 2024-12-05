@@ -295,10 +295,7 @@
     border-radius: 0 !important;
     border-top: 1px solid rgba(0, 0, 0, 0.171) !important;
     /* border-radius: 10px !important; */
-
-
 }
-
 
 @keyframes highlight {
     0% {
@@ -312,11 +309,9 @@
     }
 }
 
-
 .characteristics-write-input-error input {
     animation: highlight 0.5s ease-out 1;
 }
-
 
 .characteristics-properties-unabled {
     opacity: 0.17;
@@ -376,12 +371,12 @@
 }
 
 .characteristics-write-span {
-    color: #64d63e;
+    color: #f1552e;
     margin: 0px 7px;
 }
 
 .characteristics-read-span {
-    color: #f1552e;
+    color: #64d63e;
     margin: 0px 7px;
 }
 

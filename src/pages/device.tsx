@@ -245,7 +245,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     useEffect(() => {
         socket.on("characteristic_response", (response: CharacteristicResponse) => {
             NapicuLogView.print({name: characteristics_aliases_table.get_alias_by_key(response.uuid) || response.uuid, message: response.data, color: "white"});
-            updateHistory(response.uuid, response.data, "write");
+            updateHistory(response.uuid, response.data, "read");
         });
     }, [socket]);
 

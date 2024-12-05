@@ -84,31 +84,26 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
                     </div>
                 </div>
 
-
-
                 <div className="characteristics-read-view is-relative">
                     <div className="characteristics-read-view-lines" ref={logContainerRef}>
                         {characteristicHistory.map((value: CharacteristicOperationHistory, index: number) => (
                             <div key={index} className="is-flex has-text-weight-bold">
                                 <div className="characteristics-read-view-time">
                                     {value.timestamp}
-                                    <span className="characteristics-write-span">{'<<'}</span>
+                                    <span
+                                        className={
+                                            value.type === "write"
+                                            ? "characteristics-write-span"
+                                            : "characteristics-read-span"
+                                        }
+                                        >
+                                        {value.type === "write" ? "<<" : ">>"}
+                                    </span>
                                 </div>
                                 <div className="characteristics-read-view-value">{value.value}</div>
                             </div>
                         ))}
-
                     </div>
-
-
-
-                    {/* <div className="is-flex has-text-weight-bold">
-                        <div className="characteristics-read-view-time">
-                            15:30:45
-                            <span className="characteristics-read-span">{'>>'}</span>
-                        </div>
-                        <div className="characteristics-read-view-value">Zařízení poslalo, že master je sigma!</div>
-                    </div> */}
 
                     <div className={`characteristics-write-input uuid-input ${writeButtonInputError ? 'characteristics-write-input-error' : ''}`}>
                         <input
