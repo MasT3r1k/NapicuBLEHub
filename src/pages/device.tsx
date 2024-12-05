@@ -4,16 +4,12 @@ import NapicuCookies from "./Cookies";
 import ConsoleView from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
-import NapicuAliasManager from "./AliasManager/AliasManager";
-import { COOKIES_SERVICES_ALIASES_NAME, COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT } from "./config";
+import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT } from "./config";
 import { CharacteristicsReqHistory } from "./CharacteristicsReqHistory";
+import { service_aliases_table, characteristics_aliases_table } from ".";
 
 
 const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
-
-    //Cookies tables
-    const service_aliases_table: NapicuAliasManager = new NapicuAliasManager(COOKIES_SERVICES_ALIASES_NAME);
-    const characteristics_aliases_table: NapicuAliasManager = new NapicuAliasManager(COOKIES_CHARACTERISTICS_ALIASES_NAME);
 
     const [letfPanelWidth, setLeftPanelWidth] = useState<number>(
         () => NapicuCookies.getCookies<number>(COOKIES_LEFT_PANEL_WIDTH_NAME) || SIZE_LEFT_PANEL_DEFAULT_WIDTH);

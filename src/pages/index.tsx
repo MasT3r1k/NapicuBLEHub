@@ -4,7 +4,13 @@ import io, { Socket, SocketOptions } from "socket.io-client";
 import DeviceView from "./device";
 import { NapicuLogView } from "./console";
 import { useSocket } from "./Socket";
+import NapicuAliasManager from "./AliasManager/AliasManager";
+import { COOKIES_SERVICES_ALIASES_NAME, COOKIES_CHARACTERISTICS_ALIASES_NAME } from "./config";
 
+
+//Cookies tables
+export const service_aliases_table: NapicuAliasManager = new NapicuAliasManager(COOKIES_SERVICES_ALIASES_NAME);
+export const characteristics_aliases_table: NapicuAliasManager = new NapicuAliasManager(COOKIES_CHARACTERISTICS_ALIASES_NAME);
 
 const Home = (): JSX.Element => {
   const socket = useSocket();
@@ -59,7 +65,7 @@ const Home = (): JSX.Element => {
 
 
     socket.on("characteristic_response", (response: CharacteristicResponse) => {
-      NapicuLogView.print({name: response.uuid, message: response.data, color: "white"});
+      NapicuLogView.print({name: characteristics_aliases_table.get_alias_by_key(response.uuid) || response.uuid, message: response.data, color: "white"});
     });
 
     socket.on("connected_device_rssi", (data: number) => {
