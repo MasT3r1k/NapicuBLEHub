@@ -38,6 +38,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
         () => NapicuCookies.getCookies<number>(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME) || SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH);
 
     const inputDivRef = useRef<HTMLDivElement>(null);
+    const logContainerRef = useRef<HTMLDivElement>(null);
 
     const focusConsoleInput = (): void => {
         if (inputDivRef.current) {
@@ -160,6 +161,12 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
         return () => unsubscribe();
     }, []);
 
+    useEffect(() => {
+        if (logContainerRef.current) {
+          logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+        }
+    }, [logLines]);
+
     return (
         <div className="console-split"> 
             {/* Left panel */}
@@ -201,7 +208,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
                 </div>
             </div>
             {/* Right panel */}
-            <div className="console-right is-relative">
+            <div className="console-right is-relative" ref={logContainerRef}>
                 <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
                 <div>
                     {logLines.map((line: ILogLine, index: number) => (

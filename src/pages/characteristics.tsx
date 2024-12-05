@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { CharacteristicOperation, CharacteristicRequest, ConnectedDeviceCharViewProps } from "@/types/ble_device";
+import { CharacteristicRequest, ConnectedDeviceCharViewProps } from "@/types/ble_device";
 import { CharacteristicOperationHistory, formatTime } from "./CharacteristicsReqHistory";
 import { useSocket } from "./Socket";
 
@@ -11,6 +11,8 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
     const [writeInputValue, setWriteInputValue] = useState<string>("");
     const [writeButtonInputError, setWriteButtonInputError] = useState<boolean>(false);
     const [characteristicHistory, setCharacteristicHistory] = useState(characteristic.history.history_list);
+
+    const logContainerRef = useRef<HTMLDivElement>(null);
 
     const handleWriteKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
@@ -26,6 +28,12 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
     useEffect(() => {
         setCharacteristicHistory(characteristic.history.history_list);
     }, [characteristic]);
+
+    useEffect(() => {
+        if (logContainerRef.current) {
+          logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+        }
+    }, [characteristicHistory]);
 
     const handleWriteInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setWriteButtonInputError(false);
@@ -79,7 +87,7 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
 
                 <div className="characteristics-read-view is-relative">
-                    <div className="characteristics-read-view-lines">
+                    <div className="characteristics-read-view-lines" ref={logContainerRef}>
                         {characteristicHistory.map((value: CharacteristicOperationHistory, index: number) => (
                             <div key={index} className="is-flex has-text-weight-bold">
                                 <div className="characteristics-read-view-time">
