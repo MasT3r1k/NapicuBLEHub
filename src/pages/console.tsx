@@ -3,25 +3,34 @@ import { DeviceReactViewProps } from "./interfaces/Idevice";
 import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
 import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SERVICES_ALIASES_NAME, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
-import { useSocket } from "./Socket";
+import { EventEmitter } from 'events';
 
 export class NapicuLogView {
     private static consoleLogLines: ILogLine[] = [];
-
+    private static eventEmitter = new EventEmitter();
+  
     public static get_lines(): ILogLine[] {
-        return this.consoleLogLines;
+      return this.consoleLogLines;
     }
-
+  
     public static print(value: ILogLine): void {
-        this.consoleLogLines.push(value);
+      this.consoleLogLines.push(value);
+      this.eventEmitter.emit('update');
     }
-
+  
     public static clear(): void {
-        this.consoleLogLines = [];
+      this.consoleLogLines = [];
+      this.eventEmitter.emit('update');
     }
-}
-
+  
+    public static subscribe(callback: () => void): () => void {
+      this.eventEmitter.on('update', callback);
+      return () => this.eventEmitter.off('update', callback);
+    }
+  }
 const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
+    const [logLines, setLogLines] = useState<ILogLine[]>(NapicuLogView.get_lines());
+
 
     const [consoleLines, setConsoleLines] = useState<IConsoleCommand[]>([]);
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
@@ -143,6 +152,14 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
         document.addEventListener('mouseup', handleMouseUp);
     };
 
+    useEffect(() => {
+        const unsubscribe = NapicuLogView.subscribe(() => {
+          setLogLines([...NapicuLogView.get_lines()]);
+        });
+    
+        return () => unsubscribe();
+    }, []);
+
     return (
         <div className="console-split"> 
             {/* Left panel */}
@@ -187,7 +204,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
             <div className="console-right is-relative">
                 <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
                 <div>
-                    {NapicuLogView.get_lines().map((line: ILogLine, index: number) => (
+                    {logLines.map((line: ILogLine, index: number) => (
                         <div key={index} className="is-flex">
                             {line.name && (
                                 <div>

@@ -187,6 +187,47 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         return deviceServices[selectedServiceIndex].chars;
     }
 
+    const findServiceAndCharacteristicIndex = (characteristic_uuid: string): { service_index: number; char_index: number } | null => {
+        for (let service_index = 0; service_index < deviceServices.length; service_index++) {
+          const chars = deviceServices[service_index].chars;
+          for (let char_index = 0; char_index < chars.length; char_index++) {
+            if (chars[char_index].uuid === characteristic_uuid) {
+              return { service_index, char_index };
+            }
+          }
+        }
+        return null; 
+      };
+
+    const updateHistory = (char_uuid: string, value: string, type: 'read' | 'write' | 'notify') => {
+        setDeviceServices((prevServices) => {
+
+            const i = findServiceAndCharacteristicIndex(char_uuid);
+            if(i) {
+                const { service_index, char_index } = i;
+
+                const new_services = [...prevServices];
+                const new_chars = [...new_services[service_index].chars];
+    
+                const updatedChar = {
+                    ...new_chars[char_index],
+                    history: new CharacteristicsReqHistory(),
+                };
+                updatedChar.history.history_list = [...new_chars[char_index].history.history_list];
+                updatedChar.history.add_with_auto_date(value, type);
+        
+                new_chars[char_index] = updatedChar;
+                new_services[service_index] = {
+                    ...new_services[service_index],
+                    chars: new_chars,
+                };
+        
+                return new_services;
+            }
+            return prevServices;
+        });
+    };
+
 
     //TODO 
     useEffect(() => {
@@ -203,10 +244,8 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
     useEffect(() => {
         socket.on("characteristic_response", (response: CharacteristicResponse) => {
-            
             NapicuLogView.print({name: characteristics_aliases_table.get_alias_by_key(response.uuid) || response.uuid, message: response.data, color: "white"});
-            
-            deviceServices[2].chars[0].history.add_with_auto_date(response.data, "write");
+            updateHistory(response.uuid, response.data, "write");
         });
     }, [socket]);
 
