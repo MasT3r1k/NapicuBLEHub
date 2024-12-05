@@ -27,13 +27,6 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
         setCharacteristicHistory(characteristic.history.history_list);
     }, [characteristic]);
 
-    useEffect(() => {
-        if (!socket) return;
-       //TODO OFF reactStrictMode 
-        console.log("Socket in characteristics.tsx loaded");
-        console.log(socket);
-    }, []);
-
     const handleWriteInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setWriteButtonInputError(false);
         setWriteInputValue(event.target.value);
@@ -87,8 +80,8 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
                 <div className="characteristics-read-view is-relative">
                     <div className="characteristics-read-view-lines">
-                        {characteristicHistory.map((value: CharacteristicOperationHistory) => (
-                            <div className="is-flex has-text-weight-bold">
+                        {characteristicHistory.map((value: CharacteristicOperationHistory, index: number) => (
+                            <div key={index} className="is-flex has-text-weight-bold">
                                 <div className="characteristics-read-view-time">
                                     {value.timestamp}
                                     <span className="characteristics-write-span">{'<<'}</span>
