@@ -1,4 +1,4 @@
-import { ConnectedDevice, BLEDeviceService, ConnectingDevice, Device } from "@/types/ble_device";
+import { ConnectedDevice, BLEDeviceService, ConnectingDevice, Device, CharacteristicResponse } from "@/types/ble_device";
 import { useEffect, useState } from "react";
 import io, { Socket, SocketOptions } from "socket.io-client";
 import DeviceView from "./device";
@@ -24,7 +24,7 @@ const Home = (): JSX.Element => {
   useEffect(() => {
     if (!socket) return;
 
-    console.log("Update socket."); //TODO Debug
+    //console.log("Update socket."); //TODO Debug
 
 
     socket.on("device", (device: Device) => {
@@ -55,6 +55,11 @@ const Home = (): JSX.Element => {
       setConnectingData(undefined);
       NapicuLogView.clear();
       NapicuLogView.print({name: data.address, message: "Connected", color: "white"});
+    });
+
+
+    socket.on("characteristic_response", (response: CharacteristicResponse) => {
+      NapicuLogView.print({name: response.uuid, message: response.data, color: "white"});
     });
 
     socket.on("connected_device_rssi", (data: number) => {

@@ -3,10 +3,7 @@ import { DeviceReactViewProps } from "./interfaces/Idevice";
 import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
 import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SERVICES_ALIASES_NAME, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
-
-
-
-
+import { useSocket } from "./Socket";
 
 export class NapicuLogView {
     private static consoleLogLines: ILogLine[] = [];
@@ -24,12 +21,9 @@ export class NapicuLogView {
     }
 }
 
-
 const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
     const [consoleLines, setConsoleLines] = useState<IConsoleCommand[]>([]);
-
-
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
     const [leftPanelWidth, setLeftPanelWidth] = useState<number>(
         () => NapicuCookies.getCookies<number>(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME) || SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH);

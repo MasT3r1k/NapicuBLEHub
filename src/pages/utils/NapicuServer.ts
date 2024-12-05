@@ -3,7 +3,7 @@ import { NextApiRequest } from "next";
 import { NextApiResponseServerIO } from "@/types/next";
 import { DefaultEventsMap, Server as SocketIOServer } from "socket.io";
 import noble from "@abandonware/noble";
-import { ConnectedDevice, ConnectedDeviceChar, BLEDeviceService, ConnectingDevice, Device, CharacteristicOperation, CharacteristicRequest } from "@/types/ble_device";
+import { ConnectedDevice, ConnectedDeviceChar, BLEDeviceService, ConnectingDevice, Device, CharacteristicOperation, CharacteristicRequest, CharacteristicResponse } from "@/types/ble_device";
 import NapicuLOG from "./NapicuLogger";
 
 interface ConnectedDeviceCharacteristicsServerData {
@@ -195,15 +195,23 @@ export default class NapicuServer {
     
 
     if(characteristic) {
-      characteristic.read((error: string, data: Buffer) => {
-        //TODO EMIT
-        console.log('Data read:', data.toString('utf8'));
+      characteristic.read((error: string, buf: Buffer) => { //TODO IF error 
+        this.emit_data_response(buf, data.uuid);        
       });
 
     } else {
       NapicuLOG.LOG_E(`characteristic with UUID: ${data.uuid} not found!`);
     }
 
+  }
+
+  private emit_data_response(data: Buffer, uuid: string): void {
+    const response_data: CharacteristicResponse = {
+      data: data.toString('utf8'),
+      uuid: uuid
+    };
+
+    this.io.emit("characteristic_response", response_data)
   }
 
   private start_scan = (): void => {

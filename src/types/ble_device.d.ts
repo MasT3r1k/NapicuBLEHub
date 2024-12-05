@@ -44,3 +44,8 @@ export interface CharacteristicOperation {
 export interface CharacteristicRequest extends CharacteristicOperation {
     uuid: string
 }
+
+export interface CharacteristicResponse {
+    data: string, 
+    uuid: string 
+}

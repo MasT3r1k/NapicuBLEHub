@@ -33,8 +33,6 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const aliasEditInput = useRef<HTMLInputElement>(null);
     const [aliasInputValue, setAliasInputValue] = useState<string>("");
 
-
-
     //Init cookies
     const [deviceServices, setDeviceServices] = useState<ConnectedDeviceServiceData[]>(device.services.map<ConnectedDeviceServiceData>((service: BLEDeviceService) => {
         return {
