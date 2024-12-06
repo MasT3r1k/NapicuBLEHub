@@ -5,6 +5,7 @@ export const COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME: string = "console_panel_la
 export const COOKIES_SERVICES_ALIASES_NAME: string = "services_aliases";
 export const COOKIES_CHARACTERISTICS_ALIASES_NAME: string = "characteristics_aliases";
 
+export const COOKIES_SELECTED_CHARACTERISTIC: string = "selected_char";
 
 //Sizes
 export const SIZE_LEFT_PANEL_DEFAULT_WIDTH: number = 380;

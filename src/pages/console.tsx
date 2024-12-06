@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DeviceReactViewProps } from "./interfaces/Idevice";
 import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
-import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SERVICES_ALIASES_NAME, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
+import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
 import { EventEmitter } from 'events';
 
@@ -67,6 +67,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
                             NapicuCookies.deleteCookies(COOKIES_SERVICES_ALIASES_NAME);
                             NapicuCookies.deleteCookies(COOKIES_CHARACTERISTICS_ALIASES_NAME);
                             NapicuCookies.deleteCookies(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME);
+                            NapicuCookies.deleteCookies(COOKIES_SELECTED_CHARACTERISTIC);
                             consolePrint("Aliases successfully deleted! Please refresh the page.");
                         } else {
                             //TODO

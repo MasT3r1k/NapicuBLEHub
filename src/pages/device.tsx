@@ -2,9 +2,9 @@ import { ConnectedDeviceChar, BLEDeviceService, CharacteristicResponse } from "@
 import React, { useState, useRef, useEffect } from "react";
 import NapicuCookies from "./Cookies";
 import ConsoleView, { NapicuLogView } from "./console";
-import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps } from "./interfaces/Idevice";
+import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps, SelectedCharacteristicCookiesData } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
-import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT } from "./config";
+import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT, COOKIES_SELECTED_CHARACTERISTIC } from "./config";
 import { CharacteristicsReqHistory } from "./CharacteristicsReqHistory";
 import { service_aliases_table, characteristics_aliases_table } from ".";
 import { useSocket } from "./Socket";
@@ -42,6 +42,9 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         }
     }));
 
+    const hasRunRef = useRef<boolean>(false);
+
+    
     const handleMouseDownLeftResizer = (event: React.MouseEvent) => {
         event.preventDefault();
 
@@ -197,7 +200,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
           }
         }
         return null; 
-      };
+    };
 
     const updateHistory = (char_uuid: string, value: string, type: 'read' | 'write' | 'notify') => {
         setDeviceServices((prevServices) => {
@@ -228,6 +231,18 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         });
     };
 
+    if(!hasRunRef.current) {
+        const selected_device_chars_table: string | null = 
+            NapicuCookies.getCookies<SelectedCharacteristicCookiesData>(COOKIES_SELECTED_CHARACTERISTIC)?.[device.address] || null;
+
+            const i = selected_device_chars_table && findServiceAndCharacteristicIndex(selected_device_chars_table);
+            if(i) {
+                setSelectedServiceIndex(i.service_index);
+                setSelectedCharacteristicIndex(i.char_index);
+            }
+       
+        hasRunRef.current = true;
+    }
 
     //TODO 
     useEffect(() => {
@@ -248,6 +263,15 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
             updateHistory(response.uuid, response.data, "read");
         });
     }, [socket]);
+
+    useEffect(() => {
+        const selected_device_chars_table: SelectedCharacteristicCookiesData = 
+            NapicuCookies.getCookies<SelectedCharacteristicCookiesData>(COOKIES_SELECTED_CHARACTERISTIC) || {};
+
+        selected_device_chars_table[device.address] = deviceServices[selectedServiceIndex].chars[selectedCharacteristicIndex].uuid
+
+        NapicuCookies.setCookies<SelectedCharacteristicCookiesData>(COOKIES_SELECTED_CHARACTERISTIC, selected_device_chars_table);
+    }, [selectedCharacteristicIndex]);
 
 
     return (

@@ -15,3 +15,7 @@ export interface ConnectedDeviceServiceData {
     alias: string | null,
     chars: ConnectedDeviceCharacteristicData[]
 }
+
+export interface SelectedCharacteristicCookiesData {
+    [address: string]: string;
+}
