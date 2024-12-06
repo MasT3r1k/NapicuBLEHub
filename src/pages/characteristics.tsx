@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { CharacteristicRequest, ConnectedDeviceCharViewProps } from "@/types/ble_device";
 import { CharacteristicOperationHistory, formatTime } from "./CharacteristicsReqHistory";
 import { useSocket } from "./Socket";
+import { DEFAULT_CHARACTERISTICS_WATCH } from "./config";
 
 
 const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): JSX.Element => {
@@ -13,6 +14,8 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
     const [characteristicHistory, setCharacteristicHistory] = useState(characteristic.history.history_list);
 
     const logContainerRef = useRef<HTMLDivElement>(null);
+
+    const [isWatchChecked, setIsWatchChecked] = useState<boolean>(DEFAULT_CHARACTERISTICS_WATCH);
 
     const handleWriteKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
@@ -69,6 +72,10 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
         }
     }
 
+    const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsWatchChecked(event.target.checked);
+    };
+    
 
     return (
         <div className="characteristics-options">
@@ -118,33 +125,43 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
                 </div>
 
                 {/* Buttons */}
-                <div className="characteristics-options-buttons">
+                <div className="characteristics-options-buttons is-flex is-justify-content-space-between is-align-content-center">
+                    <div>
+                        {/* Read */}
+                        <button className={`button characteristics-properties-read-button has-text-white has-text-weight-bold 
+                            ${!characteristic.properties.includes("read") ? 'button-unabled' : ''}`} onClick={on_click_read_button}>
+                            <span>Read</span>
+                        </button>
 
-                    {/* Read */}
-                    <button className={`button characteristics-properties-read-button has-text-white has-text-weight-bold 
-                        ${!characteristic.properties.includes("read") ? 'button-unabled' : ''}`} onClick={on_click_read_button}>
-                        <span>Read</span>
-                    </button>
+                        {/* Write */}
+                        <button className={`button characteristics-properties-write-button has-text-white has-text-weight-bold 
+                            ${!characteristic.properties.includes("write") ? 'button-unabled' : ''}`} onClick={on_click_write_button}>
+                            <span>Write</span>
+                        </button>
 
-                    {/* Write */}
-                    <button className={`button characteristics-properties-write-button has-text-white has-text-weight-bold 
-                        ${!characteristic.properties.includes("write") ? 'button-unabled' : ''}`} onClick={on_click_write_button}>
-                        <span>Write</span>
-                    </button>
+                        {/* Notify */}
+                        <button className={`button characteristics-properties-notify-button has-text-white has-text-weight-bold 
+                            ${!characteristic.properties.includes("notify") ? 'button-unabled' : ''}`} onClick={on_click_notify_button}>
+                            <span>Notify</span>
+                        </button>
+                    </div>
 
-                    {/* Notify */}
-                    <button className={`button characteristics-properties-notify-button has-text-white has-text-weight-bold 
-                        ${!characteristic.properties.includes("notify") ? 'button-unabled' : ''}`} onClick={on_click_notify_button}>
-                        <span>Notify</span>
-                    </button>
+                    <div className="is-flex is-align-content-center">
+                        <div className="mr-2 has-text-weight-bold ">
+                            Watch: 
+                        </div>
 
+                        <label className="np-char-switch">
+                            <input 
+                                type="checkbox" 
+                                checked={isWatchChecked} 
+                                onChange={handleCheckboxChange} />
+                            <span className="np-char-slider"></span>
+                        </label>
+                    </div>
                 </div>
-
             </div>
         </div>
-
-
-
     )
 }
 

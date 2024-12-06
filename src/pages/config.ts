@@ -7,6 +7,8 @@ export const COOKIES_CHARACTERISTICS_ALIASES_NAME: string = "characteristics_ali
 
 export const COOKIES_SELECTED_CHARACTERISTIC: string = "selected_char";
 
+export const DEFAULT_CHARACTERISTICS_WATCH: boolean = true;
+
 //Sizes
 export const SIZE_LEFT_PANEL_DEFAULT_WIDTH: number = 380;
 export const SIZE_LEFT_PANEL_MIN_WIDTH: number = 240;

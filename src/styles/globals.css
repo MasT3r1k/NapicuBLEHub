@@ -249,6 +249,54 @@ body {
   transform: translateY(-5px) !important;
 }
 
+.np-char-switch {
+  font-size: 12px;
+  position: relative;
+  display: inline-block;
+  width: 3.5em;
+  height: 2em;
+}
+
+.np-char-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.np-char-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #dd4848;
+  border-radius: 50px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.np-char-slider:before {
+  position: absolute;
+  content: "";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2em;
+  width: 2em;
+  inset: 0;
+  background-color: white;
+  border-radius: 50px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.np-char-switch input:checked + .np-char-slider {
+  background: #64d63e;
+}
+
+
+.np-char-switch input:checked + .np-char-slider:before {
+  transform: translateX(1.6em);
+}
+
+
 @media (max-width: 1500px) {
   .filter-window>.section{
     width: 60%;

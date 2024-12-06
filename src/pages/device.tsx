@@ -44,7 +44,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
     const hasRunRef = useRef<boolean>(false);
 
-    
+
     const handleMouseDownLeftResizer = (event: React.MouseEvent) => {
         event.preventDefault();
 
