@@ -22,6 +22,7 @@ export interface BLEDeviceService {
 
 export interface ConnectedDeviceCharViewProps {
     characteristic: ConnectedDeviceCharacteristicData;
+    onWatchChange?: (uuid: string, new_watch: boolean) => void;
 }
 
 

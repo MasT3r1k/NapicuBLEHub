@@ -1,5 +1,5 @@
 import { ConnectedDeviceChar, BLEDeviceService, CharacteristicResponse } from "@/types/ble_device";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import NapicuCookies from "./Cookies";
 import ConsoleView, { NapicuLogView } from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps, SelectedCharacteristicCookiesData } from "./interfaces/Idevice";
@@ -32,15 +32,22 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const [aliasInputValue, setAliasInputValue] = useState<string>("");
 
     //Init cookies
-    const [deviceServices, setDeviceServices] = useState<ConnectedDeviceServiceData[]>(device.services.map<ConnectedDeviceServiceData>((service: BLEDeviceService) => {
-        return {
+    const [deviceServices, setDeviceServices] = useState<ConnectedDeviceServiceData[]>(() => {
+        return device.services.map<ConnectedDeviceServiceData>((service: BLEDeviceService) => {
+          return {
             uuid: service.uuid,
             alias: service_aliases_table.get_alias_by_key(service.uuid),
             chars: service.chars.map((characteristic: ConnectedDeviceChar) => {
-              return {...characteristic, alias: characteristics_aliases_table.get_alias_by_key(characteristic.uuid), history: new CharacteristicsReqHistory(), watch: true} //TODO podle proměnné   
-            })
-        }
-    }));
+              return {
+                ...characteristic,
+                alias: characteristics_aliases_table.get_alias_by_key(characteristic.uuid),
+                history: new CharacteristicsReqHistory(),
+                watch: true, // TODO: aktualizovat podle proměnné
+              };
+            }),
+          };
+        });
+    });
 
     const hasRunRef = useRef<boolean>(false);
 
@@ -203,7 +210,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     };
 
     const updateHistory = (char_uuid: string, value: string, type: 'read' | 'write' | 'notify') => {
-        setDeviceServices((prevServices) => {
+        setDeviceServices((prevServices: ConnectedDeviceServiceData[]) => {
 
             const i = findServiceAndCharacteristicIndex(char_uuid);
             if(i) {
@@ -257,11 +264,25 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         }
     }, [expandedCharacteristicIndex]);
 
-    useEffect(() => {
-        socket.on("characteristic_response", (response: CharacteristicResponse) => {
-            NapicuLogView.print({name: characteristics_aliases_table.get_alias_by_key(response.uuid) || response.uuid, message: response.data, color: "white"});
-            updateHistory(response.uuid, response.data, "read");
+    const onCharacteristicResponse = (response: CharacteristicResponse): void => {
+        setDeviceServices((current_device_services) => {
+            const indexes = findServiceAndCharacteristicIndex(response.uuid);
+            const char = indexes && current_device_services[indexes.service_index].chars[indexes.char_index];
+
+            if(char?.watch) {
+                NapicuLogView.print({name: characteristics_aliases_table.get_alias_by_key(response.uuid) || response.uuid, message: response.data, color: "white"});
+            } 
+            
+
+            return current_device_services;
         });
+
+        
+        updateHistory(response.uuid, response.data, "read");
+    }
+
+    useEffect(() => { //TODO fix init
+        socket.on("characteristic_response", onCharacteristicResponse);
     }, [socket]);
 
     useEffect(() => {
@@ -273,6 +294,34 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         NapicuCookies.setCookies<SelectedCharacteristicCookiesData>(COOKIES_SELECTED_CHARACTERISTIC, selected_device_chars_table);
     }, [selectedCharacteristicIndex]);
 
+
+    const handleWatchCharacteristicChange = (char_uuid: string, new_value: boolean) => {
+       // setCharacteristic((prev) => ({ ...prev, watch: newWatch }));
+
+       setDeviceServices((prevServices: ConnectedDeviceServiceData[]) => {
+        const i = findServiceAndCharacteristicIndex(char_uuid);
+        if(i) {
+            const { service_index, char_index } = i;
+
+            const new_services = [...prevServices];
+            const new_chars = [...new_services[service_index].chars];
+
+            const updatedChar = {
+                ...new_chars[char_index],
+                watch: new_value
+            };
+           
+            new_chars[char_index] = updatedChar;
+            new_services[service_index] = {
+                ...new_services[service_index],
+                chars: new_chars,
+            };
+   
+            return new_services;
+        }
+        return prevServices;
+       });
+    };
 
     return (
         <div className="is-flex is-justify-content-space-between is-flex-direction-column device-section-view">
@@ -429,7 +478,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                     <div className="main-view is-relative" style={{ height: `${consolePanelHeight}px` }}>
                         <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
                         {getSelectedServiceCharacteristics().length && (
-                            <CharacteristicsView characteristic={getSelectedServiceCharacteristics()[selectedCharacteristicIndex]} />
+                            <CharacteristicsView characteristic={getSelectedServiceCharacteristics()[selectedCharacteristicIndex]} onWatchChange={handleWatchCharacteristicChange} />
                         )}
                     </div>
 

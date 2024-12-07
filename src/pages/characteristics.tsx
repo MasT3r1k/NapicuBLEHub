@@ -5,7 +5,7 @@ import { useSocket } from "./Socket";
 import { DEFAULT_CHARACTERISTICS_WATCH } from "./config";
 
 
-const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): JSX.Element => {
+const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDeviceCharViewProps): JSX.Element => {
     const socket = useSocket();
 
     const writeInput = useRef<HTMLInputElement>(null);
@@ -76,7 +76,10 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
         setIsWatchChecked(event.target.checked);
-        characteristic.watch = event.target.checked;
+
+        if (onWatchChange) {
+            onWatchChange(characteristic.uuid, event.target.checked); 
+          }
     };
     
 
