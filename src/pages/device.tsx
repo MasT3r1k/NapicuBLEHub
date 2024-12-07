@@ -31,6 +31,8 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const aliasEditInput = useRef<HTMLInputElement>(null);
     const [aliasInputValue, setAliasInputValue] = useState<string>("");
 
+    const hasInitializedSocketListenersRef = useRef<boolean>(false);
+
     //Init cookies
     const [deviceServices, setDeviceServices] = useState<ConnectedDeviceServiceData[]>(() => {
         return device.services.map<ConnectedDeviceServiceData>((service: BLEDeviceService) => {
@@ -273,17 +275,18 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                 NapicuLogView.print({name: characteristics_aliases_table.get_alias_by_key(response.uuid) || response.uuid, message: response.data, color: "white"});
             } 
             
-
             return current_device_services;
         });
 
-        
         updateHistory(response.uuid, response.data, "read");
     }
 
-    useEffect(() => { //TODO fix init
-        socket.on("characteristic_response", onCharacteristicResponse);
-    }, [socket]);
+    useEffect(() => { 
+        if(!hasInitializedSocketListenersRef.current) {
+            socket.on("characteristic_response", onCharacteristicResponse);
+            hasInitializedSocketListenersRef.current = true;
+        }
+    }, [hasInitializedSocketListenersRef]);
 
     useEffect(() => {
         const selected_device_chars_table: SelectedCharacteristicCookiesData = 
