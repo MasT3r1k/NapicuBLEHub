@@ -5,6 +5,8 @@ export const COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME: string = "console_panel_la
 export const COOKIES_SERVICES_ALIASES_NAME: string = "services_aliases";
 export const COOKIES_CHARACTERISTICS_ALIASES_NAME: string = "characteristics_aliases";
 
+export const COOKIES_UNWATCHED_CHARACTERISTICS: string = "unwatched_characteristics";
+
 export const COOKIES_SELECTED_CHARACTERISTIC: string = "selected_char";
 
 export const DEFAULT_CHARACTERISTICS_WATCH: boolean = true;

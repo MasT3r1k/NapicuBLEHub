@@ -4,7 +4,7 @@ import NapicuCookies from "./Cookies";
 import ConsoleView, { NapicuLogView } from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps, SelectedCharacteristicCookiesData } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
-import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT, COOKIES_SELECTED_CHARACTERISTIC } from "./config";
+import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_UNWATCHED_CHARACTERISTICS } from "./config";
 import { CharacteristicsReqHistory } from "./CharacteristicsReqHistory";
 import { service_aliases_table, characteristics_aliases_table } from ".";
 import { useSocket } from "./Socket";
@@ -31,7 +31,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const aliasEditInput = useRef<HTMLInputElement>(null);
     const [aliasInputValue, setAliasInputValue] = useState<string>("");
 
-    const hasInitializedSocketListenersRef = useRef<boolean>(false);
+    const hasRunRef = useRef<boolean>(false);
 
     //Init cookies
     const [deviceServices, setDeviceServices] = useState<ConnectedDeviceServiceData[]>(() => {
@@ -44,15 +44,12 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                 ...characteristic,
                 alias: characteristics_aliases_table.get_alias_by_key(characteristic.uuid),
                 history: new CharacteristicsReqHistory(),
-                watch: true, // TODO: aktualizovat podle proměnné
+                watch: !NapicuCookies.getCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS)?.includes(characteristic.uuid)
               };
             }),
           };
         });
     });
-
-    const hasRunRef = useRef<boolean>(false);
-
 
     const handleMouseDownLeftResizer = (event: React.MouseEvent) => {
         event.preventDefault();
@@ -240,19 +237,6 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         });
     };
 
-    if(!hasRunRef.current) {
-        const selected_device_chars_table: string | null = 
-            NapicuCookies.getCookies<SelectedCharacteristicCookiesData>(COOKIES_SELECTED_CHARACTERISTIC)?.[device.address] || null;
-
-            const i = selected_device_chars_table && findServiceAndCharacteristicIndex(selected_device_chars_table);
-            if(i) {
-                setSelectedServiceIndex(i.service_index);
-                setSelectedCharacteristicIndex(i.char_index);
-            }
-       
-        hasRunRef.current = true;
-    }
-
     //TODO 
     useEffect(() => {
         if (expandedServiceIndex !== -1 && aliasEditInput.current) {
@@ -280,13 +264,6 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
         updateHistory(response.uuid, response.data, "read");
     }
-
-    useEffect(() => { 
-        if(!hasInitializedSocketListenersRef.current) {
-            socket.on("characteristic_response", onCharacteristicResponse);
-            hasInitializedSocketListenersRef.current = true;
-        }
-    }, [hasInitializedSocketListenersRef]);
 
     useEffect(() => {
         const selected_device_chars_table: SelectedCharacteristicCookiesData = 
@@ -319,12 +296,39 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                 ...new_services[service_index],
                 chars: new_chars,
             };
+
+            var wt_char_table: string[] = NapicuCookies.getCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS) || [];
+
+            if(new_value) {
+                wt_char_table = wt_char_table.filter((uuid: string) => {
+                    return uuid !== char_uuid;
+                });
+            } else wt_char_table.push(char_uuid);
+            
+            NapicuCookies.setCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS, wt_char_table);
    
             return new_services;
         }
         return prevServices;
        });
     };
+
+
+
+    if(!hasRunRef.current) {
+        socket.on("characteristic_response", onCharacteristicResponse);
+        hasRunRef.current = true;
+
+        const selected_device_chars_table: string | null = 
+        NapicuCookies.getCookies<SelectedCharacteristicCookiesData>(COOKIES_SELECTED_CHARACTERISTIC)?.[device.address] || null;
+
+        const i = selected_device_chars_table && findServiceAndCharacteristicIndex(selected_device_chars_table);
+        if(i) {
+            setSelectedServiceIndex(i.service_index);
+            setSelectedCharacteristicIndex(i.char_index);
+        }
+    }
+
 
     return (
         <div className="is-flex is-justify-content-space-between is-flex-direction-column device-section-view">

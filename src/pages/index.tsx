@@ -27,7 +27,7 @@ const Home = (): JSX.Element => {
   const [uuid_filter_value, set_uuid_filter_value] = useState("");
 
 
-  useEffect(() => {
+  useEffect(() => { //TODO fix init
     if (!socket) return;
 
     //console.log("Update socket."); //TODO Debug
