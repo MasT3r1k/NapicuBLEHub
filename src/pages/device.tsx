@@ -37,7 +37,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
             uuid: service.uuid,
             alias: service_aliases_table.get_alias_by_key(service.uuid),
             chars: service.chars.map((characteristic: ConnectedDeviceChar) => {
-              return {...characteristic, alias: characteristics_aliases_table.get_alias_by_key(characteristic.uuid), history: new CharacteristicsReqHistory()}  
+              return {...characteristic, alias: characteristics_aliases_table.get_alias_by_key(characteristic.uuid), history: new CharacteristicsReqHistory(), watch: true} //TODO podle proměnné   
             })
         }
     }));

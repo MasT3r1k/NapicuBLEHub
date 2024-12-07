@@ -15,7 +15,7 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
     const logContainerRef = useRef<HTMLDivElement>(null);
 
-    const [isWatchChecked, setIsWatchChecked] = useState<boolean>(DEFAULT_CHARACTERISTICS_WATCH);
+    const [isWatchChecked, setIsWatchChecked] = useState<boolean>(characteristic.watch);
 
     const handleWriteKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
@@ -30,6 +30,7 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
 
     useEffect(() => {
         setCharacteristicHistory(characteristic.history.history_list);
+        setIsWatchChecked(characteristic.watch);
     }, [characteristic]);
 
     useEffect(() => {
@@ -73,7 +74,9 @@ const CharacteristicsView = ({ characteristic }: ConnectedDeviceCharViewProps): 
     }
 
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
         setIsWatchChecked(event.target.checked);
+        characteristic.watch = event.target.checked;
     };
     
 
