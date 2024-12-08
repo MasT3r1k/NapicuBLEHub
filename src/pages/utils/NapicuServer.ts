@@ -198,12 +198,12 @@ export default class NapicuServer {
     if(characteristic) {
       characteristic.read((error: string, buf: Buffer) => {
         if(error) {
-          NapicuLOG.LOG_E(`Failed to read data from characteristic with UUID: (${data.uuid}) Error: ${error}`);
+          NapicuLOG.LOG_E(`Failed to read data from characteristic with UUID: (${data.uuid}) Error:`, error);
           return;
         } 
 
         this.emit_data_response(buf, data.uuid);
-        NapicuLOG.LOG_I(`Successfully read data from characteristic with UUID: (${data.uuid}): ${buf.toString('utf8')}`);
+        NapicuLOG.LOG_I(`Successfully read data from characteristic with UUID: (${data.uuid}):`, buf.toString('utf8'));
       });
     } else {
       NapicuLOG.LOG_E(`Characteristic with UUID: (${data.uuid}) not found!`);
@@ -216,11 +216,11 @@ export default class NapicuServer {
     if(characteristic && data.value !== null) {
       characteristic.write(Buffer.from(data.value.toString()), true, (error: string) => {
         if(error) {
-          NapicuLOG.LOG_E(`Failed to write data to characteristic with UUID: (${data.uuid}). Error: ${error}`);
+          NapicuLOG.LOG_E(`Failed to write data to characteristic with UUID: (${data.uuid}). Error:`, error);
           return;
         }
 
-        NapicuLOG.LOG_I(`Successfully wrote data to characteristic with UUID: (${data.uuid}): ${data.value}`);
+        NapicuLOG.LOG_I(`Successfully wrote data to characteristic with UUID: (${data.uuid}):`, data.value);
       });
     } else {
       NapicuLOG.LOG_E(`Characteristic with UUID: (${data.uuid}) not found!`);
