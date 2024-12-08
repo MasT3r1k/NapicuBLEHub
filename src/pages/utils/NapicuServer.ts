@@ -5,6 +5,7 @@ import { DefaultEventsMap, Server as SocketIOServer } from "socket.io";
 import noble from "@abandonware/noble";
 import { ConnectedDevice, ConnectedDeviceChar, BLEDeviceService, ConnectingDevice, Device, CharacteristicOperation, CharacteristicRequest, CharacteristicResponse } from "@/types/ble_device";
 import NapicuLOG from "./NapicuLogger";
+import { NapicuLogView } from "../console";
 
 interface ConnectedDeviceCharacteristicsServerData {
 
@@ -60,6 +61,8 @@ export default class NapicuServer {
       socket.on("connect_device", this.connect);
 
       socket.on("read", this.characteristic_read);
+
+      socket.on("write", this.characteristic_write);
 
       socket.on("disconnect", () => {
         const client_count: number = this.io.sockets.sockets.size;
@@ -193,13 +196,35 @@ export default class NapicuServer {
   private characteristic_read = (data: CharacteristicRequest): void => {
     const characteristic: noble.Characteristic | undefined = this.connected_device_characteristics?.find((characteristic: noble.Characteristic) => characteristic.uuid == data.uuid);
     if(characteristic) {
-      characteristic.read((error: string, buf: Buffer) => { //TODO IF error 
-        this.emit_data_response(buf, data.uuid);      
+      characteristic.read((error: string, buf: Buffer) => {
+        if(error) {
+          NapicuLOG.LOG_E(`Failed to read data from characteristic with UUID: (${data.uuid}) Error: ${error}`);
+          return;
+        } 
+
+        this.emit_data_response(buf, data.uuid);
+        NapicuLOG.LOG_I(`Successfully read data from characteristic with UUID: (${data.uuid}): ${buf.toString('utf8')}`);
       });
     } else {
-      NapicuLOG.LOG_E(`characteristic with UUID: ${data.uuid} not found!`);
+      NapicuLOG.LOG_E(`Characteristic with UUID: (${data.uuid}) not found!`);
     }
+  }
 
+  private characteristic_write = (data: CharacteristicRequest): void => {
+    const characteristic: noble.Characteristic | undefined = this.connected_device_characteristics?.find((characteristic: noble.Characteristic) => characteristic.uuid == data.uuid);
+    
+    if(characteristic && data.value !== null) {
+      characteristic.write(Buffer.from(data.value.toString()), true, (error: string) => {
+        if(error) {
+          NapicuLOG.LOG_E(`Failed to write data to characteristic with UUID: (${data.uuid}). Error: ${error}`);
+          return;
+        }
+
+        NapicuLOG.LOG_I(`Successfully wrote data to characteristic with UUID: (${data.uuid}): ${data.value}`);
+      });
+    } else {
+      NapicuLOG.LOG_E(`Characteristic with UUID: (${data.uuid}) not found!`);
+    }
   }
 
   private emit_data_response(data: Buffer, uuid: string): void {

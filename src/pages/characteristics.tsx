@@ -54,6 +54,10 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
     const on_click_write_button = (): void => {
         if(characteristic.properties.includes("write")) {
             if (writeInputValue.length) {
+
+                const data: CharacteristicRequest = {type: "write", value: writeInputValue, uuid: characteristic.uuid};
+                socket.emit("write", data);
+
                 addToHistory({ type: "write", timestamp: formatTime(new Date()), value: writeInputValue });
             } else {
                 writeInput.current?.select();
