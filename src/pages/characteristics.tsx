@@ -126,6 +126,7 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
                             onChange={handleWriteInputChange}
                             value={writeInputValue || ""}
                             onKeyDown={(e) => handleWriteKeyDownInput(e, characteristic.uuid)}
+                            disabled={!characteristic.properties.includes("write")}
                         />
                     </div>
                 </div>
