@@ -8,7 +8,8 @@ export interface DeviceReactViewProps {
 export interface ConnectedDeviceCharacteristicData extends ConnectedDeviceChar {
     alias: string | null;
     history: CharacteristicsReqHistory;
-    watch: boolean
+    watch: boolean,
+    notify?: boolean
 }
 
 export interface ConnectedDeviceServiceData {

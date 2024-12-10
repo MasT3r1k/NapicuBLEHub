@@ -29,6 +29,7 @@ export default class NapicuServer {
 
   private client_connected_device_data: ConnectedDevice | null = null;
 
+  private subscribed_characteristic_uuids: string[] = [];
 
   constructor(req: NextApiRequest, res: NextApiResponseServerIO) {
     NapicuLOG.LOG_I("Starting...");
@@ -50,7 +51,12 @@ export default class NapicuServer {
         socket.emit("device", device);
       }
 
-      if(this.connected_device) this.io.emit("connected_device", this.client_connected_device_data);
+      //If already connected
+      if(this.connected_device) {
+        this.io.emit("connected_device", this.client_connected_device_data);
+        if(this.subscribed_characteristic_uuids) this.emit_subscribed_characteristic();
+      } 
+      
       
       socket.emit("scan_status", this.is_scanning);
 
@@ -64,6 +70,8 @@ export default class NapicuServer {
 
       socket.on("write", this.characteristic_write);
 
+      socket.on("notify", this.characteristic_notify);
+
       socket.on("disconnect", () => {
         const client_count: number = this.io.sockets.sockets.size;
         NapicuLOG.LOG_I("Client has disconnected. Number of connected clients:", client_count);
@@ -75,6 +83,7 @@ export default class NapicuServer {
           this.stop_scan();
           NapicuLOG.LOG_I("Setting found_peripheral to []...");
           this.found_peripheral = [];
+          this.subscribed_characteristic_uuids = [];
           // NapicuLOG.LOG_I("Restarting Noble.");
           // noble.reset();
         }
@@ -160,7 +169,9 @@ export default class NapicuServer {
                   this.connected_device = null;
                   this.client_connected_device_data = null;
                   this.connected_device_characteristics = null;
+                  this.subscribed_characteristic_uuids = [];
                   //TODO Emit
+                  //TODO remove all listeners -> notify 
                 });
   
                 this.connected_device = peripheral;
@@ -227,13 +238,45 @@ export default class NapicuServer {
     }
   }
 
+  private characteristic_notify = (data: CharacteristicRequest): void => {
+    const characteristic: noble.Characteristic | undefined = this.connected_device_characteristics?.find((characteristic: noble.Characteristic) => characteristic.uuid == data.uuid);
+    if(characteristic) {
+      if(characteristic.listenerCount("data")) {
+        characteristic.removeAllListeners("data");
+        this.subscribed_characteristic_uuids = this.subscribed_characteristic_uuids.filter((uuid: string) => uuid !== data.uuid);
+        this.emit_subscribed_characteristic();
+        return;
+      } 
+
+      this.subscribed_characteristic_uuids.push(data.uuid);
+      this.emit_subscribed_characteristic();
+
+      characteristic.unsubscribe();
+      characteristic.subscribe((error: string) => {
+        if (error) NapicuLOG.LOG_E(`Error subscribing to notifications for characteristic with UUID: (${data.uuid}). Error:`, error);
+        else NapicuLOG.LOG_I(`Successfully subscribed to notifications for characteristic with UUID: (${data.uuid})`);
+      });
+
+      characteristic.on('data', (buf: Buffer) => {
+        this.emit_data_response(buf, data.uuid);
+      });
+
+    } else {
+      NapicuLOG.LOG_E(`Characteristic with UUID: (${data.uuid}) not found!`);
+    }
+  }
+
   private emit_data_response(data: Buffer, uuid: string): void {
     const response_data: CharacteristicResponse = {
       data: data.toString('utf8'),
-      uuid: uuid
+      uuid: uuid,
     };
 
-    this.io.emit("characteristic_response", response_data)
+    this.io.emit("characteristic_response", response_data);
+  }
+
+  private emit_subscribed_characteristic(): void {
+    this.io.emit("subscribed_characteristics", this.subscribed_characteristic_uuids);
   }
 
   private start_scan = (): void => {

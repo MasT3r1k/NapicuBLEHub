@@ -73,7 +73,8 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
 
     const on_click_notify_button = (): void => {
         if(characteristic.properties.includes("notify")) {
-            
+            const data: CharacteristicRequest = {type: "notify", value: null, uuid: characteristic.uuid};
+            socket.emit("notify", data);
         }
     }
 
@@ -83,7 +84,7 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
 
         if (onWatchChange) {
             onWatchChange(characteristic.uuid, event.target.checked); 
-          }
+        }
     };
     
 
@@ -153,7 +154,9 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
                         {/* Notify */}
                         <button className={`button characteristics-properties-notify-button has-text-white has-text-weight-bold 
                             ${!characteristic.properties.includes("notify") ? 'button-unabled' : ''}`} onClick={on_click_notify_button}>
-                            <span>Notify</span>
+                            <span>
+                                {characteristic.notify ? 'Unsubscribe' : 'Notify'}
+                            </span>
                         </button>
                     </div>
 

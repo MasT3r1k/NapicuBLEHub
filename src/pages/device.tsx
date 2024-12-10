@@ -44,7 +44,8 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                 ...characteristic,
                 alias: characteristics_aliases_table.get_alias_by_key(characteristic.uuid),
                 history: new CharacteristicsReqHistory(),
-                watch: !NapicuCookies.getCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS)?.includes(characteristic.uuid)
+                watch: !NapicuCookies.getCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS)?.includes(characteristic.uuid),
+                notify: undefined
               };
             }),
           };
@@ -265,6 +266,19 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         updateHistory(response.uuid, response.data, "read");
     }
 
+    const onSubscribedCharacteristic = (subscribed_characteristics: string[]): void => {
+        setDeviceServices((prevServices: ConnectedDeviceServiceData[]) => {
+            return prevServices.map((service: ConnectedDeviceServiceData) => ({
+                ...service,
+                chars: service.chars.map((char: ConnectedDeviceCharacteristicData) => ({
+                    ...char,
+                    notify: subscribed_characteristics.includes(char.uuid),
+                })),
+            }));
+        });  
+        
+    }
+
     useEffect(() => {
         const selected_device_chars_table: SelectedCharacteristicCookiesData = 
             NapicuCookies.getCookies<SelectedCharacteristicCookiesData>(COOKIES_SELECTED_CHARACTERISTIC) || {};
@@ -279,44 +293,43 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
        // setCharacteristic((prev) => ({ ...prev, watch: newWatch }));
 
        setDeviceServices((prevServices: ConnectedDeviceServiceData[]) => {
-        const i = findServiceAndCharacteristicIndex(char_uuid);
-        if(i) {
-            const { service_index, char_index } = i;
+            const i = findServiceAndCharacteristicIndex(char_uuid);
+            if(i) {
+                const { service_index, char_index } = i;
 
-            const new_services = [...prevServices];
-            const new_chars = [...new_services[service_index].chars];
+                const new_services = [...prevServices];
+                const new_chars = [...new_services[service_index].chars];
 
-            const updatedChar = {
-                ...new_chars[char_index],
-                watch: new_value
-            };
-           
-            new_chars[char_index] = updatedChar;
-            new_services[service_index] = {
-                ...new_services[service_index],
-                chars: new_chars,
-            };
-
-            var wt_char_table: string[] = NapicuCookies.getCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS) || [];
-
-            if(new_value) {
-                wt_char_table = wt_char_table.filter((uuid: string) => {
-                    return uuid !== char_uuid;
-                });
-            } else wt_char_table.push(char_uuid);
+                const updatedChar = {
+                    ...new_chars[char_index],
+                    watch: new_value
+                };
             
-            NapicuCookies.setCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS, wt_char_table);
-   
-            return new_services;
-        }
-        return prevServices;
+                new_chars[char_index] = updatedChar;
+                new_services[service_index] = {
+                    ...new_services[service_index],
+                    chars: new_chars,
+                };
+
+                var wt_char_table: string[] = NapicuCookies.getCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS) || [];
+
+                if(new_value) {
+                    wt_char_table = wt_char_table.filter((uuid: string) => {
+                        return uuid !== char_uuid;
+                    });
+                } else wt_char_table.push(char_uuid);
+                
+                NapicuCookies.setCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS, wt_char_table);
+    
+                return new_services;
+            }
+            return prevServices;
        });
     };
 
-
-
     if(!hasRunRef.current) {
         socket.on("characteristic_response", onCharacteristicResponse);
+        socket.on("subscribed_characteristics", onSubscribedCharacteristic);
         hasRunRef.current = true;
 
         const selected_device_chars_table: string | null = 
