@@ -17,16 +17,21 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
 
     const [isWatchChecked, setIsWatchChecked] = useState<boolean>(characteristic.watch);
 
-    const handleWriteKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
+    const handle_write_key_down_input = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
             on_click_write_button();
         }
     };
 
-    const addToHistory = (item: CharacteristicOperationHistory) => {
+    const add_to_history = (item: CharacteristicOperationHistory): void => {
         characteristic.history.add(item);
         setCharacteristicHistory([...characteristic.history.history_list]);
     };
+
+    const clear_history = (): void => {
+        characteristic.history.clear();
+        setCharacteristicHistory([]);
+    }
 
     useEffect(() => {
         setCharacteristicHistory(characteristic.history.history_list);
@@ -39,7 +44,7 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
         }
     }, [characteristicHistory]);
 
-    const handleWriteInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handle_write_input_change = (event: React.ChangeEvent<HTMLInputElement>) => {
         setWriteButtonInputError(false);
         setWriteInputValue(event.target.value);
     };
@@ -58,7 +63,7 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
                 const data: CharacteristicRequest = {type: "write", value: writeInputValue, uuid: characteristic.uuid};
                 socket.emit("write", data);
 
-                addToHistory({ type: "write", timestamp: formatTime(new Date()), value: writeInputValue });
+                add_to_history({ type: "write", timestamp: formatTime(new Date()), value: writeInputValue });
             } else {
                 writeInput.current?.select();
 
@@ -71,6 +76,10 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
         }
     }
 
+    const on_click_clear_button = (): void => {
+        clear_history();
+    }
+
     const on_click_notify_button = (): void => {
         if(characteristic.properties.includes("notify")) {
             const data: CharacteristicRequest = {type: "notify", value: null, uuid: characteristic.uuid};
@@ -78,15 +87,12 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
         }
     }
 
-    const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-
+    const handle_checkbox_change = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsWatchChecked(event.target.checked);
-
         if (onWatchChange) {
             onWatchChange(characteristic.uuid, event.target.checked); 
         }
     };
-    
 
     return (
         <div className="characteristics-options">
@@ -128,9 +134,9 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
                             ref={writeInput}
                             type="text"
                             placeholder="Write a message"
-                            onChange={handleWriteInputChange}
+                            onChange={handle_write_input_change}
                             value={writeInputValue || ""}
-                            onKeyDown={(e) => handleWriteKeyDownInput(e, characteristic.uuid)}
+                            onKeyDown={(e) => handle_write_key_down_input(e, characteristic.uuid)}
                             disabled={!characteristic.properties.includes("write")}
                         />
                     </div>
@@ -164,15 +170,23 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
                     </div>
 
                     <div className="is-flex is-align-content-center">
+
+                        {/* Clear */}
+                        <button className="button characteristics-properties-write-button has-text-white has-text-weight-bold" onClick={on_click_clear_button}>
+                            <span>Clear</span>
+                        </button>
+
+                        {/* Watch */}
                         <div className="mr-2 has-text-weight-bold ">
                             Watch: 
                         </div>
 
+                        {/* Watch Slider */}
                         <label className="np-char-switch">
                             <input 
                                 type="checkbox" 
                                 checked={isWatchChecked} 
-                                onChange={handleCheckboxChange} />
+                                onChange={handle_checkbox_change} />
                             <span className="np-char-slider"></span>
                         </label>
                     </div>
