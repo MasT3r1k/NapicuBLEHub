@@ -68,6 +68,7 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
                             NapicuCookies.deleteCookies(COOKIES_CHARACTERISTICS_ALIASES_NAME);
                             NapicuCookies.deleteCookies(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME);
                             NapicuCookies.deleteCookies(COOKIES_SELECTED_CHARACTERISTIC);
+                            NapicuCookies.deleteCookies(DEFAULT_CHARACTERISTICS_WATCH);
                             consolePrint("Aliases successfully deleted! Please refresh the page.");
                         } else {
                             //TODO
