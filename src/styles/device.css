@@ -281,6 +281,14 @@
     background-color: #fdd008;
 }
 
+.characteristics-properties-unsubscribe-button {
+    background-color: #3d3d3d !important;
+}
+
+.characteristics-properties-unsubscribe-button span{
+    background-color: #808080 !important;
+}
+
 .characteristics-write-input {
     position: absolute;
     bottom: 0;

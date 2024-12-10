@@ -152,11 +152,14 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
                         </button>
 
                         {/* Notify */}
-                        <button className={`button characteristics-properties-notify-button has-text-white has-text-weight-bold 
-                            ${!characteristic.properties.includes("notify") ? 'button-unabled' : ''}`} onClick={on_click_notify_button}>
-                            <span>
-                                {characteristic.notify ? 'Unsubscribe' : 'Notify'}
-                            </span>
+                        <button className={`button characteristics-properties-notify-button has-text-white has-text-weight-bold  
+                            ${!characteristic.properties.includes("notify") ? 'button-unabled' : ''}
+                            ${characteristic.notify ? 'characteristics-properties-unsubscribe-button' : ''}`} 
+                            onClick={on_click_notify_button}
+                            >
+                                <span>
+                                    {characteristic.notify ? 'Unsubscribe' : 'Notify'}
+                                </span>
                         </button>
                     </div>
 
