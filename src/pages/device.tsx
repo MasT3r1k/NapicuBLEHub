@@ -289,7 +289,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     }, [selectedCharacteristicIndex]);
 
 
-    const handleWatchCharacteristicChange = (char_uuid: string, new_value: boolean) => {
+    const handleWatchCharacteristicChange = (char_uuid: string, new_value: boolean): void => {
        // setCharacteristic((prev) => ({ ...prev, watch: newWatch }));
 
        setDeviceServices((prevServices: ConnectedDeviceServiceData[]) => {

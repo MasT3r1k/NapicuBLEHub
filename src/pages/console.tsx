@@ -46,6 +46,30 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
         }
     }
 
+    const console_clear_command = (args: string[]): void => {
+        switch(args[0]) {
+            case "all": 
+                break;
+
+            case "logs": 
+                //TODO Print success 
+                setLogLines([]);
+                break;
+            default: 
+                //TODO Delete all or help command
+                clearConsole();
+                break;
+        }
+    } 
+
+    const console_unsubscribe_command = (args: string[]): void => {
+        if(args[0]) {
+            //TODO Main functions
+        } else {
+            //TODO Help command
+        }
+    } 
+
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === "ArrowUp" || event.key === "ArrowDown") handleArrowKeyDown(event);
         else if (event.key === "Enter") {
@@ -53,17 +77,17 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
             consolePrint(console_input, true);
 
             if (console_input.length) {
+                //TODO To lower case
                 const command_parts: string[] = console_input.split(" ");
+                const command_args: string [] = command_parts.slice(1);
 
 
                 switch (command_parts[0].toLowerCase()) {
                     case "clear":
-                        clearConsole();
+                        console_clear_command(command_args);
                         break;
-
                     case "delete":
-
-                        if (command_parts[1] == "aliases") {
+                        if (command_args[0] == "aliases") {
                             NapicuCookies.deleteCookies(COOKIES_SERVICES_ALIASES_NAME);
                             NapicuCookies.deleteCookies(COOKIES_CHARACTERISTICS_ALIASES_NAME);
                             NapicuCookies.deleteCookies(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME);
@@ -76,14 +100,17 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
                             consolePrint(`\t aliases - Removes aliases for services and characteristics.`);
                             consolePrint(`\t sizes - Removes window sizes.`);
                         }
+                        break;
 
+                    case "unsubscribe":
+                    case "un":
+                        console_unsubscribe_command(command_args);
                         break;
                     default:
 
                         consolePrintWrongCommand(command_parts);
                         break;
                 }
-
             }
 
             //consolePrint(inputText, true);
@@ -99,18 +126,17 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
         }
     };
 
-    const consolePrint = (msg: string, show_name: boolean = false) => {
+    const consolePrint = (msg: string, show_name: boolean = false): void => {
         setConsoleLines((prevLines) => [...prevLines, { command: msg, color: "white", show_name }]);
     }
 
-    const consolePrintError = (msg: string) => {
+    const consolePrintError = (msg: string): void => {
         setConsoleLines((prevLines) => [...prevLines, { command: msg, color: "red", show_name: false }]);
     }
 
-    const consolePrintWrongCommand = (command_parts: string[]) => {
+    const consolePrintWrongCommand = (command_parts: string[]): void => {
         consolePrintError(`${command_parts[0]}: command not found. Type 'help' for more information.`);
     }
-
 
     const handleArrowKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         event.preventDefault();
