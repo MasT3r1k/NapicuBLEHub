@@ -331,8 +331,24 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
 
     const consoleHandler = (command: string, args: string[]): void => {
-        console.log(command);
-        console.log(args);
+        if(consoleViewRef.current) {
+            switch(command) {
+                case "unsubscribe":
+                case "un":
+                    if(args[0] == "all") {
+                        consoleViewRef.current.consolePrint("Unsubscribing from all notifications...");
+                        socket.emit("unsubscribe_all_characteristic");
+                    }
+                   
+    
+                    break;
+                default: 
+                    consoleViewRef.current.consolePrintWrongCommand(command);
+                    break;
+            } 
+        } else {
+            alert("Error when forwarding a console reference! Try restarting the page and try again.");
+        }
     } 
 
     if(!hasRunRef.current) {

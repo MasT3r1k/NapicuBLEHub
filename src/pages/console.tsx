@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from "react";
-import { DeviceReactViewProps } from "./interfaces/Idevice";
+import { ConsoleReactViewProps, DeviceReactViewProps } from "./interfaces/Idevice";
 import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
 import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
@@ -8,7 +8,7 @@ import { EventEmitter } from 'events';
 export interface ConsoleViewRef {
     consolePrint: (msg: string, show_name?: boolean) => void;
     consolePrintError: (msg: string) => void;
-    consolePrintWrongCommand: (command_parts: string[]) => void;
+    consolePrintWrongCommand: (command_name: string) => void;
 }
 
 export class NapicuLogView {
@@ -35,7 +35,7 @@ export class NapicuLogView {
     }
 }
 
-const ConsoleView = React.forwardRef<ConsoleViewRef, DeviceReactViewProps>(({ device, consoleHandler }: DeviceReactViewProps, ref: React.ForwardedRef<ConsoleViewRef>): JSX.Element => {
+const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ device, consoleHandler }: ConsoleReactViewProps, ref: React.ForwardedRef<ConsoleViewRef>): JSX.Element => {
     const [logLines, setLogLines] = useState<ILogLine[]>(NapicuLogView.get_lines());
 
     const [consoleLines, setConsoleLines] = useState<IConsoleCommand[]>([]);
@@ -108,25 +108,13 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, DeviceReactViewProps>(({ de
                         }
                         break;
 
-                    // case "unsubscribe":
-                    // case "un":
-                    //     console_unsubscribe_command(command_args);
-                    //   break;
                     default:
                         consoleHandler(command_name, command_args);
-                        //consolePrintWrongCommand(command_parts);
                         break;
                 }
             }
 
-            //consolePrint(inputText, true);
-
             if (inputDivRef.current) inputDivRef.current.innerHTML = "";
-
-            // if (onEnterPress) {
-            //     onEnterPress(inputText); 
-            // }
-
 
             event.preventDefault();
         }
@@ -140,8 +128,8 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, DeviceReactViewProps>(({ de
         setConsoleLines((prevLines) => [...prevLines, { command: msg, color: "red", show_name: false }]);
     }
 
-    const consolePrintWrongCommand = (command_parts: string[]): void => {
-        consolePrintError(`${command_parts[0]}: command not found. Type 'help' for more information.`);
+    const consolePrintWrongCommand = (command_name: string): void => {
+        consolePrintError(`${command_name}: command not found. Type 'help' for more information.`);
     }
 
     const handleArrowKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
