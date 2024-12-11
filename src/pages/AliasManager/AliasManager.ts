@@ -1,14 +1,11 @@
 import NapicuCookies from "../Cookies";
 
-
 interface IServicesAliasesTable {
     name: string,
     alias: string
 }
 
 export default class NapicuAliasManager {
-
-
 
     constructor(private table_name: string) {}
 
@@ -22,6 +19,12 @@ export default class NapicuAliasManager {
             : [...aliases_table, { name: key, alias: value }];  
 
         NapicuCookies.setCookies<IServicesAliasesTable[]>(this.table_name, updated_aliases_table);
+    }
+
+    public get_name(name: string): string | null {
+        return NapicuCookies.getCookies<IServicesAliasesTable[]>(this.table_name)?.find((item: IServicesAliasesTable) => {
+            return item.name.toLowerCase() === name || item.alias.toLowerCase() === name
+        })?.name || null;
     }
 
     public get_alias_by_key(key: string): string | null {
