@@ -3,7 +3,11 @@ import { CharacteristicsReqHistory } from "../CharacteristicsReqHistory";
 
 export interface DeviceReactViewProps {
     device: ConnectedDevice;
-    consoleHandler?: (command: string, args: string[]) => void
+}
+
+export interface ConsoleReactViewProps {
+    device: ConnectedDevice;
+    consoleHandler: (command: string, args: string[]) => void
 }
 
 export interface ConnectedDeviceCharacteristicData extends ConnectedDeviceChar {
