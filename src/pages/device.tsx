@@ -329,17 +329,20 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
        });
     };
 
-
     const consoleHandler = (command: string, args: string[]): void => {
         if(consoleViewRef.current) {
             switch(command) {
                 case "unsubscribe":
                 case "un":
-                    if(args[0] == "all") {
+                    if(args[0] == "all") { //TODO Reserve "all" (aliases)
                         consoleViewRef.current.consolePrint("Unsubscribing from all notifications...");
-                        socket.emit("unsubscribe_all_characteristic");
+                        socket.emit("unsubscribe_all_characteristics");
+                    } else {
+                        const characteristic_uuid: string | null = characteristics_aliases_table.get_name(args[0]);
+                        if(characteristic_uuid) {
+                            socket.emit("unsubscribe_characteristic", characteristic_uuid);
+                        } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
                     }
-                   
     
                     break;
                 default: 
@@ -365,8 +368,6 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
             setSelectedCharacteristicIndex(i.char_index);
         }
     }
-
-
 
     return (
         <div className="is-flex is-justify-content-space-between is-flex-direction-column device-section-view">
