@@ -72,7 +72,9 @@ export default class NapicuServer {
 
       socket.on("notify", this.characteristic_notify);
 
-      socket.on("unsubscribe_all_characteristic", this.unsubscribe_all_characteristic);
+      socket.on("unsubscribe_all_characteristics", this.unsubscribe_all_characteristics);
+
+      socket.on("unsubscribe_characteristic", ((data: string) => this.unsubscribe_characteristic(data)));
 
       socket.on("disconnect", () => {
         const client_count: number = this.io.sockets.sockets.size;
@@ -287,15 +289,13 @@ export default class NapicuServer {
         NapicuLOG.LOG_I(`Successfully unsubscribed from notifications for characteristic with UUID: (${characteristic.uuid})`);
 
         return true;
-      }
-    } else {
-      NapicuLOG.LOG_E(`Characteristic with UUID: (${typeof input === "string" ? input : input.uuid}) not found!`);
-    }
-  
+      } else NapicuLOG.LOG_E(`Characteristic with UUID: (${typeof input === "string" ? input : input.uuid}) is not being watched!`);
+    } else NapicuLOG.LOG_E(`Characteristic with UUID: (${typeof input === "string" ? input : input.uuid}) not found!`);
+    
     return false;
   }
   
-  private unsubscribe_all_characteristic = (): void => {
+  private unsubscribe_all_characteristics = (): void => {
     NapicuLOG.LOG_I("Unsubscribing from all notifications...");
     this.connected_device_characteristics?.forEach((characteristic: noble.Characteristic) => {
       this.unsubscribe_characteristic(characteristic);
