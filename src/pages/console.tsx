@@ -1,9 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useImperativeHandle } from "react";
 import { DeviceReactViewProps } from "./interfaces/Idevice";
 import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
 import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
 import { EventEmitter } from 'events';
+
+export interface ConsoleViewRef {
+    consolePrint: (msg: string, show_name?: boolean) => void;
+    consolePrintError: (msg: string) => void;
+    consolePrintWrongCommand: (command_parts: string[]) => void;
+}
 
 export class NapicuLogView {
     private static consoleLogLines: ILogLine[] = [];
@@ -27,10 +33,10 @@ export class NapicuLogView {
       this.eventEmitter.on('update', callback);
       return () => this.eventEmitter.off('update', callback);
     }
-  }
-const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
-    const [logLines, setLogLines] = useState<ILogLine[]>(NapicuLogView.get_lines());
+}
 
+const ConsoleView = React.forwardRef<ConsoleViewRef, DeviceReactViewProps>(({ device, consoleHandler }: DeviceReactViewProps, ref: React.ForwardedRef<ConsoleViewRef>): JSX.Element => {
+    const [logLines, setLogLines] = useState<ILogLine[]>(NapicuLogView.get_lines());
 
     const [consoleLines, setConsoleLines] = useState<IConsoleCommand[]>([]);
     const [leftPanelResizing, setLeftPanelResizing] = useState<boolean>(false);
@@ -39,6 +45,12 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
     const inputDivRef = useRef<HTMLDivElement>(null);
     const logContainerRef = useRef<HTMLDivElement>(null);
+
+    useImperativeHandle(ref, () => ({
+        consolePrint,
+        consolePrintError,
+        consolePrintWrongCommand
+    }));
 
     const focusConsoleInput = (): void => {
         if (inputDivRef.current) {
@@ -62,13 +74,6 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
         }
     } 
 
-    const console_unsubscribe_command = (args: string[]): void => {
-        if(args[0]) {
-            //TODO Main functions
-        } else {
-            //TODO Help command
-        }
-    } 
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === "ArrowUp" || event.key === "ArrowDown") handleArrowKeyDown(event);
@@ -78,11 +83,12 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
             if (console_input.length) {
                 //TODO To lower case
-                const command_parts: string[] = console_input.split(" ");
+                const command_parts: string[] = console_input.split(" ").map((value: string) => value.replace(/\s+/g, '').toLowerCase());
+                const command_name: string = command_parts[0];
                 const command_args: string [] = command_parts.slice(1);
 
 
-                switch (command_parts[0].toLowerCase()) {
+                switch (command_name) {
                     case "clear":
                         console_clear_command(command_args);
                         break;
@@ -102,13 +108,13 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
                         }
                         break;
 
-                    case "unsubscribe":
-                    case "un":
-                        console_unsubscribe_command(command_args);
-                        break;
+                    // case "unsubscribe":
+                    // case "un":
+                    //     console_unsubscribe_command(command_args);
+                    //   break;
                     default:
-
-                        consolePrintWrongCommand(command_parts);
+                        consoleHandler(command_name, command_args);
+                        //consolePrintWrongCommand(command_parts);
                         break;
                 }
             }
@@ -257,6 +263,6 @@ const ConsoleView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
         </div>
     );
-}
+})
 
 export default ConsoleView;

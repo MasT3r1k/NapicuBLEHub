@@ -1,7 +1,7 @@
 import { ConnectedDeviceChar, BLEDeviceService, CharacteristicResponse } from "@/types/ble_device";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import NapicuCookies from "./Cookies";
-import ConsoleView, { NapicuLogView } from "./console";
+import ConsoleView, { ConsoleViewRef, NapicuLogView } from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps, SelectedCharacteristicCookiesData } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
 import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_UNWATCHED_CHARACTERISTICS } from "./config";
@@ -32,6 +32,8 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const [aliasInputValue, setAliasInputValue] = useState<string>("");
 
     const hasRunRef = useRef<boolean>(false);
+
+    const consoleViewRef = useRef<ConsoleViewRef>(null);
 
     //Init cookies
     const [deviceServices, setDeviceServices] = useState<ConnectedDeviceServiceData[]>(() => {
@@ -327,6 +329,12 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
        });
     };
 
+
+    const consoleHandler = (command: string, args: string[]): void => {
+        console.log(command);
+        console.log(args);
+    } 
+
     if(!hasRunRef.current) {
         socket.on("characteristic_response", onCharacteristicResponse);
         socket.on("subscribed_characteristics", onSubscribedCharacteristic);
@@ -341,6 +349,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
             setSelectedCharacteristicIndex(i.char_index);
         }
     }
+
 
 
     return (
@@ -503,7 +512,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                     </div>
 
                     <div className="bottom-console" >
-                        <ConsoleView device={device}/>
+                        <ConsoleView device={device} consoleHandler={consoleHandler} ref={consoleViewRef} />
                     </div>
                 </div>
             </div>
