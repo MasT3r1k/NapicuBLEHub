@@ -296,7 +296,7 @@ export default class NapicuServer {
   }
   
   private unsubscribe_all_characteristic = (): void => {
-    NapicuLOG.LOG_I("Unsubscribing from all notifications for all subscribed characteristics.");
+    NapicuLOG.LOG_I("Unsubscribing from all notifications...");
     this.connected_device_characteristics?.forEach((characteristic: noble.Characteristic) => {
       this.unsubscribe_characteristic(characteristic);
     });
