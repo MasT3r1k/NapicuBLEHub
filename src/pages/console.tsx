@@ -83,10 +83,9 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
             if (console_input.length) {
                 //TODO To lower case
-                const command_parts: string[] = console_input.split(" ").map((value: string) => value.replace(/\s+/g, '').toLowerCase()).filter((value: string) => value !== "");
+                const command_parts: string[] = console_input.split(" ").map(item => item.trim().toLowerCase())  .filter(item => item !== '');            
                 const command_name: string = command_parts[0];
                 const command_args: string [] = command_parts.slice(1);
-
 
                 switch (command_name) {
                     case "clear":
