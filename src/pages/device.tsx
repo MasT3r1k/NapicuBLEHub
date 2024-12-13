@@ -332,7 +332,6 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const consoleHandler = (command: string, args: string[]): void => {
         if(consoleViewRef.current) {
             switch(command) {
-
                 // UNSUBSCRIBE COMMAND
                 case "unsubscribe":
                 case "un":
@@ -340,29 +339,38 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                         consoleViewRef.current.consolePrint("Unsubscribing from all notifications...");
                         socket.emit("unsubscribe_all_characteristics");
                     } else {
-                        if(findServiceAndCharacteristicIndex(args[0])) {
-                            const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
-                            socket.emit("unsubscribe_characteristic", characteristic_uuid);
-                            break;
+                        const indexes = findServiceAndCharacteristicIndex(args[0]);
+
+                        if(indexes) {
+                            if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("notify")) {
+                                const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
+                                socket.emit("unsubscribe_characteristic", characteristic_uuid);
+                            } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'notify' property!`);
                         } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
                     }
                     break;
 
                 // SUBSCRIBE COMMAND
                 case "subscribe":
-                    case "sub":
-                        if(args[0]) { 
-                            if(findServiceAndCharacteristicIndex(args[0])) {
+                case "sub":
+
+                    if(args[0]) { 
+                        const indexes = findServiceAndCharacteristicIndex(args[0]);
+
+                        if(indexes) {
+                            if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("notify")) {
                                 const characteristic_uuid: string  = characteristics_aliases_table.get_name(args[0]) || args[0];
                                 socket.emit("subscribe_characteristic", characteristic_uuid);
-                                console.log("subed")
-                                break;
-                            } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
-                        }
-                        break;
-            default: 
-                    consoleViewRef.current.consolePrintWrongCommand(command);
+                            } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'notify' property!`);
+                        } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
+                    }
                     break;
+            
+            
+
+                default: 
+                consoleViewRef.current.consolePrintWrongCommand(command);
+                break;
             } 
         } else {
             alert("Error when forwarding a console reference! Try restarting the page and try again.");
