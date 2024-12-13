@@ -83,7 +83,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
             if (console_input.length) {
                 //TODO To lower case
-                const command_parts: string[] = console_input.split(" ").map((value: string) => value.replace(/\s+/g, '').toLowerCase());
+                const command_parts: string[] = console_input.split(" ").map((value: string) => value.replace(/\s+/g, '').toLowerCase()).filter((value: string) => value !== "");
                 const command_name: string = command_parts[0];
                 const command_args: string [] = command_parts.slice(1);
 
@@ -116,7 +116,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
             if (inputDivRef.current) inputDivRef.current.innerHTML = "";
 
-            event.preventDefault();
+            event.preventDefault(); 
         }
     };
 

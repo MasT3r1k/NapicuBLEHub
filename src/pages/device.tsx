@@ -332,6 +332,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const consoleHandler = (command: string, args: string[]): void => {
         if(consoleViewRef.current) {
             switch(command) {
+                // UNSUBSCRIBE COMMAND
                 case "unsubscribe":
                 case "un":
                     if(args[0] == "all") { //TODO Reserve "all" (aliases)
@@ -345,7 +346,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                     }
     
                     break;
-                default: 
+            default: 
                     consoleViewRef.current.consolePrintWrongCommand(command);
                     break;
             } 
