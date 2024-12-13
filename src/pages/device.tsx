@@ -331,8 +331,6 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
     const consoleHandler = (command: string, args: string[]): void => {
         if(consoleViewRef.current) {
-            console.log(command);
-
             switch(command) {
 
                 // UNSUBSCRIBE COMMAND
@@ -343,12 +341,9 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                         socket.emit("unsubscribe_all_characteristics");
                     } else {
                         if(findServiceAndCharacteristicIndex(args[0])) {
-                            const characteristic_uuid: string | null = characteristics_aliases_table.get_name(args[0]);
-
-                            if(characteristic_uuid) {
-                                socket.emit("unsubscribe_characteristic", characteristic_uuid || args[0]);
-                                break;
-                            }
+                            const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
+                            socket.emit("unsubscribe_characteristic", characteristic_uuid);
+                            break;
                         } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
                     }
                     break;
@@ -358,11 +353,10 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                     case "sub":
                         if(args[0]) { 
                             if(findServiceAndCharacteristicIndex(args[0])) {
-                                const characteristic_uuid: string | null = characteristics_aliases_table.get_name(args[0]);
-                                if(characteristic_uuid) {
-                                    socket.emit("subscribe_characteristic", characteristic_uuid);
-                                    break;
-                                }
+                                const characteristic_uuid: string  = characteristics_aliases_table.get_name(args[0]) || args[0];
+                                socket.emit("subscribe_characteristic", characteristic_uuid);
+                                console.log("subed")
+                                break;
                             } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
                         }
                         break;
