@@ -331,21 +331,41 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
     const consoleHandler = (command: string, args: string[]): void => {
         if(consoleViewRef.current) {
+            console.log(command);
+
             switch(command) {
+
                 // UNSUBSCRIBE COMMAND
                 case "unsubscribe":
                 case "un":
-                    if(args[0] == "all") { //TODO Reserve "all" (aliases)
+                    if(args[0] == "all") {
                         consoleViewRef.current.consolePrint("Unsubscribing from all notifications...");
                         socket.emit("unsubscribe_all_characteristics");
                     } else {
-                        const characteristic_uuid: string | null = characteristics_aliases_table.get_name(args[0]);
-                        if(characteristic_uuid) {
-                            socket.emit("unsubscribe_characteristic", characteristic_uuid);
+                        if(findServiceAndCharacteristicIndex(args[0])) {
+                            const characteristic_uuid: string | null = characteristics_aliases_table.get_name(args[0]);
+
+                            if(characteristic_uuid) {
+                                socket.emit("unsubscribe_characteristic", characteristic_uuid || args[0]);
+                                break;
+                            }
                         } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
                     }
-    
                     break;
+
+                // SUBSCRIBE COMMAND
+                case "subscribe":
+                    case "sub":
+                        if(args[0]) { 
+                            if(findServiceAndCharacteristicIndex(args[0])) {
+                                const characteristic_uuid: string | null = characteristics_aliases_table.get_name(args[0]);
+                                if(characteristic_uuid) {
+                                    socket.emit("subscribe_characteristic", characteristic_uuid);
+                                    break;
+                                }
+                            } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
+                        }
+                        break;
             default: 
                     consoleViewRef.current.consolePrintWrongCommand(command);
                     break;
