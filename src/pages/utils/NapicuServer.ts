@@ -76,6 +76,8 @@ export default class NapicuServer {
 
       socket.on("unsubscribe_characteristic", ((data: string) => this.unsubscribe_characteristic(data)));
 
+      socket.on("subscribe_characteristic", ((data: string) => this.characteristic_notify({type: "notify", uuid: data, value: null})));
+
       socket.on("disconnect", () => {
         const client_count: number = this.io.sockets.sockets.size;
         NapicuLOG.LOG_I("Client has disconnected. Number of connected clients:", client_count);
