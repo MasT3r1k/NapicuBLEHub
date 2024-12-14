@@ -338,7 +338,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                     if(args[0] == "all") {
                         consoleViewRef.current.consolePrint("Unsubscribing from all notifications...");
                         socket.emit("unsubscribe_all_characteristics");
-                    } else {
+                    } else if(args[0]) {
                         const indexes = findServiceAndCharacteristicIndex(args[0]);
 
                         if(indexes) {
@@ -347,13 +347,14 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                                 socket.emit("unsubscribe_characteristic", characteristic_uuid);
                             } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'notify' property!`);
                         } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
+                    } else {
+                        consoleViewRef.current.consolePrintError("No parameter provided for alias or UUID of the characteristic!");
                     }
                     break;
 
                 // SUBSCRIBE COMMAND
                 case "subscribe":
                 case "sub":
-
                     if(args[0]) { 
                         const indexes = findServiceAndCharacteristicIndex(args[0]);
 
@@ -363,9 +364,13 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                                 socket.emit("subscribe_characteristic", characteristic_uuid);
                             } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'notify' property!`);
                         } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
+                    } else {
+                        consoleViewRef.current.consolePrintError("No parameter provided for alias or UUID of the characteristic!");
                     }
                     break;
             
+                case "write":
+
             
 
                 default: 
