@@ -1,10 +1,10 @@
-import { ConnectedDeviceChar, BLEDeviceService, CharacteristicResponse } from "@/types/ble_device";
+import { ConnectedDeviceChar, BLEDeviceService, CharacteristicResponse, CharacteristicRequest } from "@/types/ble_device";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import NapicuCookies from "./Cookies";
 import ConsoleView, { ConsoleViewRef, NapicuLogView } from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps, SelectedCharacteristicCookiesData } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
-import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_UNWATCHED_CHARACTERISTICS } from "./config";
+import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_UNWATCHED_CHARACTERISTICS, COMMAND_MESSAGE_WRITE_USAGE, COMMAND_MESSAGE_SUBSCRIBE_USAGE, COMMAND_MESSAGE_UNSUBSCRIBE_USAGE, COMMAND_MESSAGE_READ_USAGE } from "./config";
 import { CharacteristicsReqHistory } from "./CharacteristicsReqHistory";
 import { service_aliases_table, characteristics_aliases_table } from ".";
 import { useSocket } from "./Socket";
@@ -332,46 +332,70 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const consoleHandler = (command: string, args: string[]): void => {
         if(consoleViewRef.current) {
             switch(command) {
-                // UNSUBSCRIBE COMMAND
-                case "unsubscribe":
-                case "un":
-                    if(args[0] == "all") {
-                        consoleViewRef.current.consolePrint("Unsubscribing from all notifications...");
-                        socket.emit("unsubscribe_all_characteristics");
-                    } else if(args[0]) {
-                        const indexes = findServiceAndCharacteristicIndex(args[0]);
-
-                        if(indexes) {
-                            if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("notify")) {
-                                const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
-                                socket.emit("unsubscribe_characteristic", characteristic_uuid);
-                            } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'notify' property!`);
-                        } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
-                    } else {
-                        consoleViewRef.current.consolePrintError("No parameter provided for alias or UUID of the characteristic!");
-                    }
-                    break;
-
                 // SUBSCRIBE COMMAND
                 case "subscribe":
                 case "sub":
                     if(args[0]) { 
-                        const indexes = findServiceAndCharacteristicIndex(args[0]);
+                        const characteristic_uuid: string  = characteristics_aliases_table.get_name(args[0]) || args[0];
+                        const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);
 
                         if(indexes) {
                             if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("notify")) {
-                                const characteristic_uuid: string  = characteristics_aliases_table.get_name(args[0]) || args[0];
                                 socket.emit("subscribe_characteristic", characteristic_uuid);
                             } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'notify' property!`);
                         } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
-                    } else {
-                        consoleViewRef.current.consolePrintError("No parameter provided for alias or UUID of the characteristic!");
-                    }
+                    } else consoleViewRef.current.printUsageError(COMMAND_MESSAGE_SUBSCRIBE_USAGE, "No parameter provided for alias or UUID of the characteristic!");
                     break;
-            
-                case "write":
 
-            
+                // UNSUBSCRIBE COMMAND
+                case "unsubscribe":
+                case "un":
+                    if(args[0] == "all") { // TODO Reserve alias 
+                        consoleViewRef.current.consolePrint("Unsubscribing from all notifications...");
+                        socket.emit("unsubscribe_all_characteristics");
+                    } else if(args[0]) {
+                        const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
+                        const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);
+
+                        if(indexes) {
+                            if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("notify")) {
+                                socket.emit("unsubscribe_characteristic", characteristic_uuid);
+                            } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'notify' property!`);
+                        } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
+                    } else consoleViewRef.current.printUsageError(COMMAND_MESSAGE_UNSUBSCRIBE_USAGE, "No parameter provided for alias or UUID of the characteristic!");
+                    break;
+
+                // WRITE COMMAND
+                case "write":
+                    if(args[0]) {
+                        const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
+                        const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);
+
+                        if(indexes) {
+                            if(args[1]) {
+                                if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("write")) {
+                                    const data: CharacteristicRequest = {type: "write", value: args[1], uuid: characteristic_uuid};
+                                    socket.emit("write", data);
+                                } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'write' property!`);
+                            } else consoleViewRef.current.printUsageError(COMMAND_MESSAGE_WRITE_USAGE, "No message parameter provided!");
+                        } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
+                    } else consoleViewRef.current.printUsageError(COMMAND_MESSAGE_WRITE_USAGE, "No parameter provided for alias or UUID of the characteristic!");
+                    break;
+
+                // READ COMMAND
+                case "read":
+                    if(args[0]) {
+                        const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
+                        const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);
+
+                        if(indexes) {
+                            if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("read")) {
+                                const data: CharacteristicRequest = {type: "read", value: null, uuid: characteristic_uuid};
+                                socket.emit("read", data);
+                            } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'read' property!`);
+                        } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
+                    } else consoleViewRef.current.printUsageError(COMMAND_MESSAGE_READ_USAGE, "No parameter provided for alias or UUID of the characteristic!");
+                    break;
 
                 default: 
                 consoleViewRef.current.consolePrintWrongCommand(command);

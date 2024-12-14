@@ -230,7 +230,11 @@ export default class NapicuServer {
   private characteristic_write = (data: CharacteristicRequest): void => {
     const characteristic: noble.Characteristic | undefined = this.connected_device_characteristics?.find((characteristic: noble.Characteristic) => characteristic.uuid == data.uuid);
     
+
+
     if(characteristic && data.value !== null) {
+      console.log(Buffer.from(data.value.toString()));
+
       characteristic.write(Buffer.from(data.value.toString()), true, (error: string) => {
         if(error) {
           NapicuLOG.LOG_E(`Failed to write data to characteristic with UUID: (${data.uuid}). Error:`, error);

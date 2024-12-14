@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from "react";
 import { ConsoleReactViewProps, DeviceReactViewProps } from "./interfaces/Idevice";
-import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
+import { CommandUsageMessage, IConsoleCommand, ILogLine } from "./interfaces/IConsole";
 import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
 import { EventEmitter } from 'events';
@@ -9,6 +9,7 @@ export interface ConsoleViewRef {
     consolePrint: (msg: string, show_name?: boolean) => void;
     consolePrintError: (msg: string) => void;
     consolePrintWrongCommand: (command_name: string) => void;
+    printUsageError: (usage: CommandUsageMessage, error_message: string) => void;
 }
 
 export class NapicuLogView {
@@ -49,7 +50,8 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
     useImperativeHandle(ref, () => ({
         consolePrint,
         consolePrintError,
-        consolePrintWrongCommand
+        consolePrintWrongCommand,
+        printUsageError
     }));
 
     const focusConsoleInput = (): void => {
@@ -83,7 +85,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
             if (console_input.length) {
                 //TODO To lower case
-                const command_parts: string[] = console_input.split(" ").map(item => item.trim().toLowerCase())  .filter(item => item !== '');            
+                const command_parts: string[] = console_input.match(/(['"])(.*?)\1|\S+/g)?.map(item => item.replace(/['"]/g, '').trim().toLowerCase()) || [];      
                 const command_name: string = command_parts[0];
                 const command_args: string [] = command_parts.slice(1);
 
@@ -129,6 +131,12 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
     const consolePrintWrongCommand = (command_name: string): void => {
         consolePrintError(`${command_name}: command not found. Type 'help' for more information.`);
+    }
+
+    const printUsageError = (usage: CommandUsageMessage, error_message: string) => {
+        consolePrintError(error_message);
+        consolePrint(`Usage: ${usage.usage}`);
+        usage.usage_details.forEach(detail => consolePrint(`\t ${detail}`));
     }
 
     const handleArrowKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {

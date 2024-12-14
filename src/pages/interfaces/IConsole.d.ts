@@ -9,3 +9,8 @@ export interface ILogLine {
     message: string,
     color: "red" | "white"
 }
+
+export interface CommandUsageMessage {
+    usage: string, 
+    usage_details: string[]
+}
