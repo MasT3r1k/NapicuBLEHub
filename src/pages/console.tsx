@@ -150,6 +150,17 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
         // }
     };
 
+    const handlePaste = (event: React.ClipboardEvent<HTMLDivElement>) => {
+        event.preventDefault(); 
+        const plainText = event.clipboardData.getData("text/plain");
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents(); 
+            range.insertNode(document.createTextNode(plainText)); 
+        }
+    };
+    
     const clearConsole = () => {
         setConsoleLines([]);
     }
@@ -232,6 +243,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                             ref={inputDivRef}
                             onKeyDown={handleKeyDown}
                             onInput={handleInput}
+                            onPaste={handlePaste}
                         ></div>
                     </div>
                 </div>
