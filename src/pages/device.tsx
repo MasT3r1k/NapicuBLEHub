@@ -372,12 +372,12 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                         const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);
 
                         if(indexes) {
-                            if(args[1]) {
-                                if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("write")) {
+                            if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("write")) {
+                                if(args[1]) {
                                     const data: CharacteristicRequest = {type: "write", value: args[1], uuid: characteristic_uuid};
                                     socket.emit("write", data);
-                                } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'write' property!`);
-                            } else consoleViewRef.current.printUsageError(COMMAND_MESSAGE_WRITE_USAGE, "No message parameter provided!");
+                                } else consoleViewRef.current.printUsageError(COMMAND_MESSAGE_WRITE_USAGE, "No message parameter provided!");
+                            } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'write' property!`);
                         } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
                     } else consoleViewRef.current.printUsageError(COMMAND_MESSAGE_WRITE_USAGE, "No parameter provided for alias or UUID of the characteristic!");
                     break;
