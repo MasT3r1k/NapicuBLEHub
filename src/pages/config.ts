@@ -26,10 +26,14 @@ export const SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH: number = 500;
 export const SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH: number = 240;
 export const SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH: number = 150; 
 
+// Commands 
+export const COMMAND_SUBSCRIBE: string[] = ["subscribe", "sub"];
+export const COMMAND_UNSUBSCRIBE: string[] = ["unsubscribe", "un"];
+export const COMMAND_WRITE: string[] = ["write"];
+export const COMMAND_READ: string[] = ["read"];
+
+
 // Command Messages
-
-
-
 export const COMMAND_MESSAGE_SUBSCRIBE_USAGE: CommandUsageMessage = {
     usage: "subscribe <UUID>",
     usage_details: [
