@@ -33,6 +33,16 @@ export const COMMAND_WRITE: string[] = ["write"];
 export const COMMAND_READ: string[] = ["read"];
 
 
+export function GET_ALL_COMMANDS(): string[] {
+    return [
+        ...COMMAND_SUBSCRIBE,
+        ...COMMAND_UNSUBSCRIBE,
+        ...COMMAND_WRITE,
+        ...COMMAND_READ
+    ];
+}
+
+
 // Command Messages
 export const COMMAND_MESSAGE_SUBSCRIBE_USAGE: CommandUsageMessage = {
     usage: "subscribe <UUID>",

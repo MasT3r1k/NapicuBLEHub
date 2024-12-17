@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from "react";
 import { ConsoleReactViewProps, DeviceReactViewProps } from "./interfaces/Idevice";
 import { CommandUsageMessage, IConsoleCommand, ILogLine } from "./interfaces/IConsole";
-import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
+import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, GET_ALL_COMMANDS, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
 import { EventEmitter } from 'events';
 
@@ -79,6 +79,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === "ArrowUp" || event.key === "ArrowDown") handleArrowKeyDown(event);
+        else if (event.key === "Tab") handleTabKeyDown(event);
         else if (event.key === "Enter") {
             const console_input: string = inputDivRef.current?.innerText || "";
             consolePrint(console_input, true);
@@ -143,6 +144,45 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
         event.preventDefault();
     }
 
+    const handleTabKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        const reg_input_result: RegExpMatchArray | null = (inputDivRef.current?.innerText || "").match(/(\S+|\s+)/g);
+
+
+        console.log(reg_input_result?.length);
+
+        if(reg_input_result) {
+            // Autocomplete for command names
+            if(reg_input_result.length === 1 && inputDivRef.current) {
+                const matching_commands = GET_ALL_COMMANDS().filter((command_name: string) =>
+                    command_name.startsWith(reg_input_result[0].toLowerCase())
+                );
+        
+                if (matching_commands.length === 1) {
+                    inputDivRef.current.innerText = matching_commands[0];
+                    setCursorToEnd();
+                } else if (matching_commands.length > 1) {
+                    consolePrint(inputDivRef.current.innerText, true);
+                    consolePrint(matching_commands.join(", "));
+    
+                }
+            }
+        } else {
+            if(inputDivRef.current) {
+                consolePrint(inputDivRef.current.innerText, true);
+                consolePrint(GET_ALL_COMMANDS().join(", "));
+            }
+
+        }
+
+
+
+
+ 
+
+
+        event.preventDefault();
+    }
+
     const handleInput = () => {
         const inputText = inputDivRef.current?.innerText || "";
         // if (onInputChange) {
@@ -191,6 +231,18 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
+    };
+
+    const setCursorToEnd = () => {
+        const range = document.createRange();
+        const selection = window.getSelection();
+      
+        if (selection && inputDivRef.current) {
+          range.selectNodeContents(inputDivRef.current);
+          range.collapse(false); 
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
     };
 
     useEffect(() => {
