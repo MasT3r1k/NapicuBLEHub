@@ -148,32 +148,33 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
         const reg_input_result: RegExpMatchArray | null = (inputDivRef.current?.innerText || "").match(/(\S+|\s+)/g);
 
 
-        console.log(reg_input_result?.length);
 
-        if(reg_input_result) {
+
+        if(inputDivRef.current) {
             // Autocomplete for command names
-            if(reg_input_result.length === 1 && inputDivRef.current) {
-                const matching_commands = GET_ALL_COMMANDS().filter((command_name: string) =>
-                    command_name.startsWith(reg_input_result[0].toLowerCase())
-                );
-        
-                if (matching_commands.length === 1) {
-                    inputDivRef.current.innerText = matching_commands[0];
-                    setCursorToEnd();
-                } else if (matching_commands.length > 1) {
-                    consolePrint(inputDivRef.current.innerText, true);
-                    consolePrint(matching_commands.join(", "));
-    
+            if(reg_input_result?.[0].trim().length) { 
+                if(reg_input_result.length === 1) {
+                    const matching_commands = GET_ALL_COMMANDS().filter((command_name: string) =>
+                        command_name.startsWith(reg_input_result[0].toLowerCase())
+                    );
+            
+                    if (matching_commands.length === 1) {
+                        inputDivRef.current.innerText = matching_commands[0];
+                        setCursorToEnd();
+                    } else if (matching_commands.length > 1) {
+                        consolePrint(inputDivRef.current.innerText, true);
+                        consolePrint(matching_commands.join(", "));
+                    }
                 }
-            }
-        } else {
-            if(inputDivRef.current) {
+            } else {
+                // Returns all available commands
+                inputDivRef.current.innerText = "";
                 consolePrint(inputDivRef.current.innerText, true);
-                console.log(GET_ALL_COMMANDS());
                 consolePrint(GET_ALL_COMMANDS().join(", "));
             }
+        } 
 
-        }
+
 
 
 
