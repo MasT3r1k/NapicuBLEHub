@@ -34,15 +34,18 @@ export const COMMAND_WRITE: ConsoleCommand = new ConsoleCommand("write");
 export const COMMAND_READ: ConsoleCommand = new ConsoleCommand("read");
 
 
-export function GET_ALL_COMMANDS(): string[] {
+export function GET_ALL_COMMANDS(): ConsoleCommand[] {
     return [
-        COMMAND_SUBSCRIBE.get_command_name(),
-        COMMAND_UNSUBSCRIBE.get_command_name(),
-        COMMAND_WRITE.get_command_name(),
-        COMMAND_READ.get_command_name()
+        COMMAND_SUBSCRIBE,
+        COMMAND_UNSUBSCRIBE,
+        COMMAND_WRITE,
+        COMMAND_READ
     ];
 }
 
+export function GET_ALL_COMMANDS_NAMES(): string[] {
+    return GET_ALL_COMMANDS().map((command: ConsoleCommand) => command.get_command_name());
+}
 
 // Command Messages
 export const COMMAND_MESSAGE_SUBSCRIBE_USAGE: CommandUsageMessage = {

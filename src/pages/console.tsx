@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from "react";
 import { ConsoleReactViewProps, DeviceReactViewProps } from "./interfaces/Idevice";
 import { CommandUsageMessage, IConsoleCommand, ILogLine } from "./interfaces/IConsole";
-import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, GET_ALL_COMMANDS, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
+import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, GET_ALL_COMMANDS_NAMES, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
 import { EventEmitter } from 'events';
 
@@ -152,7 +152,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
             // Autocomplete for command names
             if(reg_input_result?.[0].trim().length) { 
                 if(reg_input_result.length === 1) {
-                    const matching_commands = GET_ALL_COMMANDS().filter((command_name: string) =>
+                    const matching_commands = GET_ALL_COMMANDS_NAMES().filter((command_name: string) =>
                         command_name.startsWith(reg_input_result[0].toLowerCase())
                     );
             
@@ -168,7 +168,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                 // Returns all available commands
                 inputDivRef.current.innerText = "";
                 consolePrint(inputDivRef.current.innerText, true);
-                consolePrint(GET_ALL_COMMANDS().join(", "));
+                consolePrint(GET_ALL_COMMANDS_NAMES().join(", "));
             }
         } 
 
