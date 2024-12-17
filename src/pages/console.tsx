@@ -77,7 +77,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
     } 
 
 
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {    
         if (event.key === "ArrowUp" || event.key === "ArrowDown") handleArrowKeyDown(event);
         else if (event.key === "Tab") handleTabKeyDown(event);
         else if (event.key === "Enter") {
@@ -117,7 +117,6 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
             }
 
             if (inputDivRef.current) inputDivRef.current.innerHTML = "";
-
             event.preventDefault(); 
         }
     };
@@ -149,7 +148,6 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
 
 
-
         if(inputDivRef.current) {
             // Autocomplete for command names
             if(reg_input_result?.[0].trim().length) { 
@@ -173,14 +171,6 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                 consolePrint(GET_ALL_COMMANDS().join(", "));
             }
         } 
-
-
-
-
-
-
- 
-
 
         event.preventDefault();
     }

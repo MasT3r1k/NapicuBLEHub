@@ -334,11 +334,14 @@
 
 .console-split {
     display: flex;
+    position: absolute;
     height: 100%;
+    width: 100%;
 }
 
 .console-split>div {
     padding: 10px 15px;
+    overflow-y: auto;
 }
 
 .console-right {
