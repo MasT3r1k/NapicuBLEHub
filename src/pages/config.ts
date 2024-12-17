@@ -1,4 +1,5 @@
 import { CommandUsageMessage } from "./interfaces/IConsole";
+import { ConsoleCommand } from "./utils/Command";
 
 export const COOKIES_LEFT_PANEL_WIDTH_NAME: string = "left_panel_width";
 export const COOKIES_CONSOLE_PANEL_HEIGHT_NAME: string = "console_panel_height";
@@ -27,18 +28,18 @@ export const SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH: number = 240;
 export const SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH: number = 150; 
 
 // Commands 
-export const COMMAND_SUBSCRIBE: string[] = ["subscribe", "sub"];
-export const COMMAND_UNSUBSCRIBE: string[] = ["unsubscribe", "un"];
-export const COMMAND_WRITE: string[] = ["write"];
-export const COMMAND_READ: string[] = ["read"];
+export const COMMAND_SUBSCRIBE: ConsoleCommand = new ConsoleCommand("subscribe", ["sub"]);
+export const COMMAND_UNSUBSCRIBE: ConsoleCommand = new ConsoleCommand("unsubscribe", ["un"]); 
+export const COMMAND_WRITE: ConsoleCommand = new ConsoleCommand("write");
+export const COMMAND_READ: ConsoleCommand = new ConsoleCommand("read");
 
 
 export function GET_ALL_COMMANDS(): string[] {
     return [
-        ...COMMAND_SUBSCRIBE,
-        ...COMMAND_UNSUBSCRIBE,
-        ...COMMAND_WRITE,
-        ...COMMAND_READ
+        COMMAND_SUBSCRIBE.get_command_name(),
+        COMMAND_UNSUBSCRIBE.get_command_name(),
+        COMMAND_WRITE.get_command_name(),
+        COMMAND_READ.get_command_name()
     ];
 }
 

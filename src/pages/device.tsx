@@ -332,7 +332,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const consoleHandler = (command: string, args: string[]): void => {
         if(consoleViewRef.current) {
             // SUBSCRIBE COMMAND
-            if(COMMAND_SUBSCRIBE.includes(command)) {
+            if(COMMAND_SUBSCRIBE.get_all_command_variants().includes(command)) {
                 if(args[0]) { 
                     const characteristic_uuid: string  = characteristics_aliases_table.get_name(args[0]) || args[0];
                     const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);
@@ -346,7 +346,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                 
             } 
             // UNSUBSCRIBE COMMAND
-            else if (COMMAND_UNSUBSCRIBE.includes(command)) {
+            else if (COMMAND_UNSUBSCRIBE.get_all_command_variants().includes(command)) {
                 if(args[0] == "all") { // TODO Reserve alias 
                     consoleViewRef.current.consolePrint("Unsubscribing from all notifications...");
                     socket.emit("unsubscribe_all_characteristics");
@@ -363,7 +363,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                 
             }
             // WRITE COMMAND
-            else if(COMMAND_WRITE.includes(command)) {
+            else if(COMMAND_WRITE.get_all_command_variants().includes(command)) {
                 if(args[0]) {
                     const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
                     const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);
@@ -379,7 +379,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                 } else consoleViewRef.current.printUsageError(COMMAND_MESSAGE_WRITE_USAGE, "No parameter provided for alias or UUID of the characteristic!");
             }
             // READ COMMAND
-            else if(COMMAND_READ.includes(command)) {
+            else if(COMMAND_READ.get_all_command_variants().includes(command)) {
                 if(args[0]) {
                     const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
                     const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);

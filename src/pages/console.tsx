@@ -169,6 +169,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
         } else {
             if(inputDivRef.current) {
                 consolePrint(inputDivRef.current.innerText, true);
+                console.log(GET_ALL_COMMANDS());
                 consolePrint(GET_ALL_COMMANDS().join(", "));
             }
 
