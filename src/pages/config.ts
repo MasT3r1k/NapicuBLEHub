@@ -28,10 +28,41 @@ export const SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH: number = 240;
 export const SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH: number = 150; 
 
 // Commands 
-export const COMMAND_SUBSCRIBE: ConsoleCommand = new ConsoleCommand("subscribe", ["sub"]);
-export const COMMAND_UNSUBSCRIBE: ConsoleCommand = new ConsoleCommand("unsubscribe", ["un"]); 
-export const COMMAND_WRITE: ConsoleCommand = new ConsoleCommand("write");
-export const COMMAND_READ: ConsoleCommand = new ConsoleCommand("read");
+export const COMMAND_SUBSCRIBE: ConsoleCommand = new ConsoleCommand("subscribe", ["sub"], [
+    {
+        name: "uuid",
+        type: "UUID",
+        usage_description: "The UUID of the characteristic you want to subscribe to."
+    }
+]);
+
+export const COMMAND_UNSUBSCRIBE: ConsoleCommand = new ConsoleCommand("unsubscribe", ["un"], [
+    {
+        name: "uuid",
+        type: "UUID",
+        usage_description: "The UUID of the characteristic you want to unsubscribe from."
+    }
+]); 
+
+export const COMMAND_WRITE: ConsoleCommand = new ConsoleCommand("write", [], [
+    {
+        name: "uuid",
+        type: "UUID",
+        usage_description: "The UUID of the characteristic you want to write to."
+    },
+    {
+        name: "message",
+        type: "text",
+        usage_description: "The data to be written to the characteristic."
+    }
+]);
+export const COMMAND_READ: ConsoleCommand = new ConsoleCommand("read", [], [
+    {
+        name: "uuid",
+        type: "UUID",
+        usage_description: "The UUID of the characteristic you want to read from."
+    },
+]);
 
 
 export function GET_ALL_COMMANDS(): ConsoleCommand[] {
@@ -45,34 +76,4 @@ export function GET_ALL_COMMANDS(): ConsoleCommand[] {
 
 export function GET_ALL_COMMANDS_NAMES(): string[] {
     return GET_ALL_COMMANDS().map((command: ConsoleCommand) => command.get_command_name());
-}
-
-// Command Messages
-export const COMMAND_MESSAGE_SUBSCRIBE_USAGE: CommandUsageMessage = {
-    usage: "subscribe <UUID>",
-    usage_details: [
-        "UUID      - The UUID of the characteristic you want to subscribe to.",
-    ],
-}
-
-export const COMMAND_MESSAGE_UNSUBSCRIBE_USAGE: CommandUsageMessage = {
-    usage: "unsubscribe <UUID>",
-    usage_details: [
-        "UUID      - The UUID of the characteristic you want to unsubscribe from.",
-    ],
-}
-
-export const COMMAND_MESSAGE_WRITE_USAGE: CommandUsageMessage = {
-    usage: `write <UUID> "<message>"`,
-    usage_details: [
-        "UUID      - The UUID of the characteristic you want to write to.",
-        "message   - The data to be written to the characteristic."
-    ],
-}
-
-export const COMMAND_MESSAGE_READ_USAGE: CommandUsageMessage = {
-    usage: "read <UUID>",
-    usage_details: [
-        "UUID      - The UUID of the characteristic you want to read from.",
-    ],
 }

@@ -1,15 +1,16 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from "react";
 import { ConsoleReactViewProps, DeviceReactViewProps } from "./interfaces/Idevice";
-import { CommandUsageMessage, IConsoleCommand, ILogLine } from "./interfaces/IConsole";
+import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
 import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, GET_ALL_COMMANDS_NAMES, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
 import { EventEmitter } from 'events';
+import { ConsoleCommand, IConsoleCommandParams } from "./utils/Command";
 
 export interface ConsoleViewRef {
     consolePrint: (msg: string, show_name?: boolean) => void;
     consolePrintError: (msg: string) => void;
     consolePrintWrongCommand: (command_name: string) => void;
-    printUsageError: (usage: CommandUsageMessage, error_message: string) => void;
+    printUsageError: (command: ConsoleCommand, error_message: string) => void;
 }
 
 export class NapicuLogView {
@@ -133,10 +134,16 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
         consolePrintError(`${command_name}: command not found. Type 'help' for more information.`);
     }
 
-    const printUsageError = (usage: CommandUsageMessage, error_message: string) => {
+    const printUsageError = (command: ConsoleCommand, error_message: string) => {
         consolePrintError(error_message);
-        consolePrint(`Usage: ${usage.usage}`);
-        usage.usage_details.forEach(detail => consolePrint(`\t ${detail}`));
+        consolePrint(`Usage: ${command.get_command_name()} ${command.get_command_params().map(
+            (par: IConsoleCommandParams) => ` <${par.name.toUpperCase()}>`).join('')}`);
+      
+        const max_key_length: number = Math.max(...command.get_command_params().map((par: IConsoleCommandParams) => par.name.length));
+
+        command.get_command_params().forEach((detail: IConsoleCommandParams) => {
+                consolePrint(`\t ${detail.name.toUpperCase().padEnd(max_key_length, " ")}   - ${detail.usage_description}`);
+        }); 
     }
 
     const handleArrowKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
