@@ -77,3 +77,10 @@ export function GET_ALL_COMMANDS(): ConsoleCommand[] {
 export function GET_ALL_COMMANDS_NAMES(): string[] {
     return GET_ALL_COMMANDS().map((command: ConsoleCommand) => command.get_command_name());
 }
+
+export function GET_COMMAND_BY_NAME(command_name: string): ConsoleCommand | null {
+    return GET_ALL_COMMANDS().find((command: ConsoleCommand) => 
+        command.get_command_name().toLowerCase() === command_name.toLowerCase() || 
+        command.get_shortcuts().find((shortcut: string) => shortcut.toLowerCase() === command_name.toLowerCase())
+    ) || null;
+}

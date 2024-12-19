@@ -30,6 +30,10 @@ export class ConsoleCommand {
         return this.name;
     }
 
+    public get_shortcuts(): string[] {
+        return this.shortcuts;
+    }
+
     public get_command_params(): IConsoleCommandParams[] {
         return this.command_params;
     }

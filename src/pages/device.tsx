@@ -9,7 +9,6 @@ import { CharacteristicsReqHistory } from "./CharacteristicsReqHistory";
 import { service_aliases_table, characteristics_aliases_table } from ".";
 import { useSocket } from "./Socket";
 
-
 const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const socket = useSocket();
 
@@ -393,9 +392,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                     } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
                 } else consoleViewRef.current.printUsageError(COMMAND_READ, "No parameter provided for alias or UUID of the characteristic!");
             } 
-            else {
-                consoleViewRef.current.consolePrintWrongCommand(command);
-            }
+            else consoleViewRef.current.consolePrintWrongCommand(command);
             
         } else {
             alert("Error when forwarding a console reference! Try restarting the page and try again.");

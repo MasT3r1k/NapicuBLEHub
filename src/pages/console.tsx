@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from "react";
 import { ConsoleReactViewProps, DeviceReactViewProps } from "./interfaces/Idevice";
 import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
-import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, GET_ALL_COMMANDS_NAMES, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
+import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, GET_ALL_COMMANDS_NAMES, GET_COMMAND_BY_NAME, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
 import { EventEmitter } from 'events';
 import { ConsoleCommand, IConsoleCommandParams } from "./utils/Command";
+import { BLEDeviceService, ConnectedDeviceChar } from "@/types/ble_device";
 
 export interface ConsoleViewRef {
     consolePrint: (msg: string, show_name?: boolean) => void;
@@ -47,6 +48,9 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
     const inputDivRef = useRef<HTMLDivElement>(null);
     const logContainerRef = useRef<HTMLDivElement>(null);
+
+    const [allCharacteristicsUUID, setAllCharacteristicsUUID] = useState<string[]>([]);
+    const predictorSelectedUUID = useRef<number>(0);
 
     useImperativeHandle(ref, () => ({
         consolePrint,
@@ -152,15 +156,14 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
     const handleTabKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         const reg_input_result: RegExpMatchArray | null = (inputDivRef.current?.innerText || "").match(/(\S+|\s+)/g);
-
-
+        const reg_input_without_space_result: string[] | null = reg_input_result?.filter(item => item.trim() !== '') || null;
 
         if(inputDivRef.current) {
             // Autocomplete for command names
-            if(reg_input_result?.[0].trim().length) { 
+            if(reg_input_without_space_result?.length && reg_input_result?.length) { 
                 if(reg_input_result.length === 1) {
                     const matching_commands = GET_ALL_COMMANDS_NAMES().filter((command_name: string) =>
-                        command_name.startsWith(reg_input_result[0].toLowerCase())
+                        command_name.startsWith(reg_input_without_space_result[0].toLowerCase())
                     );
             
                     if (matching_commands.length === 1) {
@@ -169,6 +172,28 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                     } else if (matching_commands.length > 1) {
                         consolePrint(inputDivRef.current.innerText, true);
                         consolePrint(matching_commands.join(", "));
+                    }
+                } else if(reg_input_result.length > 1) {
+                    const command: ConsoleCommand | null = GET_COMMAND_BY_NAME(reg_input_without_space_result[0]);
+
+                    
+                    if(command) {
+                        const param: IConsoleCommandParams = command.get_command_params()[reg_input_without_space_result.length - 1];
+
+
+                        switch (param?.type) {
+                            case "text":
+         
+                                break;
+
+                            case "UUID":
+
+                                inputDivRef.current.innerText += allCharacteristicsUUID[0];
+                                setCursorToEnd();
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             } else {
@@ -244,6 +269,16 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
         }
     };
 
+    const getAllCharUUIDs = (): string[] => {
+        let uuids: string[] = [];
+        device.services.forEach((service: BLEDeviceService) => {
+            service.chars.forEach((char: ConnectedDeviceChar) => {
+                uuids.push(char.uuid);
+            });
+        });
+        return uuids;
+    }
+
     useEffect(() => {
         const unsubscribe = NapicuLogView.subscribe(() => {
           setLogLines([...NapicuLogView.get_lines()]);
@@ -257,6 +292,11 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
           logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
         }
     }, [logLines]);
+
+    useEffect(() => {
+        console.log("Device updated");
+        setAllCharacteristicsUUID(getAllCharUUIDs());
+    }, [device]);
 
     return (
         <div className="console-split"> 
