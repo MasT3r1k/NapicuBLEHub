@@ -53,6 +53,10 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         });
     });
 
+    const disconnectFromDevice = () => {
+        socket.emit("disconnect_device");
+    };
+
     const handleMouseDownLeftResizer = (event: React.MouseEvent) => {
         event.preventDefault();
 
@@ -115,27 +119,27 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         setSelectedCharacteristicIndex(0);
         setExpandedCharacteristicIndex(-1);
         if (selectedServiceIndex != index) setExpandedServiceIndex(-1);
-    }
+    };
 
     const onClickServiceEdit = (event: React.MouseEvent<HTMLImageElement, MouseEvent>, index: number): void => {
         event.stopPropagation();
         onClickService(index);
         setExpandedServiceIndex(expandedServiceIndex == index ? -1 : index);
         setAliasInputValue(deviceServices[index].alias || deviceServices[index].uuid);
-    }
+    };
 
     const onClickCharacteristic = (index: number): void => {
         setSelectedCharacteristicIndex(index);
         setExpandedServiceIndex(-1);
         if (selectedCharacteristicIndex != index) setExpandedCharacteristicIndex(-1);
-    }
+    };
 
     const onClickCharacteristicEdit = (event: React.MouseEvent<HTMLImageElement, MouseEvent>, index: number): void => {
         event.stopPropagation();
         onClickCharacteristic(index);
         setExpandedCharacteristicIndex(expandedServiceIndex == index ? -1 : index);
         setAliasInputValue(deviceServices[selectedServiceIndex].chars[index].alias || deviceServices[selectedServiceIndex].chars[index].uuid);
-    }
+    };
 
     const handleServiceNameKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
@@ -265,7 +269,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         });
 
         updateHistory(response.uuid, response.data, "read");
-    }
+    };
 
     const onSubscribedCharacteristic = (subscribed_characteristics: string[]): void => {
         setDeviceServices((prevServices: ConnectedDeviceServiceData[]) => {
@@ -278,7 +282,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
             }));
         });  
         
-    }
+    };
 
     useEffect(() => {
         const selected_device_chars_table: SelectedCharacteristicCookiesData = 
@@ -397,7 +401,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
         } else {
             alert("Error when forwarding a console reference! Try restarting the page and try again.");
         }
-    } 
+    };
 
     if(!hasRunRef.current) {
         socket.on("characteristic_response", onCharacteristicResponse);
@@ -412,7 +416,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
             setSelectedServiceIndex(i.service_index);
             setSelectedCharacteristicIndex(i.char_index);
         }
-    }
+    };
 
     return (
         <div className="is-flex is-justify-content-space-between is-flex-direction-column device-section-view">
@@ -457,7 +461,7 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
                         <div className="navbar-item">
                             <div className="buttons">
-                                <button className="button disconnect-button has-text-white has-text-weight-bold">
+                                <button className="button disconnect-button has-text-white has-text-weight-bold" onClick={disconnectFromDevice}>
                                     <span>
                                         Disconnect
                                     </span>

@@ -36,7 +36,7 @@ const Home = (): JSX.Element => {
     socket.on("device", (device: Device) => {
       setDevices((prevDevices) => {
  
-        if (!prevDevices.some((d) => d.address === device.address)) { //TODO
+        if (!prevDevices.some((d) => d.address === device.address)) {
           return [...prevDevices, device];
         }
         return prevDevices;
@@ -56,11 +56,17 @@ const Home = (): JSX.Element => {
       setConnectingData(data);
     });
   
-    socket.on("connected_device", (data: ConnectedDevice) => {
-      setConnectedDevice(data);
-      setConnectingData(undefined);
-      NapicuLogView.clear();
-      NapicuLogView.print({name: data.address, message: "Connected", color: "white"});
+    socket.on("connected_device", (data: ConnectedDevice | null) => {
+      if(data) {
+        setConnectedDevice(data);
+        setConnectingData(undefined);
+        setDevices([]);
+        NapicuLogView.clear();
+        NapicuLogView.print({name: data.address, message: "Connected", color: "white"});
+      } else {
+        setConnectedDevice(undefined);
+      }
+
     });
 
     socket.on("connected_device_rssi", (data: number) => {
@@ -86,12 +92,11 @@ const Home = (): JSX.Element => {
 
   const on_click_filter_button = (): void => {
     setFilter(!is_filter_menu);
-  }
+  };
 
   const handle_unknown_checkbox_change = (event: any) => {
     setIsChecked(event.target.checked);  
   };
-
 
   const handle_uuid_input_change = (event: any) => {
     const newValue = event.target.value.replace(/-/g, ""); 

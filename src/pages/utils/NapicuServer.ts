@@ -66,6 +66,8 @@ export default class NapicuServer {
 
       socket.on("connect_device", this.connect);
 
+      socket.on("disconnect_device", this.disconnect_device);
+
       socket.on("read", this.characteristic_read);
 
       socket.on("write", this.characteristic_write);
@@ -90,6 +92,7 @@ export default class NapicuServer {
           NapicuLOG.LOG_I("Setting found_peripheral to []...");
           this.found_peripheral = [];
           this.subscribed_characteristic_uuids = [];
+          socket.removeAllListeners();
           // NapicuLOG.LOG_I("Restarting Noble.");
           // noble.reset();
         }
@@ -109,7 +112,7 @@ export default class NapicuServer {
         const emit_data: ConnectingDevice = {address: peripheral.address, local_name: peripheral.advertisement.localName};
         this.io.emit("connecting", emit_data);
         this.stop_scan();
-        noble.removeListener("discover", this.noble_discover);
+        noble.removeAllListeners("discover");
         noble.startScanning([], true);
 
         let connection_timeout: NodeJS.Timeout = setTimeout(() => {
@@ -120,16 +123,22 @@ export default class NapicuServer {
         noble.on('discover', (found_peripheral: noble.Peripheral) => {
           if(found_peripheral.address == peripheral.address && found_peripheral.connectable) {
             clearTimeout(connection_timeout);
-            noble.removeListener("discover", this.noble_discover);
+            noble.removeAllListeners("discover");
             noble.stopScanning();
 
+            noble.reset();
             peripheral.connect();
-          
-            peripheral.on("connect", () => {
+
+            peripheral.on("connect", async () => {
               NapicuLOG.LOG_I("Successfully connected to:", peripheral.advertisement.localName);
               NapicuLOG.LOG_I("Discovering all services and characteristics...");
 
-              //TODO -> func
+              //This block resolves a specific error in the discoverAllServicesAndCharacteristicsAsync function 
+              //I don't know why, maybe I'll solve it someday lol
+              try {
+                const services = await peripheral.discoverServicesAsync();
+              } catch (e) { }
+             
               peripheral.discoverAllServicesAndCharacteristicsAsync().then((value: noble.ServicesAndCharacteristics) => {
                 NapicuLOG.LOG_I("Successfully discovered all services and characteristics.");
 
@@ -167,18 +176,7 @@ export default class NapicuServer {
                   peripheral.updateRssi();
                 }, 2000);
            
-                peripheral.on("disconnect", () => {
-                  NapicuLOG.LOG_I("Disconnected from:", peripheral.advertisement.localName);
-                  this.on_peripheral_disconnect();
-                  if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
-                  this.connected_device?.removeAllListeners();
-                  this.connected_device = null;
-                  this.client_connected_device_data = null;
-                  this.connected_device_characteristics = null;
-                  this.subscribed_characteristic_uuids = [];
-                  //TODO Emit
-                  //TODO remove all listeners -> notify 
-                });
+                peripheral.on("disconnect", this.disconnect_device);
   
                 this.connected_device = peripheral;
                 this.found_peripheral = [];
@@ -208,6 +206,22 @@ export default class NapicuServer {
 
   private on_peripheral_rssi_update(rssi: number): void {
     
+  }
+
+  private disconnect_device = (): void => {
+    NapicuLOG.LOG_I("Disconnected from:", this.connected_device?.advertisement.localName);
+    this.on_peripheral_disconnect();
+    if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
+    this.connected_device?.removeAllListeners();
+    this.connected_device = null;
+    this.client_connected_device_data = null;
+    this.connected_device_characteristics = null;
+    this.subscribed_characteristic_uuids = [];
+    this.io.emit("connected_device", null);
+    //TODO Emit
+    //TODO remove all listeners -> notify 
+
+    this.on_peripheral_disconnect();
   }
 
   private characteristic_read = (data: CharacteristicRequest): void => {
