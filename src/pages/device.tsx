@@ -190,7 +190,6 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
                 //TODO ERROR
             }
-
         }
     };
 

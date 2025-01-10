@@ -3,14 +3,10 @@ import { NextApiRequest } from "next";
 import { NextApiResponseServerIO } from "@/types/next";
 import { DefaultEventsMap, Server as SocketIOServer } from "socket.io";
 import noble from "@abandonware/noble";
-import { ConnectedDevice, ConnectedDeviceChar, BLEDeviceService, ConnectingDevice, Device, CharacteristicOperation, CharacteristicRequest, CharacteristicResponse } from "@/types/ble_device";
+import { ConnectedDevice, ConnectedDeviceChar, BLEDeviceService, ConnectingDevice, Device, CharacteristicRequest, CharacteristicResponse } from "@/types/ble_device";
 import NapicuLOG from "./NapicuLogger";
-import { NapicuLogView } from "../console";
 
-interface ConnectedDeviceCharacteristicsServerData {
-
-}
-
+// TODO Clean this code (and remove events)
 
 export default class NapicuServer {
   private io:  SocketIOServer<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
@@ -56,7 +52,6 @@ export default class NapicuServer {
         this.io.emit("connected_device", this.client_connected_device_data);
         if(this.subscribed_characteristic_uuids) this.emit_subscribed_characteristic();
       } 
-      
       
       socket.emit("scan_status", this.is_scanning);
 
@@ -142,7 +137,6 @@ export default class NapicuServer {
                 
               } catch (e) { }
 
-             
               peripheral.discoverAllServicesAndCharacteristicsAsync().then((value: noble.ServicesAndCharacteristics) => {
                 NapicuLOG.LOG_I("Successfully discovered all services and characteristics.");
 

@@ -52,6 +52,9 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
     const [allCharacteristicsUUID, setAllCharacteristicsUUID] = useState<string[]>([]);
     const predictorSelectedUUID = useRef<number>(0);
 
+    const selectedCommandIndex = useRef<number>(0);
+    const commandsPredictor = useRef<string[] | null>(null);
+
     useImperativeHandle(ref, () => ({
         consolePrint,
         consolePrintError,
@@ -82,7 +85,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
     } 
 
 
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {    
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {   
         if (event.key === "ArrowUp" || event.key === "ArrowDown") handleArrowKeyDown(event);
         else if (event.key === "Tab") handleTabKeyDown(event);
         else if (event.key === "Enter") {
@@ -158,25 +161,30 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
         const reg_input_result: RegExpMatchArray | null = (inputDivRef.current?.innerText || "").match(/(\S+|\s+)/g);
         const reg_input_without_space_result: string[] | null = reg_input_result?.filter(item => item.trim() !== '') || null;
 
+
+
         if(inputDivRef.current) {
             // Autocomplete for command names
             if(reg_input_without_space_result?.length && reg_input_result?.length) { 
                 if(reg_input_result.length === 1) {
-                    const matching_commands = GET_ALL_COMMANDS_NAMES().filter((command_name: string) =>
-                        command_name.startsWith(reg_input_without_space_result[0].toLowerCase())
-                    );
-            
-                    if (matching_commands.length === 1) {
-                        inputDivRef.current.innerText = matching_commands[0];
-                        setCursorToEnd();
-                    } else if (matching_commands.length > 1) {
-                        consolePrint(inputDivRef.current.innerText, true);
-                        consolePrint(matching_commands.join(", "));
+                    
+                    if(!commandsPredictor.current) {
+                        commandsPredictor.current = GET_ALL_COMMANDS_NAMES().filter((command_name: string) =>
+                            command_name.startsWith(reg_input_without_space_result[0].toLowerCase())
+                        );
                     }
+
+                    inputDivRef.current.innerText = commandsPredictor.current[selectedCommandIndex.current];
+                    setCursorToEnd();
+
+                    if(selectedCommandIndex.current >= commandsPredictor.current.length - 1) {
+                        selectedCommandIndex.current = 0;
+                    } else selectedCommandIndex.current++;
+                    
                 } else if(reg_input_result.length > 1) {
                     const command: ConsoleCommand | null = GET_COMMAND_BY_NAME(reg_input_without_space_result[0]);
 
-                    
+
                     if(command) {
                         const param: IConsoleCommandParams = command.get_command_params()[reg_input_without_space_result.length - 1];
 
@@ -188,7 +196,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
                             case "UUID":
 
-                                inputDivRef.current.innerText += allCharacteristicsUUID[0];
+                                inputDivRef.current.innerText += allCharacteristicsUUID[0]; // TODO
                                 setCursorToEnd();
                                 break;
                             default:
@@ -196,6 +204,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                         }
                     }
                 }
+
             } else {
                 // Returns all available commands
                 inputDivRef.current.innerText = "";
@@ -203,15 +212,12 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                 consolePrint(GET_ALL_COMMANDS_NAMES().join(", "));
             }
         } 
-
         event.preventDefault();
     }
 
     const handleInput = () => {
-        const inputText = inputDivRef.current?.innerText || "";
-        // if (onInputChange) {
-        //     onInputChange(inputText);
-        // }
+        selectedCommandIndex.current = 0;
+        commandsPredictor.current = null;
     };
 
     const handlePaste = (event: React.ClipboardEvent<HTMLDivElement>) => {
@@ -294,7 +300,6 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
     }, [logLines]);
 
     useEffect(() => {
-        console.log("Device updated");
         setAllCharacteristicsUUID(getAllCharUUIDs());
     }, [device]);
 
