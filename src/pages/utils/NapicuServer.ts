@@ -90,9 +90,11 @@ export default class NapicuServer {
           if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
           this.stop_scan();
           NapicuLOG.LOG_I("Setting found_peripheral to []...");
+          noble.removeAllListeners();
           this.found_peripheral = [];
           this.subscribed_characteristic_uuids = [];
           socket.removeAllListeners();
+
           // NapicuLOG.LOG_I("Restarting Noble.");
           // noble.reset();
         }
@@ -137,7 +139,9 @@ export default class NapicuServer {
               //I don't know why, maybe I'll solve it someday lol
               try {
                 const services = await peripheral.discoverServicesAsync();
+                
               } catch (e) { }
+
              
               peripheral.discoverAllServicesAndCharacteristicsAsync().then((value: noble.ServicesAndCharacteristics) => {
                 NapicuLOG.LOG_I("Successfully discovered all services and characteristics.");
@@ -210,7 +214,7 @@ export default class NapicuServer {
 
   private disconnect_device = (): void => {
     NapicuLOG.LOG_I("Disconnected from:", this.connected_device?.advertisement.localName);
-    this.on_peripheral_disconnect();
+    if(this.connected_device) this.connected_device.disconnect();
     if(this.rssi_update_time_id) clearInterval(this.rssi_update_time_id);
     this.connected_device?.removeAllListeners();
     this.connected_device = null;
@@ -218,7 +222,7 @@ export default class NapicuServer {
     this.connected_device_characteristics = null;
     this.subscribed_characteristic_uuids = [];
     this.io.emit("connected_device", null);
-    //TODO Emit
+
     //TODO remove all listeners -> notify 
 
     this.on_peripheral_disconnect();
