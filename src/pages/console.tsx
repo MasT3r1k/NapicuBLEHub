@@ -1,18 +1,13 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from "react";
-import { ConsoleReactViewProps, DeviceReactViewProps } from "./interfaces/Idevice";
+import { ConsoleReactViewProps } from "./interfaces/Idevice";
 import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
 import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, GET_ALL_COMMANDS_NAMES, GET_COMMAND_BY_NAME, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
 import { EventEmitter } from 'events';
 import { ConsoleCommand, IConsoleCommandParams } from "./utils/Command";
 import { BLEDeviceService, ConnectedDeviceChar } from "@/types/ble_device";
+import { ConsoleViewRef } from "./interfaces/IConsoleViewRef";
 
-export interface ConsoleViewRef {
-    consolePrint: (msg: string, show_name?: boolean) => void;
-    consolePrintError: (msg: string) => void;
-    consolePrintWrongCommand: (command_name: string) => void;
-    printUsageError: (command: ConsoleCommand, error_message: string) => void;
-}
 
 export class NapicuLogView {
     private static consoleLogLines: ILogLine[] = [];
@@ -50,7 +45,6 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
     const logContainerRef = useRef<HTMLDivElement>(null);
 
     const [allCharacteristicsUUID, setAllCharacteristicsUUID] = useState<string[]>([]);
-    const predictorSelectedUUID = useRef<number>(0); // TODO Remove
 
     const selectedCommandIndex = useRef<number>(0);
     const commandsPredictor = useRef<string[] | null>(null);
@@ -83,7 +77,6 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                 break;
         }
     } 
-
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {   
         if (event.key === "ArrowUp" || event.key === "ArrowDown") handleArrowKeyDown(event);
@@ -161,7 +154,6 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
         const reg_input_result: RegExpMatchArray | null = (inputDivRef.current?.innerText || "").match(/(\S+|\s+)/g);
         const reg_input_without_space_result: string[] | null = reg_input_result?.filter(item => item.trim() !== '') || null;
 
-
         if(inputDivRef.current) {
             // Autocomplete for command names
             if(reg_input_without_space_result?.length && reg_input_result?.length) { 
@@ -188,9 +180,6 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                         const param: IConsoleCommandParams = command.get_command_params()[par_count];
 
 
-               
-
-
                         switch (param?.type) {
                             case "text":
          
@@ -213,7 +202,6 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                         }
                     }
                 }
-
             } else {
                 // Returns all available commands
                 inputDivRef.current.innerText = "";
