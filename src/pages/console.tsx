@@ -50,7 +50,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
     const logContainerRef = useRef<HTMLDivElement>(null);
 
     const [allCharacteristicsUUID, setAllCharacteristicsUUID] = useState<string[]>([]);
-    const predictorSelectedUUID = useRef<number>(0);
+    const predictorSelectedUUID = useRef<number>(0); // TODO Remove
 
     const selectedCommandIndex = useRef<number>(0);
     const commandsPredictor = useRef<string[] | null>(null);
@@ -162,7 +162,6 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
         const reg_input_without_space_result: string[] | null = reg_input_result?.filter(item => item.trim() !== '') || null;
 
 
-
         if(inputDivRef.current) {
             // Autocomplete for command names
             if(reg_input_without_space_result?.length && reg_input_result?.length) { 
@@ -184,9 +183,12 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                 } else if(reg_input_result.length > 1) {
                     const command: ConsoleCommand | null = GET_COMMAND_BY_NAME(reg_input_without_space_result[0]);
 
-
                     if(command) {
-                        const param: IConsoleCommandParams = command.get_command_params()[reg_input_without_space_result.length - 1];
+                        const par_count = reg_input_result.join('').replace(/\u00A0/g, ' ') .split(/ +/).length - 2;
+                        const param: IConsoleCommandParams = command.get_command_params()[par_count];
+
+
+               
 
 
                         switch (param?.type) {
@@ -196,8 +198,15 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
                             case "UUID":
 
-                                inputDivRef.current.innerText += allCharacteristicsUUID[0]; // TODO
+                                reg_input_without_space_result[par_count + 1] = allCharacteristicsUUID[selectedCommandIndex.current];;
+
+                                inputDivRef.current.innerText = reg_input_without_space_result.join(" ");
+
                                 setCursorToEnd();
+
+                                if(selectedCommandIndex.current >= allCharacteristicsUUID.length - 1) {
+                                    selectedCommandIndex.current = 0;
+                                } else selectedCommandIndex.current++;
                                 break;
                             default:
                                 break;
