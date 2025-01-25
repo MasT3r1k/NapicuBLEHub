@@ -57,19 +57,6 @@ export const COMMAND_WRITE: ConsoleCommand = new ConsoleCommand("write", [], [
     }
 ]);
 
-export const COMMAND_WRITE_TEST: ConsoleCommand = new ConsoleCommand("write_test", [], [
-    {
-        name: "uuid",
-        type: "UUID",
-        usage_description: "The UUID of the characteristic you want to write to."
-    },
-    {
-        name: "message",
-        type: "text",
-        usage_description: "The data to be written to the characteristic."
-    }
-]);
-
 export const COMMAND_READ: ConsoleCommand = new ConsoleCommand("read", [], [
     {
         name: "uuid",
@@ -84,8 +71,7 @@ export function GET_ALL_COMMANDS(): ConsoleCommand[] {
         COMMAND_SUBSCRIBE,
         COMMAND_UNSUBSCRIBE,
         COMMAND_WRITE,
-        COMMAND_READ,
-        COMMAND_WRITE_TEST
+        COMMAND_READ
     ];
 }
 
