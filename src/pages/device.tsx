@@ -35,6 +35,8 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
     const consoleViewRef = useRef<ConsoleViewRef>(null);
 
+    const [activeContentView, setActiveContentView] = useState<number>(0);
+
     //Init cookies
     const [deviceServices, setDeviceServices] = useState<ConnectedDeviceServiceData[]>(() => {
         return device.services.map<ConnectedDeviceServiceData>((service: BLEDeviceService) => {
@@ -428,16 +430,16 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                 </div>
                 <div className="navbar-menu device-navbar-items is-unselectable">
                     <div className="navbar-start">
-                        <div className="navbar-item is-clickable">
-                            <strong className="has-text-white">Inspect</strong>
+                        <div className="navbar-item is-clickable" onClick={() => setActiveContentView(0)}>
+                            <strong className={`has-text-white ${activeContentView === 0 ? "selected-navbar-item" : ""}`}>Inspect</strong>
                         </div>
 
-                        <div className="navbar-item has-text-white is-clickable">
-                            <strong className="has-text-white">Status</strong>
+                        <div className="navbar-item has-text-white is-clickable" onClick={() => setActiveContentView(1)}>
+                            <strong className={`has-text-white ${activeContentView === 1 ? "selected-navbar-item" : ""}`}>Status</strong>
                         </div>
 
-                        <div className="navbar-item has-text-white is-clickable">
-                            <strong className="has-text-white">Settings</strong>
+                        <div className="navbar-item has-text-white is-clickable" onClick={() => setActiveContentView(2)}>
+                            <strong className={`has-text-white ${activeContentView === 2 ? "selected-navbar-item" : ""}`}>Settings</strong>
                         </div>
                     </div>
                     <div className="navbar-end">
@@ -472,116 +474,130 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
                 </div>
             </div>
 
-            <div className="device-section-view device-option-view is-relative">
-                <div className="is-inline-flex">
-                    <div className="left-view-bar" style={{ width: `${letfPanelWidth}px` }}>
-                        <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
-                        <div>
-
-                            {/* Services */}
-                            <div className="box-device-view">
-                                <div className=" box-inspect-view has-text-white">
-                                    <div className="view">
-                                        <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Services</div>
-                                        <div className="inspect-items-view">
-                                            {deviceServices?.map((service, index) => (
-                                                <div key={index} className={`inspect-item ${selectedServiceIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickService(index)}>
-                                                    <div className=" has-text-black is-clickable" >
-                                                        <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
-                                                            {expandedServiceIndex == index ? (
-                                                                <div>
-                                                                    <div className="is-italic light-text">You can set the alias for this service:</div>
-                                                                    <input
-                                                                        ref={aliasEditInput}
-                                                                        type="text"
-                                                                        className="is-size-6 has-text-weight-bold"
-                                                                        onChange={handleAliasInputChange}
-                                                                        value={aliasInputValue || ""}
-                                                                        onKeyDown={(e) => handleServiceNameKeyDownInput(e, service.uuid)}
-                                                                    />
-                                                                </div>
-                                                            ) : (
-                                                                <div className="is-size-6 has-text-weight-bold uuid-text">
-                                                                    {service.alias || service.uuid}
-                                                                </div>
-                                                            )}
-
-                                                            <div className="has-text-weight-bold is-clickable more-option-edt" >
-                                                                <img onClick={(e) => onClickServiceEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {/* Characteristics */}
-                            <div className="box-device-view">
-                                <div className=" box-inspect-view has-text-white">
-                                    <div className="view">
-                                        <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Characteristics</div>
-                                        <div className="inspect-items-view">
-                                            {getSelectedServiceCharacteristics()?.map((characteristic, index) => (
-                                                <div key={index} className={`inspect-item ${selectedCharacteristicIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickCharacteristic(index)}>
-                                                    <div className=" has-text-black is-clickable" >
-                                                        <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
-                                                            {expandedCharacteristicIndex == index ? (
+            {/* Inspect view */}
+            {activeContentView === 0 &&
+                <div className="device-section-view device-option-view is-relative">
+                    <div className="is-inline-flex">
+                        <div className="left-view-bar" style={{ width: `${letfPanelWidth}px` }}>
+                            <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
+                            <div>
+    
+                                {/* Services */}
+                                <div className="box-device-view">
+                                    <div className=" box-inspect-view has-text-white">
+                                        <div className="view">
+                                            <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Services</div>
+                                            <div className="inspect-items-view">
+                                                {deviceServices?.map((service, index) => (
+                                                    <div key={index} className={`inspect-item ${selectedServiceIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickService(index)}>
+                                                        <div className=" has-text-black is-clickable" >
+                                                            <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
+                                                                {expandedServiceIndex == index ? (
                                                                     <div>
-                                                                        <div className="is-italic light-text">You can set the alias for this characteristic:</div>
+                                                                        <div className="is-italic light-text">You can set the alias for this service:</div>
                                                                         <input
                                                                             ref={aliasEditInput}
                                                                             type="text"
                                                                             className="is-size-6 has-text-weight-bold"
                                                                             onChange={handleAliasInputChange}
                                                                             value={aliasInputValue || ""}
-                                                                            onKeyDown={(e) => handleCharacteristicNameKeyDownInput(e, characteristic.uuid)}
+                                                                            onKeyDown={(e) => handleServiceNameKeyDownInput(e, service.uuid)}
                                                                         />
                                                                     </div>
                                                                 ) : (
                                                                     <div className="is-size-6 has-text-weight-bold uuid-text">
-                                                                        {characteristic.alias || characteristic.uuid}
+                                                                        {service.alias || service.uuid}
                                                                     </div>
                                                                 )}
-
-
-                                                            <div className="has-text-weight-bold is-clickable more-option-edt">
-                                                                <img onClick={(e) => onClickCharacteristicEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
+    
+                                                                <div className="has-text-weight-bold is-clickable more-option-edt" >
+                                                                    <img onClick={(e) => onClickServiceEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div className="characteristics-properties is-flex">
-                                                            <div className={`characteristics-properties-read ${!characteristic.properties.includes("read") ? 'characteristics-properties-unabled' : ''}`} title="Read">R</div>
-                                                            <div className={`characteristics-properties-write ${!characteristic.properties.includes("write") ? 'characteristics-properties-unabled' : ''}`} title="Write">W</div>
-                                                            <div className={`characteristics-properties-notify ${!characteristic.properties.includes("notify") ? 'characteristics-properties-unabled' : ''}`} title="Notify">N</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Characteristics */}
+                                <div className="box-device-view">
+                                    <div className=" box-inspect-view has-text-white">
+                                        <div className="view">
+                                            <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Characteristics</div>
+                                            <div className="inspect-items-view">
+                                                {getSelectedServiceCharacteristics()?.map((characteristic, index) => (
+                                                    <div key={index} className={`inspect-item ${selectedCharacteristicIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickCharacteristic(index)}>
+                                                        <div className=" has-text-black is-clickable" >
+                                                            <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
+                                                                {expandedCharacteristicIndex == index ? (
+                                                                        <div>
+                                                                            <div className="is-italic light-text">You can set the alias for this characteristic:</div>
+                                                                            <input
+                                                                                ref={aliasEditInput}
+                                                                                type="text"
+                                                                                className="is-size-6 has-text-weight-bold"
+                                                                                onChange={handleAliasInputChange}
+                                                                                value={aliasInputValue || ""}
+                                                                                onKeyDown={(e) => handleCharacteristicNameKeyDownInput(e, characteristic.uuid)}
+                                                                            />
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="is-size-6 has-text-weight-bold uuid-text">
+                                                                            {characteristic.alias || characteristic.uuid}
+                                                                        </div>
+                                                                    )}
+    
+    
+                                                                <div className="has-text-weight-bold is-clickable more-option-edt">
+                                                                    <img onClick={(e) => onClickCharacteristicEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
+                                                                </div>
+                                                            </div>
+                                                            <div className="characteristics-properties is-flex">
+                                                                <div className={`characteristics-properties-read ${!characteristic.properties.includes("read") ? 'characteristics-properties-unabled' : ''}`} title="Read">R</div>
+                                                                <div className={`characteristics-properties-write ${!characteristic.properties.includes("write") ? 'characteristics-properties-unabled' : ''}`} title="Write">W</div>
+                                                                <div className={`characteristics-properties-notify ${!characteristic.properties.includes("notify") ? 'characteristics-properties-unabled' : ''}`} title="Notify">N</div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ))}
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+    
                     </div>
-
+    
+    
+                    <div className="right-view-bar">
+    
+                        <div className="main-view is-relative" style={{ height: `${consolePanelHeight}px` }}>
+                            <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
+                            {getSelectedServiceCharacteristics().length && (
+                                <CharacteristicsView characteristic={getSelectedServiceCharacteristics()[selectedCharacteristicIndex]} onWatchChange={handleWatchCharacteristicChange} />
+                            )}
+                        </div>
+    
+                        <div className="bottom-console" >
+                            <ConsoleView device={device} consoleHandler={consoleHandler} ref={consoleViewRef} />
+                        </div>
+                    </div>
                 </div>
+            }
 
+            {/* Status view */}
+            {activeContentView === 1 && 
+                <div className="device-section-view device-option-view is-relative">Status view</div>
+            }
 
-                <div className="right-view-bar">
+            {/* Settings view */}
+            {activeContentView === 2 && 
+                <div className="device-section-view device-option-view is-relative">Settings view</div>                    
+            }
 
-                    <div className="main-view is-relative" style={{ height: `${consolePanelHeight}px` }}>
-                        <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
-                        {getSelectedServiceCharacteristics().length && (
-                            <CharacteristicsView characteristic={getSelectedServiceCharacteristics()[selectedCharacteristicIndex]} onWatchChange={handleWatchCharacteristicChange} />
-                        )}
-                    </div>
-
-                    <div className="bottom-console" >
-                        <ConsoleView device={device} consoleHandler={consoleHandler} ref={consoleViewRef} />
-                    </div>
-                </div>
-            </div>
         </div>
     )
 }

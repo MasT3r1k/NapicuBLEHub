@@ -2,11 +2,17 @@
     background-color: #1897ff !important;
 }
 
-
-
 .rename-button {
     background-color: #1897ff !important;
     border: 0;
+}
+
+.navbar-menu > .navbar-start strong {
+    border-bottom: 2px solid transparent;
+}
+
+.selected-navbar-item {
+    border-color: rgba(58, 54, 54, 0.40) !important;
 }
 
 .navbar-menu > .navbar-start .navbar-item:hover {
@@ -28,6 +34,7 @@
 .device-navbar-items {
     margin-left: 20px;
 }
+
 .device-navbar-brand > .navbar-item,
 .device-navbar-items .navbar-item {
     padding-top: 0 !important;
