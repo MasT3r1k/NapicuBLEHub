@@ -1,13 +1,14 @@
 import { ConnectedDeviceChar, BLEDeviceService, CharacteristicResponse, CharacteristicRequest } from "@/types/ble_device";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import NapicuCookies from "./Cookies";
-import ConsoleView, { ConsoleViewRef, NapicuLogView } from "./console";
+import ConsoleView, { NapicuLogView } from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps, SelectedCharacteristicCookiesData } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
 import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_UNWATCHED_CHARACTERISTICS, COMMAND_SUBSCRIBE, COMMAND_UNSUBSCRIBE, COMMAND_READ, COMMAND_WRITE } from "./config";
 import { CharacteristicsReqHistory } from "./CharacteristicsReqHistory";
 import { service_aliases_table, characteristics_aliases_table } from ".";
 import { useSocket } from "./Socket";
+import { ConsoleViewRef } from "./interfaces/IConsoleViewRef";
 
 const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
     const socket = useSocket();
