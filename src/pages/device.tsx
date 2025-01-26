@@ -10,7 +10,7 @@ import { service_aliases_table, characteristics_aliases_table } from ".";
 import { useSocket } from "./Socket";
 import { ConsoleViewRef } from "./interfaces/IConsoleViewRef";
 
-const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
+const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element => {
     const socket = useSocket();
 
     const [letfPanelWidth, setLeftPanelWidth] = useState<number>(
@@ -590,7 +590,28 @@ const DeviceView = ({ device }: DeviceReactViewProps): JSX.Element => {
 
             {/* Status view */}
             {activeContentView === 1 && 
-                <div className="device-section-view device-option-view is-relative">Status view</div>
+                <div className="device-section-view device-option-view is-relative ml-auto mr-auto mt-2">
+                    <div className="device-info-table">
+                        <table className="is-striped is-hoverable is-fullwidth">
+                            <tbody>
+                                <tr>
+                                <td><strong>Device name:</strong></td>
+                                <td>{device.local_name}</td>
+                                </tr>
+                                <tr>
+                                <td><strong>Address:</strong></td>
+                                <td>{device.address}</td>
+                                </tr>
+                                <tr>
+                                <td><strong>RSSI:</strong></td>
+                                <td>{device_rssi} dBm</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+      
+                </div>
             }
 
             {/* Settings view */}

@@ -176,7 +176,7 @@ const Home = (): JSX.Element => {
         }
       </div>
       ) : (
-        <DeviceView device={connected_device}/>
+        <DeviceView device={connected_device} device_rssi={connected_device_rssi}/>
       )}
     </div>
   );

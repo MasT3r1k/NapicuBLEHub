@@ -3,6 +3,7 @@ import { CharacteristicsReqHistory } from "../CharacteristicsReqHistory";
 
 export interface DeviceReactViewProps {
     device: ConnectedDevice;
+    device_rssi: number | undefined;
 }
 
 export interface ConsoleReactViewProps {
