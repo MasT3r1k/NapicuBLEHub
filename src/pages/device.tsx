@@ -590,9 +590,10 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
 
             {/* Status view */}
             {activeContentView === 1 && 
-                <div className="device-section-view device-option-view is-relative ml-auto mr-auto mt-2">
+                <div className="device-section-view device-option-view is-relative is-flex is-flex-direction-column ml-auto mr-auto mt-2">
+                    <div className="device-section-info-title">Basic Informations</div>
                     <div className="device-info-table">
-                        <table className="is-striped is-hoverable is-fullwidth">
+                        <table>
                             <tbody>
                                 <tr>
                                 <td><strong>Device name:</strong></td>
@@ -609,8 +610,31 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                             </tbody>
                         </table>
                     </div>
-
-      
+                    <div className="device-section-info-title">Services & Characteristics</div>
+                    <div className="device-info-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><strong>Service</strong></th>
+                                    <th><strong>Characteristics</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {deviceServices?.map((service, index) => (
+                                    <tr>
+                                        <td>{service.uuid}</td>
+                                        <td>
+                                            <ul>
+                                                {service.chars.map((characteristics) => (
+                                                    <li>{characteristics.uuid}</li>
+                                                ))}
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             }
 
