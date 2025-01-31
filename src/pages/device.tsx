@@ -590,7 +590,7 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
 
             {/* Status view */}
             {activeContentView === 1 && 
-                <div className="device-section-view device-option-view is-relative is-flex is-flex-direction-column ml-auto mr-auto mt-2">
+                <div className="device-section-view is-relative is-flex is-flex-direction-column ml-auto mr-auto mt-2">
                     <div className="device-section-info-title">Basic Informations</div>
                     <div className="device-info-table">
                         <table>
@@ -639,9 +639,7 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                                                                 <div className={`characteristics-properties-notify ${!characteristics.properties.includes("notify") ? 'characteristics-properties-unabled' : ''}`} title="Notify">N</div>
                                                             </div>
                                                         </div>
-                                                        
-                                                    </li>
-                                                    
+                                                    </li>                                                    
                                                 ))}
                                             </ul>
                                         </td>
