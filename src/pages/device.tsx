@@ -626,7 +626,22 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                                         <td>
                                             <ul>
                                                 {service.chars.map((characteristics) => (
-                                                    <li>{characteristics.uuid}</li>
+                                                    <li>
+                                                        <div>
+                                                            {characteristics.alias && <strong className="alias">{characteristics.alias}</strong>}
+                                                            {characteristics.alias && " - "}
+                                                            {characteristics.uuid}
+                                                        </div>
+                                                        <div>
+                                                        <div className="characteristics-properties characteristics-properties-no-hover is-flex">
+                                                                <div className={`characteristics-properties-read ${!characteristics.properties.includes("read") ? 'characteristics-properties-unabled' : ''}`} title="Read">R</div>
+                                                                <div className={`characteristics-properties-write ${!characteristics.properties.includes("write") ? 'characteristics-properties-unabled' : ''}`} title="Write">W</div>
+                                                                <div className={`characteristics-properties-notify ${!characteristics.properties.includes("notify") ? 'characteristics-properties-unabled' : ''}`} title="Notify">N</div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    </li>
+                                                    
                                                 ))}
                                             </ul>
                                         </td>

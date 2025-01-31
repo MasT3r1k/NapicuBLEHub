@@ -258,7 +258,11 @@
 
 .characteristics-properties>div:hover {
     transform: scale(1.1);
-  }
+}
+
+.characteristics-properties-no-hover>div:hover {
+    transform: none !important;
+}
 
 .characteristics-properties-write-button {
     background-color: #2c7ea7;
