@@ -4,7 +4,7 @@ import NapicuCookies from "./Cookies";
 import ConsoleView, { NapicuLogView } from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps, SelectedCharacteristicCookiesData } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
-import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_UNWATCHED_CHARACTERISTICS, COMMAND_SUBSCRIBE, COMMAND_UNSUBSCRIBE, COMMAND_READ, COMMAND_WRITE } from "./config";
+import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_UNWATCHED_CHARACTERISTICS, COMMAND_SUBSCRIBE, COMMAND_UNSUBSCRIBE, COMMAND_READ, COMMAND_WRITE, COMMAND_CLEAR } from "./config";
 import { CharacteristicsReqHistory } from "./CharacteristicsReqHistory";
 import { service_aliases_table, characteristics_aliases_table } from ".";
 import { useSocket } from "./Socket";
@@ -336,8 +336,16 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
 
     const consoleHandler = (command: string, args: string[]): void => {
         if(consoleViewRef.current) {
+            // CONSOLE CLEAR COMMAND
+            if(COMMAND_CLEAR.get_all_command_variants().includes(command)) {
+                if(args[0]) {
+                    if(args[0] === "logs") consoleViewRef.current.clearLogs();
+                } else {
+                    consoleViewRef.current.clearConsole();
+                }
+            }
             // SUBSCRIBE COMMAND
-            if(COMMAND_SUBSCRIBE.get_all_command_variants().includes(command)) {
+            else if(COMMAND_SUBSCRIBE.get_all_command_variants().includes(command)) {
                 if(args[0]) { 
                     const characteristic_uuid: string  = characteristics_aliases_table.get_name(args[0]) || args[0];
                     const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);

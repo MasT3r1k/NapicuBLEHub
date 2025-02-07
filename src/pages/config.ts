@@ -65,13 +65,15 @@ export const COMMAND_READ: ConsoleCommand = new ConsoleCommand("read", [], [
     },
 ]);
 
+export const COMMAND_CLEAR: ConsoleCommand = new ConsoleCommand("clear", ["cl"], []);
 
 export function GET_ALL_COMMANDS(): ConsoleCommand[] {
     return [
         COMMAND_SUBSCRIBE,
         COMMAND_UNSUBSCRIBE,
         COMMAND_WRITE,
-        COMMAND_READ
+        COMMAND_READ,
+        COMMAND_CLEAR
     ];
 }
 

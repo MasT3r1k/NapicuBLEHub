@@ -53,7 +53,9 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
         consolePrint,
         consolePrintError,
         consolePrintWrongCommand,
-        printUsageError
+        printUsageError,
+        clearConsole,
+        clearLogs
     }));
 
     const focusConsoleInput = (): void => {
@@ -61,22 +63,6 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
             inputDivRef.current.focus();
         }
     }
-
-    const console_clear_command = (args: string[]): void => {
-        switch(args[0]) {
-            case "all": 
-                break;
-
-            case "logs": 
-                //TODO Print success 
-                setLogLines([]);
-                break;
-            default: 
-                //TODO Delete all or help command
-                clearConsole();
-                break;
-        }
-    } 
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {   
         if (event.key === "ArrowUp" || event.key === "ArrowDown") handleArrowKeyDown(event);
@@ -92,9 +78,6 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                 const command_args: string [] = command_parts.slice(1);
 
                 switch (command_name) {
-                    case "clear":
-                        console_clear_command(command_args);
-                        break;
                     case "delete":
                         if (command_args[0] == "aliases") {
                             NapicuCookies.deleteCookies(COOKIES_SERVICES_ALIASES_NAME);
@@ -106,7 +89,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                         } else {
                             //TODO
                             consolePrint(`Usage: [OPTION]`);
-                            consolePrint(`\t aliases - Removes aliases for services and characteristics.`);
+                            consolePrint(`\t aliases - Removes all aliases for services and characteristics.`);
                             consolePrint(`\t sizes - Removes window sizes.`);
                         }
                         break;
@@ -168,7 +151,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                     if(commandsPredictor.current.length) {    
                         inputDivRef.current.innerText = commandsPredictor.current[selectedCommandIndex.current];
                         setCursorToEnd();
-                        
+
                         if(selectedCommandIndex.current >= commandsPredictor.current.length - 1) {
                             selectedCommandIndex.current = 0;
                         } else selectedCommandIndex.current++;
@@ -232,6 +215,11 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
     
     const clearConsole = () => {
         setConsoleLines([]);
+    }
+
+    const clearLogs = () => {
+        NapicuLogView.clear();
+        setLogLines([]);
     }
 
     const handleMouseDownLeftResizer = (event: React.MouseEvent) => {

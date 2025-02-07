@@ -6,4 +6,6 @@ export interface ConsoleViewRef {
     consolePrintError: (msg: string) => void;
     consolePrintWrongCommand: (command_name: string) => void;
     printUsageError: (command: ConsoleCommand, error_message: string) => void;
+    clearConsole: () => void;
+    clearLogs: () => void;
 }
