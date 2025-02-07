@@ -165,12 +165,14 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                         );
                     }
 
-                    inputDivRef.current.innerText = commandsPredictor.current[selectedCommandIndex.current];
-                    setCursorToEnd();
-
-                    if(selectedCommandIndex.current >= commandsPredictor.current.length - 1) {
-                        selectedCommandIndex.current = 0;
-                    } else selectedCommandIndex.current++;
+                    if(commandsPredictor.current.length) {    
+                        inputDivRef.current.innerText = commandsPredictor.current[selectedCommandIndex.current];
+                        setCursorToEnd();
+                        
+                        if(selectedCommandIndex.current >= commandsPredictor.current.length - 1) {
+                            selectedCommandIndex.current = 0;
+                        } else selectedCommandIndex.current++;
+                    }
                     
                 } else if(reg_input_result.length > 1) {
                     const command: ConsoleCommand | null = GET_COMMAND_BY_NAME(reg_input_without_space_result[0]);

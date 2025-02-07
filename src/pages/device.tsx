@@ -438,9 +438,9 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                             <strong className={`has-text-white ${activeContentView === 1 ? "selected-navbar-item" : ""}`}>Status</strong>
                         </div>
 
-                        <div className="navbar-item has-text-white is-clickable" onClick={() => setActiveContentView(2)}>
+                        {/* <div className="navbar-item has-text-white is-clickable" onClick={() => setActiveContentView(2)}>
                             <strong className={`has-text-white ${activeContentView === 2 ? "selected-navbar-item" : ""}`}>Settings</strong>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="navbar-end">
                         <div className="navbar-item">
