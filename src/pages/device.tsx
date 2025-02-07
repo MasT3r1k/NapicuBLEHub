@@ -339,7 +339,11 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
             // CONSOLE CLEAR COMMAND
             if(COMMAND_CLEAR.get_all_command_variants().includes(command)) {
                 if(args[0]) {
-                    if(args[0] === "logs") consoleViewRef.current.clearLogs();
+                    if(args[0] === "logs"){
+                        consoleViewRef.current.clearLogs();
+                        consoleViewRef.current.consolePrint("Device logs have been successfully cleared.");
+                    } 
+                    
                 } else {
                     consoleViewRef.current.clearConsole();
                 }
