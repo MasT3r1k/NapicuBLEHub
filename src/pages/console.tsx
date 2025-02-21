@@ -4,7 +4,7 @@ import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
 import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, GET_ALL_COMMANDS_NAMES, GET_COMMAND_BY_NAME, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
 import NapicuCookies from "./Cookies";
 import { EventEmitter } from 'events';
-import { ConsoleCommand, IConsoleCommandParams } from "./utils/Command";
+import { ConsoleCommand, IConsoleCommandOption, IConsoleCommandParams } from "./utils/Command";
 import { BLEDeviceService, ConnectedDeviceChar } from "@/types/ble_device";
 import { ConsoleViewRef } from "./interfaces/IConsoleViewRef";
 
@@ -77,23 +77,8 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                 const command_name: string = command_parts[0];
                 const command_args: string [] = command_parts.slice(1);
 
+                //TODO
                 switch (command_name) {
-                    case "delete":
-                        if (command_args[0] == "aliases") {
-                            NapicuCookies.deleteCookies(COOKIES_SERVICES_ALIASES_NAME);
-                            NapicuCookies.deleteCookies(COOKIES_CHARACTERISTICS_ALIASES_NAME);
-                            NapicuCookies.deleteCookies(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME);
-                            NapicuCookies.deleteCookies(COOKIES_SELECTED_CHARACTERISTIC);
-                            NapicuCookies.deleteCookies(COOKIES_UNWATCHED_CHARACTERISTICS);
-                            consolePrint("Aliases successfully deleted! Please refresh the page.");
-                        } else {
-                            //TODO
-                            consolePrint(`Usage: [OPTION]`);
-                            consolePrint(`\t aliases - Removes all aliases for services and characteristics.`);
-                            consolePrint(`\t sizes - Removes window sizes.`);
-                        }
-                        break;
-
                     default:
                         consoleHandler(command_name, command_args);
                         break;
@@ -117,16 +102,24 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
         consolePrintError(`${command_name}: command not found. Type 'help' for more information.`);
     }
 
-    const printUsageError = (command: ConsoleCommand, error_message: string) => {
-        consolePrintError(error_message);
-        consolePrint(`Usage: ${command.get_command_name()} ${command.get_command_params().map(
-            (par: IConsoleCommandParams) => ` <${par.name.toUpperCase()}>`).join('')}`);
-      
+    const printUsageError = (command: ConsoleCommand, error_message: string | null) => {
+        if(error_message) consolePrintError(error_message);
+        consolePrint(`Usage: ${command.get_command_name()}${command.get_command_params().length ? ' ' + command.get_command_params().map(
+            (par: IConsoleCommandParams) => `<${par.name.toUpperCase()}>`).join(' ') : ''}${command.get_command_options().length ? ' ' + command.get_command_options().map(
+            (opt: IConsoleCommandOption) => `[-${opt.name.toLowerCase()}]`).join(' ') : ''}`);
+        
         const max_key_length: number = Math.max(...command.get_command_params().map((par: IConsoleCommandParams) => par.name.length));
 
         command.get_command_params().forEach((detail: IConsoleCommandParams) => {
-                consolePrint(`\t ${detail.name.toUpperCase().padEnd(max_key_length, " ")}   - ${detail.usage_description}`);
-        }); 
+            consolePrint(`\t ${detail.name.toUpperCase().padEnd(max_key_length, " ")}   - ${detail.usage_description}`);
+        });
+
+        if (command.get_command_options().length) {
+            consolePrint("Options:");
+            command.get_command_options().forEach((detail: IConsoleCommandOption) => {
+                consolePrint(`\t -${detail.name.toLowerCase().padEnd(max_key_length, " ")}    ${detail.description}`);
+            });
+        } 
     }
 
     const handleArrowKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -164,20 +157,14 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                         const par_count = reg_input_result.join('').replace(/\u00A0/g, ' ') .split(/ +/).length - 2;
                         const param: IConsoleCommandParams = command.get_command_params()[par_count];
 
-
                         switch (param?.type) {
                             case "text":
-         
                                 break;
-
                             case "UUID":
-
                                 reg_input_without_space_result[par_count + 1] = allCharacteristicsUUID[selectedCommandIndex.current];;
-
                                 inputDivRef.current.innerText = reg_input_without_space_result.join(" ");
 
                                 setCursorToEnd();
-
                                 if(selectedCommandIndex.current >= allCharacteristicsUUID.length - 1) {
                                     selectedCommandIndex.current = 0;
                                 } else selectedCommandIndex.current++;

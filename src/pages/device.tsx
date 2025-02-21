@@ -4,7 +4,7 @@ import NapicuCookies from "./Cookies";
 import ConsoleView, { NapicuLogView } from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps, SelectedCharacteristicCookiesData } from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
-import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_UNWATCHED_CHARACTERISTICS, COMMAND_SUBSCRIBE, COMMAND_UNSUBSCRIBE, COMMAND_READ, COMMAND_WRITE, COMMAND_CLEAR } from "./config";
+import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_UNWATCHED_CHARACTERISTICS, COMMAND_SUBSCRIBE, COMMAND_UNSUBSCRIBE, COMMAND_READ, COMMAND_WRITE, COMMAND_CLEAR, COMMAND_DELETE, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SERVICES_ALIASES_NAME, COOKIES_CHARACTERISTICS_ALIASES_NAME } from "./config";
 import { CharacteristicsReqHistory } from "./CharacteristicsReqHistory";
 import { service_aliases_table, characteristics_aliases_table } from ".";
 import { useSocket } from "./Socket";
@@ -334,12 +334,18 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
        });
     };
 
+    const consoleFindOption = (option: string, args: string[]): boolean => {
+        const options: string[] = args.filter((arg: string) => /^-[^-]/.test(arg)).map((arg: string) => arg.substring(1));
+        return options.includes(option);
+    }
+
     const consoleHandler = (command: string, args: string[]): void => {
         if(consoleViewRef.current) {
+            console.log(args);
             // CONSOLE CLEAR COMMAND
             if(COMMAND_CLEAR.get_all_command_variants().includes(command)) {
                 if(args[0]) {
-                    if(args[0] === "logs"){
+                    if(args[0] === "logs") {
                         consoleViewRef.current.clearLogs();
                         consoleViewRef.current.consolePrint("Device logs have been successfully cleared.");
                     } 
@@ -347,6 +353,24 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                 } else {
                     consoleViewRef.current.clearConsole();
                 }
+            }
+            // CONSOLE DELETE COMMAND
+            else if(COMMAND_DELETE.get_all_command_variants().includes(command)) {
+                if(consoleFindOption("aliases", args)) {
+                    NapicuCookies.deleteCookies(COOKIES_SERVICES_ALIASES_NAME);
+                    NapicuCookies.deleteCookies(COOKIES_CHARACTERISTICS_ALIASES_NAME);
+                    consoleViewRef.current.consolePrint("Aliases successfully deleted! Please refresh the page.");
+                }
+                else if (consoleFindOption("sizes", args)) {
+                    NapicuCookies.deleteCookies(COOKIES_LEFT_PANEL_WIDTH_NAME);
+                    NapicuCookies.deleteCookies(COOKIES_CONSOLE_PANEL_HEIGHT_NAME);
+                    NapicuCookies.deleteCookies(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME);
+                    consoleViewRef.current.consolePrint("Window layout has been successfully removed! Please refresh the page.");
+                }
+                else if (consoleFindOption("all", args)) {
+                    NapicuCookies.clearAllCookies();
+                    consoleViewRef.current.consolePrint("All user settings have been deleted! Please refresh the page.");
+                } else consoleViewRef.current.printUsageError(COMMAND_DELETE, null);
             }
             // SUBSCRIBE COMMAND
             else if(COMMAND_SUBSCRIBE.get_all_command_variants().includes(command)) {

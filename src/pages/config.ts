@@ -67,13 +67,33 @@ export const COMMAND_READ: ConsoleCommand = new ConsoleCommand("read", [], [
 
 export const COMMAND_CLEAR: ConsoleCommand = new ConsoleCommand("clear", ["cl"], []);
 
+export const COMMAND_DELETE: ConsoleCommand = new ConsoleCommand("delete", ['dl'], [], [
+    {
+       name: "aliases",
+       description: "Removes all aliases for services and characteristics."
+    },
+    {
+        name: "sizes",
+        description: "Removes all window layout settings."
+    },
+    {
+        name: "all",
+        description: "Removes all user settings."
+    }
+]);
+
+//         consolePrint(`Usage: [OPTION]`);
+//         consolePrint(`\t aliases - Removes all aliases for services and characteristics.`);
+//         consolePrint(`\t sizes - Removes window sizes.`);
+
 export function GET_ALL_COMMANDS(): ConsoleCommand[] {
     return [
         COMMAND_SUBSCRIBE,
         COMMAND_UNSUBSCRIBE,
         COMMAND_WRITE,
         COMMAND_READ,
-        COMMAND_CLEAR
+        COMMAND_CLEAR,
+        COMMAND_DELETE
     ];
 }
 
