@@ -35,4 +35,16 @@ export default class NapicuCookies{
     date.setTime(date.getTime() + -1 * 24 * 60 * 60 * 1000);
     document.cookie = name + '=; expires=' + date.toUTCString() + '; path=/';
   }
+
+  /**
+ * Deletes all cookies
+ */
+  public static clearAllCookies(): void {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+      const eqPos = cookie.indexOf('=');
+      const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
+      this.deleteCookies(name);
+    }
+  }
 }
