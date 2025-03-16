@@ -1,40 +1,213 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+<h1 align="center">
+  <br>
+  <img src="https://napicu.eu/assets/icons/icon-144x144.png" alt="NapicuBLEHub Icon" width="130">
+  <br>
+    NapicuBLEHub
+  <br>
+</h1>
 
-## Getting Started
+# Bluetooth Low Energy (BLE) Device Debugging and Testing Tool
 
-First, run the development server:
+This project is a debugging, analysis, and testing tool designed specifically for **Bluetooth Low Energy (BLE)**
+devices, primarily aimed at developers. It is built using [NextJS](https://nextjs.org/) and
+the [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble) library to interact with BLE devices.
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Features
+
+- **Bluetooth Low Energy (BLE) Device Interaction**: The tool allows developers to:
+    - Write data to BLE devices
+    - Read data from BLE devices
+    - Subscribe to BLE device notifications
+
+- **Intuitive Web-based UI**: The tool provides an easy-to-use web interface for interacting with BLE devices. The UI is
+  designed to be straightforward, enabling efficient debugging and testing. It offers a clickable interface for those
+  who prefer a graphical way to interact with devices.
+
+- **Web-based Terminal**: In addition to the clickable UI, the tool also supports commands via a web terminal, allowing
+  users to interact with BLE devices through a command-line interface. This offers more flexibility for advanced users
+  who prefer working with commands.
+
+- **Device Connection**: The BLE device connects directly to the machine where the program is running. This means that
+  the tool operates as a local interface for managing BLE connections, and the connected device will be mirrored across
+  all web clients accessing the program via the same network.
+
+- **Web Server Access**: The program runs as a web application accessible at the IP address where the tool is hosted.
+  This allows easy access to the tool from any device on the same network.
+
+- **Cross-Platform Support**: The tool supports Linux and macOS, and while it is designed for these platforms, **Windows
+  support has not been tested** yet.
+
+- **Single Connection Support**: The tool supports only one BLE device connection at a time. Once a device is connected,
+  it is mirrored on the web interface. This means that the same connected device will be displayed across all instances
+  of the web page that are opened on other devices. This is useful for monitoring and debugging the same BLE device
+  across multiple devices.
+---
+## Installation
+
+* *Source: https://www.npmjs.com/package/@abandonware/noble*
+
+### Prerequisites
+
+* **By default, the Bluetooth adapter is selected `hci0`. To change the
+  adapter [see this section](#multiple-adapters-linux-specific).**
+
+---
+
+#### OS X
+
+* Install [Xcode](https://itunes.apple.com/ca/app/xcode/id497799835?mt=12)
+* On newer versions of OSX, allow bluetooth access on the terminal app: "System Preferences" —> "Security &
+  Privacy" —> "Bluetooth" -> Add terminal app (see [Sandboxed terminal](#sandboxed-terminal))
+
+---
+
+#### Linux
+
+* Kernel version 3.6 or above
+* `libbluetooth-dev` needs to be installed. For instructions for specific distributions, see below.
+* To set the necessary privileges to run without
+  sudo, [see this section](https://www.npmjs.com/package/@abandonware/noble#running-without-rootsudo-linux-specific).
+  This is required for all distributions (Raspbian, Ubuntu, Fedora, etc). You will not get any errors if running without
+  sudo, but nothing will happen.
+
+##### Ubuntu, Debian, Raspbian
+
+See the [generic Linux notes above](#linux) first.
+
+```sh
+sudo apt-get install bluetooth bluez libbluetooth-dev libudev-dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Make sure `node` is on your `PATH`. If it's not, some options:
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+* Symlink `nodejs` to `node`: `sudo ln -s /usr/bin/nodejs /usr/bin/node`
+* [Install Node.js using the NodeSource package](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+If you are having trouble connecting to BLE devices on a Raspberry Pi, you should disable the `pnat` plugin. Add the
+following line at the bottom of `/etc/bluetooth/main.conf`:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+```
+DisablePlugins=pnat
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Then restart the system.
 
-## Learn More
+See [Issue #425 · OpenWonderLabs/homebridge-switchbot](https://github.com/OpenWonderLabs/homebridge-switchbot/issues/425#issuecomment-1190864279).
 
-To learn more about Next.js, take a look at the following resources:
+##### Fedora and other RPM-based distributions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+See the [generic Linux notes above](#linux) first.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```sh
+sudo yum install bluez bluez-libs bluez-libs-devel
+```
 
-## Deploy on Vercel
+##### Intel Edison
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+See the [generic Linux notes above](#linux) first.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+See [Configure Intel Edison for Bluetooth LE (Smart) Development](http://rexstjohn.com/configure-intel-edison-for-bluetooth-le-smart-development/).
+
+#### FreeBSD
+
+Make sure you have GNU Make:
+
+```sh
+sudo pkg install gmake
+```
+
+Disable automatic loading of the default Bluetooth stack by
+putting [no-ubt.conf](https://gist.github.com/myfreeweb/44f4f3e791a057bc4f3619a166a03b87) into
+`/usr/local/etc/devd/no-ubt.conf` and restarting devd (`sudo service devd restart`).
+
+Unload `ng_ubt` kernel module if already loaded:
+
+```sh
+sudo kldunload ng_ubt
+```
+
+Make sure you have read and write permissions on the `/dev/usb/*` device that corresponds to your Bluetooth adapter.
+
+---
+
+### Multiple Adapters (Linux-specific)
+
+`hci0` is used by default.
+
+To override, set the `NOBLE_HCI_DEVICE_ID` environment variable to the interface number.
+
+For example, to specify `hci1`:
+
+```sh
+sudo NOBLE_HCI_DEVICE_ID=1 node <your file>.js
+```
+
+### Reporting all HCI events (Linux-specific)
+
+By default, noble waits for both the advertisement data and scan response data for each Bluetooth address. If your
+device does not use scan response, the `NOBLE_REPORT_ALL_HCI_EVENTS` environment variable can be used to bypass it.
+
+```sh
+sudo NOBLE_REPORT_ALL_HCI_EVENTS=1 node <your file>.js
+```
+
+### bleno compatibility (Linux-specific)
+
+By default, noble will respond with an error whenever a GATT request message is received. If your intention is to use
+bleno in tandem with noble, the `NOBLE_MULTI_ROLE` environment variable can be used to bypass this behaviour.
+
+__Note:__ this requires a Bluetooth 4.1 adapter.
+
+```sh
+sudo NOBLE_MULTI_ROLE=1 node <your file>.js
+```
+
+---
+
+## Development and Deployment
+
+For a complete list of available scripts, refer to the `package.json` file.
+
+#### Start Application - Production mode
+
+```
+sudo npm run start
+```
+
+#### Start Application - Development mode
+
+```
+sudo npm run dev
+```
+
+#### Application build
+
+```
+sudo npm run build
+```
+
+---
+
+## CLI Guide
+
+For more commands and options, refer to the official
+documentation: [Next.js CLI Reference](https://nextjs.org/docs/pages/api-reference/cli/next).
+
+```bash
+"dev": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next dev -p 6969 -H 0.0.0.0"
+```
+
+#### NOBLE_HCI_DEVICE_ID=0
+
+This parameter specifies the Bluetooth adapter to be used. NOBLE_HCI_DEVICE_ID=0 means that the adapter with ID 0 will
+be selected. This adapter is used for communication with Bluetooth Low Energy (BLE) devices.
+
+#### NAPICU_SERVER_LOG_LEVEL=2
+
+This parameter defines the log level for console output:
+
+* `-1` - Disables all logs (no logs will be shown).
+* `1` - Only error logs will be shown.
+* `2` - Shows error, success, and informational logs.
+
