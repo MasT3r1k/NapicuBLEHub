@@ -4,9 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next dev -p 6969 -H 0.0.0.0",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "build": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next build",
+    "start": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next start -p 6969 -H 0.0.0.0"
   },
   "dependencies": {
     "@abandonware/noble": "^1.9.2-25",
