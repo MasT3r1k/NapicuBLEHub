@@ -1,19 +1,15 @@
-<h1 align="center">
-  <br>
-  <img src="https://napicu.eu/assets/icons/icon-144x144.png" alt="NapicuBLEHub Icon" width="130">
-  <br>
-    NapicuBLEHub
-  <br>
-</h1>
 
-# Bluetooth Low Energy (BLE) Device Debugging and Testing Tool
+# NapicuBLEHub
+
+![NapicuBLEHub Icon](https://napicu.eu/assets/icons/icon-144x144.png){: .center width="130px"}
+
+A Bluetooth Low Energy (BLE) Device Debugging and Testing Tool for Developers
 
 This project is a debugging, analysis, and testing tool designed specifically for **Bluetooth Low Energy (BLE)**
 devices, primarily aimed at developers. It is built using [NextJS](https://nextjs.org/) and
 the [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble) library to interact with BLE devices.
----
-
 ## Features
+
 
 - **Bluetooth Low Energy (BLE) Device Interaction**: The tool allows developers to:
     - Write data to BLE devices
@@ -45,35 +41,34 @@ the [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble) libra
 ---
 ## Installation
 
-* *Source: https://www.npmjs.com/package/@abandonware/noble*
+Source: [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble)
 
 ### Prerequisites
+### Prerequisites
 
-* **By default, the Bluetooth adapter is selected `hci0`. To change the
-  adapter [see this section](#multiple-adapters-linux-specific).**
+By default, the Bluetooth adapter is selected as `hci0`.
+To change the adapter, [check the multiple adapters section](#multiple-adapters-linux-specific).
 
----
+#### macOS
 
-#### OS X
-
-* Install [Xcode](https://itunes.apple.com/ca/app/xcode/id497799835?mt=12)
-* On newer versions of OSX, allow bluetooth access on the terminal app: "System Preferences" —> "Security &
-  Privacy" —> "Bluetooth" -> Add terminal app (see [Sandboxed terminal](#sandboxed-terminal))
-
----
+1. Install [Xcode](https://itunes.apple.com/ca/app/xcode/id497799835?mt=12).
+2. In newer macOS, allow Bluetooth access:
+   - Navigate to "System Preferences" → "Security & Privacy" → "Bluetooth".
+   - Add the terminal app (see [Sandboxed terminal](#sandboxed-terminal)).
 
 #### Linux
 
-* Kernel version 3.6 or above
-* `libbluetooth-dev` needs to be installed. For instructions for specific distributions, see below.
+Requirements:
+* Kernel version 3.6 or above.
+* `libbluetooth-dev` must be installed. Instructions for specific distributions are below.
 * To set the necessary privileges to run without
   sudo, [see this section](https://www.npmjs.com/package/@abandonware/noble#running-without-rootsudo-linux-specific).
   This is required for all distributions (Raspbian, Ubuntu, Fedora, etc). You will not get any errors if running without
   sudo, but nothing will happen.
 
-##### Ubuntu, Debian, Raspbian
+#### Ubuntu, Debian, Raspbian
 
-See the [generic Linux notes above](#linux) first.
+Refer to [generic Linux notes above](#linux).
 
 ```sh
 sudo apt-get install bluetooth bluez libbluetooth-dev libudev-dev
@@ -81,7 +76,7 @@ sudo apt-get install bluetooth bluez libbluetooth-dev libudev-dev
 
 Make sure `node` is on your `PATH`. If it's not, some options:
 
-* Symlink `nodejs` to `node`: `sudo ln -s /usr/bin/nodejs /usr/bin/node`
+* [Install Node.js via NodeSource Package](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
 * [Install Node.js using the NodeSource package](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
 
 If you are having trouble connecting to BLE devices on a Raspberry Pi, you should disable the `pnat` plugin. Add the
@@ -95,9 +90,9 @@ Then restart the system.
 
 See [Issue #425 · OpenWonderLabs/homebridge-switchbot](https://github.com/OpenWonderLabs/homebridge-switchbot/issues/425#issuecomment-1190864279).
 
-##### Fedora and other RPM-based distributions
+#### Fedora and RPM-based Distributions
 
-See the [generic Linux notes above](#linux) first.
+Refer to [generic Linux notes above](#linux).
 
 ```sh
 sudo yum install bluez bluez-libs bluez-libs-devel
@@ -107,7 +102,7 @@ sudo yum install bluez bluez-libs bluez-libs-devel
 
 See the [generic Linux notes above](#linux) first.
 
-See [Configure Intel Edison for Bluetooth LE (Smart) Development](http://rexstjohn.com/configure-intel-edison-for-bluetooth-le-smart-development/).
+For reference: [Configuring Intel Edison for BLE Development](http://rexstjohn.com/configure-intel-edison-for-bluetooth-le-smart-development/).
 
 #### FreeBSD
 
@@ -117,9 +112,9 @@ Make sure you have GNU Make:
 sudo pkg install gmake
 ```
 
-Disable automatic loading of the default Bluetooth stack by
-putting [no-ubt.conf](https://gist.github.com/myfreeweb/44f4f3e791a057bc4f3619a166a03b87) into
-`/usr/local/etc/devd/no-ubt.conf` and restarting devd (`sudo service devd restart`).
+Disable the default Bluetooth stack:
+1. Add [no-ubt.conf](https://gist.github.com/myfreeweb/44f4f3e791a057bc4f3619a166a03b87) to `/usr/local/etc/devd/no-ubt.conf`.
+2. Restart devd with `sudo service devd restart`.
 
 Unload `ng_ubt` kernel module if already loaded:
 
@@ -130,9 +125,9 @@ sudo kldunload ng_ubt
 Make sure you have read and write permissions on the `/dev/usb/*` device that corresponds to your Bluetooth adapter.
 
 ---
+### Multiple Bluetooth Adapters (Linux)
 
-### Multiple Adapters (Linux-specific)
-
+Default Adapter: `hci0`
 `hci0` is used by default.
 
 To override, set the `NOBLE_HCI_DEVICE_ID` environment variable to the interface number.
@@ -165,9 +160,9 @@ sudo NOBLE_MULTI_ROLE=1 node <your file>.js
 
 ---
 
-## Development and Deployment
+## Development & Deployment
 
-For a complete list of available scripts, refer to the `package.json` file.
+Available scripts are listed in `package.json`.
 
 #### Start Application - Production mode
 
