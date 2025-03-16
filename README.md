@@ -42,7 +42,7 @@ the [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble) libra
 
 Source: [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble)
 
-### Prerequisites
+
 ### Prerequisites
 
 By default, the Bluetooth adapter is selected as `hci0`.
@@ -57,7 +57,6 @@ To change the adapter, [check the multiple adapters section](#multiple-adapters-
 
 #### Linux
 
-Requirements:
 * Kernel version 3.6 or above.
 * `libbluetooth-dev` must be installed. Instructions for specific distributions are below.
 * To set the necessary privileges to run without
