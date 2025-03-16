@@ -1,7 +1,6 @@
 
 # NapicuBLEHub
 
-![NapicuBLEHub Icon](https://napicu.eu/assets/icons/icon-144x144.png){: .center width="130px"}
 
 A Bluetooth Low Energy (BLE) Device Debugging and Testing Tool for Developers
 
