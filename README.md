@@ -1,5 +1,5 @@
 
-# NapicuBLEHub
+# NapicuBLEHub [beta]
 
 
 A Bluetooth Low Energy (BLE) Device Debugging and Testing Tool for Developers
