@@ -41,7 +41,7 @@ export class NapicuLogView {
     }
 }
 
-const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ device, consoleHandler }: ConsoleReactViewProps, ref: React.ForwardedRef<ConsoleViewRef>): JSX.Element => {
+const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ device, consoleHandler }: ConsoleReactViewProps, ref: React.ForwardedRef<ConsoleViewRef>): React.JSX.Element | null => {
     const [logLines, setLogLines] = useState<ILogLine[]>(NapicuLogView.get_lines());
 
     const [consoleLines, setConsoleLines] = useState<IConsoleCommand[]>([]);
@@ -56,6 +56,12 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
 
     const selectedCommandIndex = useRef<number>(0);
     const commandsPredictor = useRef<string[] | null>(null);
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     useImperativeHandle(ref, () => ({
         consolePrint,
@@ -286,6 +292,10 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
     useEffect(() => {
         setAllCharacteristicsUUID(getAllCharUUIDs());
     }, [device]);
+
+    if (!isClient) {
+        return null;
+    }
 
     return (
         <div className="console-split"> 

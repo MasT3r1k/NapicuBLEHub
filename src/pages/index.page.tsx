@@ -1,7 +1,7 @@
 import {ConnectedDevice, ConnectingDevice, Device} from "@/types/ble_device";
 import {JSX, useEffect, useState} from "react";
-import DeviceView from "./device";
-import {NapicuLogView} from "./console";
+import DeviceView from "./device.page";
+import {NapicuLogView} from "./console.page";
 import {useSocket} from "./Socket";
 import NapicuAliasManager from "./AliasManager/AliasManager";
 import {COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_SERVICES_ALIASES_NAME} from "./config";
@@ -11,7 +11,7 @@ import {COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_SERVICES_ALIASES_NAME} fro
 export const service_aliases_table: NapicuAliasManager = new NapicuAliasManager(COOKIES_SERVICES_ALIASES_NAME);
 export const characteristics_aliases_table: NapicuAliasManager = new NapicuAliasManager(COOKIES_CHARACTERISTICS_ALIASES_NAME);
 
-const Home = (): JSX.Element => {
+const Home = (): React.JSX.Element | null => {
   const socket = useSocket();
 
   const [devices, setDevices] = useState<Device[]>([]);
@@ -25,6 +25,11 @@ const Home = (): JSX.Element => {
 
   const [uuid_filter_value, set_uuid_filter_value] = useState("");
 
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => { //TODO fix init
     if (!socket) return;
@@ -108,6 +113,10 @@ const Home = (): JSX.Element => {
       event.preventDefault();
     }
   };
+
+  if (!isClient) {
+    return null;
+  }
 
   return ( //TODO FIX this fcking css
     <div className={connected_device ? "" : "section is-fullheight"} style={connected_device ? {'height': '100%'} :  {'height': 0} }>

@@ -1,14 +1,14 @@
 import {BLEDeviceService, CharacteristicRequest, CharacteristicResponse, ConnectedDeviceChar} from "@/types/ble_device";
 import React, {JSX, useEffect, useRef, useState} from "react";
 import NapicuCookies from "./Cookies";
-import ConsoleView, {NapicuLogView} from "./console";
+import ConsoleView, {NapicuLogView} from "./console.page";
 import {
     ConnectedDeviceCharacteristicData,
     ConnectedDeviceServiceData,
     DeviceReactViewProps,
     SelectedCharacteristicCookiesData
 } from "./interfaces/Idevice";
-import CharacteristicsView from "./characteristics";
+import CharacteristicsView from "./characteristics.page";
 import {
     COMMAND_CLEAR,
     COMMAND_DELETE,
@@ -30,11 +30,11 @@ import {
     SIZE_LEFT_PANEL_MIN_WIDTH
 } from "./config";
 import {CharacteristicsReqHistory} from "./CharacteristicsReqHistory";
-import {characteristics_aliases_table, service_aliases_table} from ".";
 import {useSocket} from "./Socket";
 import {ConsoleViewRef} from "./interfaces/IConsoleViewRef";
+import {characteristics_aliases_table, service_aliases_table} from "@/pages/index.page";
 
-const DeviceView = ({device, device_rssi}: DeviceReactViewProps): JSX.Element => {
+const DeviceView = ({device, device_rssi}: DeviceReactViewProps): React.JSX.Element | null => {
     const socket = useSocket();
 
     const [letfPanelWidth, setLeftPanelWidth] = useState<number>(
@@ -60,6 +60,12 @@ const DeviceView = ({device, device_rssi}: DeviceReactViewProps): JSX.Element =>
     const consoleViewRef = useRef<ConsoleViewRef>(null);
 
     const [activeContentView, setActiveContentView] = useState<number>(0);
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     //Init cookies
     const [deviceServices, setDeviceServices] = useState<ConnectedDeviceServiceData[]>(() => {
@@ -486,6 +492,10 @@ const DeviceView = ({device, device_rssi}: DeviceReactViewProps): JSX.Element =>
             setSelectedServiceIndex(i.service_index);
             setSelectedCharacteristicIndex(i.char_index);
         }
+    }
+
+    if (!isClient) {
+        return null;
     }
 
     return (

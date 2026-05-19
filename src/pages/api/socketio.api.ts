@@ -1,6 +1,8 @@
 import { NextApiRequest } from "next";
 import { NextApiResponseServerIO } from "@/types/next";
-import NapicuServer from "../utils/NapicuServer";
+import NapicuServer from "@/utils/NapicuServer";
+
+
 
 export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
   if (!res.socket.server.io) {

@@ -3,17 +3,23 @@ import { CharacteristicRequest, ConnectedDeviceCharViewProps } from "@/types/ble
 import { CharacteristicOperationHistory, formatTime } from "./CharacteristicsReqHistory";
 import { useSocket } from "./Socket";
 
-const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDeviceCharViewProps): JSX.Element => {
+const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDeviceCharViewProps): React.JSX.Element | null => {
     const socket = useSocket();
 
     const writeInput = useRef<HTMLInputElement>(null);
     const [writeInputValue, setWriteInputValue] = useState<string>("");
     const [writeButtonInputError, setWriteButtonInputError] = useState<boolean>(false);
-    const [characteristicHistory, setCharacteristicHistory] = useState(characteristic.history.history_list);
+    const [characteristicHistory, setCharacteristicHistory] = useState(characteristic?.history.history_list);
 
     const logContainerRef = useRef<HTMLDivElement>(null);
 
-    const [isWatchChecked, setIsWatchChecked] = useState<boolean>(characteristic.watch);
+    const [isWatchChecked, setIsWatchChecked] = useState<boolean>(characteristic?.watch);
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const handle_write_key_down_input = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
@@ -91,6 +97,10 @@ const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDevice
             onWatchChange(characteristic.uuid, event.target.checked); 
         }
     };
+
+    if (!isClient) {
+        return null;
+    }
 
     return (
         <div className="characteristics-options">
