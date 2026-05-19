@@ -69,7 +69,7 @@ const DeviceView = ({device, device_rssi}: DeviceReactViewProps): React.JSX.Elem
 
     //Init cookies
     const [deviceServices, setDeviceServices] = useState<ConnectedDeviceServiceData[]>(() => {
-        return device.services.map<ConnectedDeviceServiceData>((service: BLEDeviceService) => {
+        return device?.services.map<ConnectedDeviceServiceData>((service: BLEDeviceService) => {
             return {
                 uuid: service.uuid,
                 alias: service_aliases_table.get_alias_by_key(service.uuid),
@@ -479,6 +479,10 @@ const DeviceView = ({device, device_rssi}: DeviceReactViewProps): React.JSX.Elem
         }
     };
 
+    if (!isClient) {
+        return null;
+    }
+
     if (!hasRunRef.current) {
         socket.on("characteristic_response", onCharacteristicResponse);
         socket.on("subscribed_characteristics", onSubscribedCharacteristic);
@@ -494,9 +498,7 @@ const DeviceView = ({device, device_rssi}: DeviceReactViewProps): React.JSX.Elem
         }
     }
 
-    if (!isClient) {
-        return null;
-    }
+
 
     return (
         <div className="is-flex is-justify-content-space-between is-flex-direction-column device-section-view">
