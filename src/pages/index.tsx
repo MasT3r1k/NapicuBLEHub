@@ -1,11 +1,10 @@
-import { ConnectedDevice, BLEDeviceService, ConnectingDevice, Device, CharacteristicResponse } from "@/types/ble_device";
+import {ConnectedDevice, ConnectingDevice, Device} from "@/types/ble_device";
 import {JSX, useEffect, useState} from "react";
-import io, { Socket, SocketOptions } from "socket.io-client";
 import DeviceView from "./device";
-import { NapicuLogView } from "./console";
-import { useSocket } from "./Socket";
+import {NapicuLogView} from "./console";
+import {useSocket} from "./Socket";
 import NapicuAliasManager from "./AliasManager/AliasManager";
-import { COOKIES_SERVICES_ALIASES_NAME, COOKIES_CHARACTERISTICS_ALIASES_NAME } from "./config";
+import {COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_SERVICES_ALIASES_NAME} from "./config";
 
 
 //Cookies tables
@@ -20,7 +19,7 @@ const Home = (): JSX.Element => {
   const [is_filter_menu, setFilter] = useState<boolean>(false);
   const [connecting_data, setConnectingData] = useState<ConnectingDevice | undefined>();
   const [connected_device, setConnectedDevice] = useState<ConnectedDevice | undefined>();
-  const [connected_device_rssi, setConnectedDeviceRSSI] = useState<number | undefined>(); //TODO USE 
+  const [connected_device_rssi, setConnectedDeviceRSSI] = useState<number | undefined>(); //TODO USE
   //Settings filter
   const [filter_allow_unknown_name, setIsChecked] = useState(true);
 
@@ -35,7 +34,7 @@ const Home = (): JSX.Element => {
 
     socket.on("device", (device: Device) => {
       setDevices((prevDevices) => {
- 
+
         if (!prevDevices.some((d) => d.address === device.address)) {
           return [...prevDevices, device];
         }
@@ -55,7 +54,7 @@ const Home = (): JSX.Element => {
     socket.on("connecting", (data: ConnectingDevice) => {
       setConnectingData(data);
     });
-  
+
     socket.on("connected_device", (data: ConnectedDevice | null) => {
       if(data) {
         setConnectedDevice(data);
@@ -95,11 +94,11 @@ const Home = (): JSX.Element => {
   };
 
   const handle_unknown_checkbox_change = (event: any) => {
-    setIsChecked(event.target.checked);  
+    setIsChecked(event.target.checked);
   };
 
   const handle_uuid_input_change = (event: any) => {
-    const newValue = event.target.value.replace(/-/g, ""); 
+    const newValue = event.target.value.replace(/-/g, "");
     set_uuid_filter_value(newValue);
     console.log(newValue)
   };
@@ -124,7 +123,7 @@ const Home = (): JSX.Element => {
                 (filter_allow_unknown_name || !filter_allow_unknown_name && device.name != "Unknown") && (!uuid_filter_value.length || uuid_filter_value.length  && device.uuids?.indexOf(uuid_filter_value) != -1 ) ? (
                   <div className="box box-bg has-text-white is-size-6 has-text-weight-bold is-clickable is-unselectable" onClick={() => {connect(device.address)}} key={device.address}>{device.name}
                     <span className="device-adress"> ({device.address})</span>
-                  </div>    
+                  </div>
                 ) : null
               ))}
             </div>
@@ -140,8 +139,8 @@ const Home = (): JSX.Element => {
           <button className="filter-button has-text-weight-bold has-text-white is-size-5" onClick={on_click_filter_button}>
               Filter results
           </button>
-        </div>      
-        
+        </div>
+
         {is_filter_menu &&
           <div className="filter-window">
             <div className="section">
@@ -171,7 +170,7 @@ const Home = (): JSX.Element => {
 
                 </div>
             </div>
-        
+
           </div>
         }
       </div>

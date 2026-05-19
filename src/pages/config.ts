@@ -1,4 +1,3 @@
-import { CommandUsageMessage } from "./interfaces/IConsole";
 import { ConsoleCommand } from "./utils/Command";
 
 export const COOKIES_LEFT_PANEL_WIDTH_NAME: string = "left_panel_width";

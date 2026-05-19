@@ -2,8 +2,6 @@ import React, {useState, useRef, useEffect, JSX} from "react";
 import { CharacteristicRequest, ConnectedDeviceCharViewProps } from "@/types/ble_device";
 import { CharacteristicOperationHistory, formatTime } from "./CharacteristicsReqHistory";
 import { useSocket } from "./Socket";
-import { DEFAULT_CHARACTERISTICS_WATCH } from "./config";
-
 
 const CharacteristicsView = ({ characteristic, onWatchChange  }: ConnectedDeviceCharViewProps): JSX.Element => {
     const socket = useSocket();

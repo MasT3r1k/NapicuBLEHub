@@ -1,16 +1,40 @@
-import { ConnectedDeviceChar, BLEDeviceService, CharacteristicResponse, CharacteristicRequest } from "@/types/ble_device";
-import React, {useState, useRef, useEffect, useCallback, JSX} from "react";
+import {BLEDeviceService, CharacteristicRequest, CharacteristicResponse, ConnectedDeviceChar} from "@/types/ble_device";
+import React, {JSX, useEffect, useRef, useState} from "react";
 import NapicuCookies from "./Cookies";
-import ConsoleView, { NapicuLogView } from "./console";
-import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps, SelectedCharacteristicCookiesData } from "./interfaces/Idevice";
+import ConsoleView, {NapicuLogView} from "./console";
+import {
+    ConnectedDeviceCharacteristicData,
+    ConnectedDeviceServiceData,
+    DeviceReactViewProps,
+    SelectedCharacteristicCookiesData
+} from "./interfaces/Idevice";
 import CharacteristicsView from "./characteristics";
-import { COOKIES_CONSOLE_PANEL_HEIGHT_NAME, COOKIES_LEFT_PANEL_WIDTH_NAME, SIZE_LEFT_PANEL_DEFAULT_WIDTH, SIZE_LEFT_PANEL_MIN_WIDTH, SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT, SIZE_CONSOLE_PANEL_MAX_HEIGHT, SIZE_CONSOLE_PANEL_MIN_HEIGHT, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_UNWATCHED_CHARACTERISTICS, COMMAND_SUBSCRIBE, COMMAND_UNSUBSCRIBE, COMMAND_READ, COMMAND_WRITE, COMMAND_CLEAR, COMMAND_DELETE, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SERVICES_ALIASES_NAME, COOKIES_CHARACTERISTICS_ALIASES_NAME } from "./config";
-import { CharacteristicsReqHistory } from "./CharacteristicsReqHistory";
-import { service_aliases_table, characteristics_aliases_table } from ".";
-import { useSocket } from "./Socket";
-import { ConsoleViewRef } from "./interfaces/IConsoleViewRef";
+import {
+    COMMAND_CLEAR,
+    COMMAND_DELETE,
+    COMMAND_READ,
+    COMMAND_SUBSCRIBE,
+    COMMAND_UNSUBSCRIBE,
+    COMMAND_WRITE,
+    COOKIES_CHARACTERISTICS_ALIASES_NAME,
+    COOKIES_CONSOLE_PANEL_HEIGHT_NAME,
+    COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME,
+    COOKIES_LEFT_PANEL_WIDTH_NAME,
+    COOKIES_SELECTED_CHARACTERISTIC,
+    COOKIES_SERVICES_ALIASES_NAME,
+    COOKIES_UNWATCHED_CHARACTERISTICS,
+    SIZE_CONSOLE_PANEL_DEFAULT_HEIGHT,
+    SIZE_CONSOLE_PANEL_MAX_HEIGHT,
+    SIZE_CONSOLE_PANEL_MIN_HEIGHT,
+    SIZE_LEFT_PANEL_DEFAULT_WIDTH,
+    SIZE_LEFT_PANEL_MIN_WIDTH
+} from "./config";
+import {CharacteristicsReqHistory} from "./CharacteristicsReqHistory";
+import {characteristics_aliases_table, service_aliases_table} from ".";
+import {useSocket} from "./Socket";
+import {ConsoleViewRef} from "./interfaces/IConsoleViewRef";
 
-const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element => {
+const DeviceView = ({device, device_rssi}: DeviceReactViewProps): JSX.Element => {
     const socket = useSocket();
 
     const [letfPanelWidth, setLeftPanelWidth] = useState<number>(
@@ -40,19 +64,19 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
     //Init cookies
     const [deviceServices, setDeviceServices] = useState<ConnectedDeviceServiceData[]>(() => {
         return device.services.map<ConnectedDeviceServiceData>((service: BLEDeviceService) => {
-          return {
-            uuid: service.uuid,
-            alias: service_aliases_table.get_alias_by_key(service.uuid),
-            chars: service.chars.map((characteristic: ConnectedDeviceChar) => {
-              return {
-                ...characteristic,
-                alias: characteristics_aliases_table.get_alias_by_key(characteristic.uuid),
-                history: new CharacteristicsReqHistory(),
-                watch: !NapicuCookies.getCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS)?.includes(characteristic.uuid),
-                notify: undefined
-              };
-            }),
-          };
+            return {
+                uuid: service.uuid,
+                alias: service_aliases_table.get_alias_by_key(service.uuid),
+                chars: service.chars.map((characteristic: ConnectedDeviceChar) => {
+                    return {
+                        ...characteristic,
+                        alias: characteristics_aliases_table.get_alias_by_key(characteristic.uuid),
+                        history: new CharacteristicsReqHistory(),
+                        watch: !NapicuCookies.getCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS)?.includes(characteristic.uuid),
+                        notify: undefined
+                    };
+                }),
+            };
         });
     });
 
@@ -146,14 +170,14 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
 
     const handleServiceNameKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
-  
-            if(!service_aliases_table.is_alias_duplicate(aliasInputValue) || service_aliases_table.get_alias_by_key(uuid)?.toLowerCase() === aliasInputValue.toLowerCase()) {
+
+            if (!service_aliases_table.is_alias_duplicate(aliasInputValue) || service_aliases_table.get_alias_by_key(uuid)?.toLowerCase() === aliasInputValue.toLowerCase()) {
                 setDeviceServices((prevState) =>
                     prevState.map((item) =>
-                        item.uuid === uuid ? { ...item, alias: aliasInputValue } : item
+                        item.uuid === uuid ? {...item, alias: aliasInputValue} : item
                     )
                 );
-    
+
                 service_aliases_table.set_alias(uuid, aliasInputValue);
                 setExpandedServiceIndex(-1);
             } else {
@@ -165,8 +189,8 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
 
     const handleCharacteristicNameKeyDownInput = (event: React.KeyboardEvent<HTMLInputElement>, uuid: string) => {
         if (event.key === "Enter") {
-  
-            if(!characteristics_aliases_table.is_alias_duplicate(aliasInputValue) || characteristics_aliases_table.get_alias_by_key(uuid)?.toLowerCase() === aliasInputValue.toLowerCase()) {
+
+            if (!characteristics_aliases_table.is_alias_duplicate(aliasInputValue) || characteristics_aliases_table.get_alias_by_key(uuid)?.toLowerCase() === aliasInputValue.toLowerCase()) {
                 setDeviceServices((prevState) => {
                     return prevState.map((service, index) => {
                         if (index == selectedServiceIndex) {
@@ -176,14 +200,14 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                                     if (char.uuid === uuid) {
                                         return {
                                             ...char,
-                                            alias: aliasInputValue, 
+                                            alias: aliasInputValue,
                                         };
                                     }
-                                    return char; 
+                                    return char;
                                 }),
                             };
                         }
-                        return service; 
+                        return service;
                     });
                 });
 
@@ -204,41 +228,44 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
         return deviceServices[selectedServiceIndex].chars;
     }
 
-    const findServiceAndCharacteristicIndex = (characteristic_uuid: string): { service_index: number; char_index: number } | null => {
+    const findServiceAndCharacteristicIndex = (characteristic_uuid: string): {
+        service_index: number;
+        char_index: number
+    } | null => {
         for (let service_index = 0; service_index < deviceServices.length; service_index++) {
-          const chars = deviceServices[service_index].chars;
-          for (let char_index = 0; char_index < chars.length; char_index++) {
-            if (chars[char_index].uuid === characteristic_uuid) {
-              return { service_index, char_index };
+            const chars = deviceServices[service_index].chars;
+            for (let char_index = 0; char_index < chars.length; char_index++) {
+                if (chars[char_index].uuid === characteristic_uuid) {
+                    return {service_index, char_index};
+                }
             }
-          }
         }
-        return null; 
+        return null;
     };
 
     const updateHistory = (char_uuid: string, value: string, type: 'read' | 'write' | 'notify') => {
         setDeviceServices((prevServices: ConnectedDeviceServiceData[]) => {
 
             const i = findServiceAndCharacteristicIndex(char_uuid);
-            if(i) {
-                const { service_index, char_index } = i;
+            if (i) {
+                const {service_index, char_index} = i;
 
                 const new_services = [...prevServices];
                 const new_chars = [...new_services[service_index].chars];
-    
+
                 const updatedChar = {
                     ...new_chars[char_index],
                     history: new CharacteristicsReqHistory(),
                 };
                 updatedChar.history.history_list = [...new_chars[char_index].history.history_list];
                 updatedChar.history.add_with_auto_date(value, type);
-        
+
                 new_chars[char_index] = updatedChar;
                 new_services[service_index] = {
                     ...new_services[service_index],
                     chars: new_chars,
                 };
-        
+
                 return new_services;
             }
             return prevServices;
@@ -251,7 +278,7 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
             aliasEditInput.current.select();
         }
     }, [expandedServiceIndex]);
-    
+
     useEffect(() => {
         if (expandedCharacteristicIndex !== -1 && aliasEditInput.current) {
             aliasEditInput.current.select();
@@ -263,10 +290,14 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
             const indexes = findServiceAndCharacteristicIndex(response.uuid);
             const char = indexes && current_device_services[indexes.service_index].chars[indexes.char_index];
 
-            if(char?.watch) {
-                NapicuLogView.print({name: characteristics_aliases_table.get_alias_by_key(response.uuid) || response.uuid, message: response.data, color: "white"});
-            } 
-            
+            if (char?.watch) {
+                NapicuLogView.print({
+                    name: characteristics_aliases_table.get_alias_by_key(response.uuid) || response.uuid,
+                    message: response.data,
+                    color: "white"
+                });
+            }
+
             return current_device_services;
         });
 
@@ -282,12 +313,12 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                     notify: subscribed_characteristics.includes(char.uuid),
                 })),
             }));
-        });  
-        
+        });
+
     };
 
     useEffect(() => {
-        const selected_device_chars_table: SelectedCharacteristicCookiesData = 
+        const selected_device_chars_table: SelectedCharacteristicCookiesData =
             NapicuCookies.getCookies<SelectedCharacteristicCookiesData>(COOKIES_SELECTED_CHARACTERISTIC) || {};
 
         selected_device_chars_table[device.address] = deviceServices[selectedServiceIndex].chars[selectedCharacteristicIndex].uuid
@@ -297,12 +328,12 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
 
 
     const handleWatchCharacteristicChange = (char_uuid: string, new_value: boolean): void => {
-       // setCharacteristic((prev) => ({ ...prev, watch: newWatch }));
+        // setCharacteristic((prev) => ({ ...prev, watch: newWatch }));
 
-       setDeviceServices((prevServices: ConnectedDeviceServiceData[]) => {
+        setDeviceServices((prevServices: ConnectedDeviceServiceData[]) => {
             const i = findServiceAndCharacteristicIndex(char_uuid);
-            if(i) {
-                const { service_index, char_index } = i;
+            if (i) {
+                const {service_index, char_index} = i;
 
                 const new_services = [...prevServices];
                 const new_chars = [...new_services[service_index].chars];
@@ -311,7 +342,7 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                     ...new_chars[char_index],
                     watch: new_value
                 };
-            
+
                 new_chars[char_index] = updatedChar;
                 new_services[service_index] = {
                     ...new_services[service_index],
@@ -320,18 +351,18 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
 
                 var wt_char_table: string[] = NapicuCookies.getCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS) || [];
 
-                if(new_value) {
+                if (new_value) {
                     wt_char_table = wt_char_table.filter((uuid: string) => {
                         return uuid !== char_uuid;
                     });
                 } else wt_char_table.push(char_uuid);
-                
+
                 NapicuCookies.setCookies<string[]>(COOKIES_UNWATCHED_CHARACTERISTICS, wt_char_table);
-    
+
                 return new_services;
             }
             return prevServices;
-       });
+        });
     };
 
     const consoleFindOption = (option: string, args: string[]): boolean => {
@@ -340,80 +371,82 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
     }
 
     const consoleHandler = (command: string, args: string[]): void => {
-        if(consoleViewRef.current) {
+        if (consoleViewRef.current) {
             console.log(args);
             // CONSOLE CLEAR COMMAND
-            if(COMMAND_CLEAR.get_all_command_variants().includes(command)) {
-                if(args[0]) {
-                    if(args[0] === "logs") {
+            if (COMMAND_CLEAR.get_all_command_variants().includes(command)) {
+                if (args[0]) {
+                    if (args[0] === "logs") {
                         consoleViewRef.current.clearLogs();
                         consoleViewRef.current.consolePrint("Device logs have been successfully cleared.");
-                    } 
-                    
+                    }
+
                 } else {
                     consoleViewRef.current.clearConsole();
                 }
             }
             // CONSOLE DELETE COMMAND
-            else if(COMMAND_DELETE.get_all_command_variants().includes(command)) {
-                if(consoleFindOption("aliases", args)) {
+            else if (COMMAND_DELETE.get_all_command_variants().includes(command)) {
+                if (consoleFindOption("aliases", args)) {
                     NapicuCookies.deleteCookies(COOKIES_SERVICES_ALIASES_NAME);
                     NapicuCookies.deleteCookies(COOKIES_CHARACTERISTICS_ALIASES_NAME);
                     consoleViewRef.current.consolePrint("Aliases successfully deleted! Please refresh the page.");
-                }
-                else if (consoleFindOption("sizes", args)) {
+                } else if (consoleFindOption("sizes", args)) {
                     NapicuCookies.deleteCookies(COOKIES_LEFT_PANEL_WIDTH_NAME);
                     NapicuCookies.deleteCookies(COOKIES_CONSOLE_PANEL_HEIGHT_NAME);
                     NapicuCookies.deleteCookies(COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME);
                     consoleViewRef.current.consolePrint("Window layout has been successfully removed! Please refresh the page.");
-                }
-                else if (consoleFindOption("all", args)) {
+                } else if (consoleFindOption("all", args)) {
                     NapicuCookies.clearAllCookies();
                     consoleViewRef.current.consolePrint("All user settings have been deleted! Please refresh the page.");
                 } else consoleViewRef.current.printUsageError(COMMAND_DELETE, null);
             }
             // SUBSCRIBE COMMAND
-            else if(COMMAND_SUBSCRIBE.get_all_command_variants().includes(command)) {
-                if(args[0]) { 
-                    const characteristic_uuid: string  = characteristics_aliases_table.get_name(args[0]) || args[0];
+            else if (COMMAND_SUBSCRIBE.get_all_command_variants().includes(command)) {
+                if (args[0]) {
+                    const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
                     const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);
 
-                    if(indexes) {
-                        if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("notify")) {
+                    if (indexes) {
+                        if (deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("notify")) {
                             socket.emit("subscribe_characteristic", characteristic_uuid);
                         } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'notify' property!`);
                     } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
                 } else {
                     consoleViewRef.current.printUsageError(COMMAND_SUBSCRIBE, "No parameter provided for alias or UUID of the characteristic!");
                 }
-            } 
+            }
             // UNSUBSCRIBE COMMAND
             else if (COMMAND_UNSUBSCRIBE.get_all_command_variants().includes(command)) {
-                if(args[0] == "all") { // TODO Reserve alias 
+                if (args[0] == "all") { // TODO Reserve alias
                     consoleViewRef.current.consolePrint("Unsubscribing from all notifications...");
                     socket.emit("unsubscribe_all_characteristics");
-                } else if(args[0]) {
+                } else if (args[0]) {
                     const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
                     const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);
 
-                    if(indexes) {
-                        if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("notify")) {
+                    if (indexes) {
+                        if (deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("notify")) {
                             socket.emit("unsubscribe_characteristic", characteristic_uuid);
                         } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'notify' property!`);
                     } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
                 } else consoleViewRef.current.printUsageError(COMMAND_UNSUBSCRIBE, "No parameter provided for alias or UUID of the characteristic!");
-                
+
             }
             // WRITE COMMAND
-            else if(COMMAND_WRITE.get_all_command_variants().includes(command)) {
-                if(args[0]) {
+            else if (COMMAND_WRITE.get_all_command_variants().includes(command)) {
+                if (args[0]) {
                     const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
                     const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);
 
-                    if(indexes) {
-                        if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("write")) {
-                            if(args[1]) {
-                                const data: CharacteristicRequest = {type: "write", value: args[1], uuid: characteristic_uuid};
+                    if (indexes) {
+                        if (deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("write")) {
+                            if (args[1]) {
+                                const data: CharacteristicRequest = {
+                                    type: "write",
+                                    value: args[1],
+                                    uuid: characteristic_uuid
+                                };
                                 socket.emit("write", data);
                             } else consoleViewRef.current.printUsageError(COMMAND_WRITE, "No message parameter provided!");
                         } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'write' property!`);
@@ -421,40 +454,39 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                 } else consoleViewRef.current.printUsageError(COMMAND_WRITE, "No parameter provided for alias or UUID of the characteristic!");
             }
             // READ COMMAND
-            else if(COMMAND_READ.get_all_command_variants().includes(command)) {
-                if(args[0]) {
+            else if (COMMAND_READ.get_all_command_variants().includes(command)) {
+                if (args[0]) {
                     const characteristic_uuid: string = characteristics_aliases_table.get_name(args[0]) || args[0];
                     const indexes = findServiceAndCharacteristicIndex(characteristic_uuid);
 
-                    if(indexes) {
-                        if(deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("read")) {
+                    if (indexes) {
+                        if (deviceServices[indexes.service_index].chars[indexes.char_index].properties.includes("read")) {
                             const data: CharacteristicRequest = {type: "read", value: null, uuid: characteristic_uuid};
                             socket.emit("read", data);
                         } else consoleViewRef.current.consolePrintError(`Characteristic (${args[0]}) does not have the 'read' property!`);
                     } else consoleViewRef.current.consolePrintError(`Characteristic with UUID: (${args[0]}) not found!`);
                 } else consoleViewRef.current.printUsageError(COMMAND_READ, "No parameter provided for alias or UUID of the characteristic!");
-            } 
-            else consoleViewRef.current.consolePrintWrongCommand(command);
-            
+            } else consoleViewRef.current.consolePrintWrongCommand(command);
+
         } else {
             alert("Error when forwarding a console reference! Try restarting the page and try again.");
         }
     };
 
-    if(!hasRunRef.current) {
+    if (!hasRunRef.current) {
         socket.on("characteristic_response", onCharacteristicResponse);
         socket.on("subscribed_characteristics", onSubscribedCharacteristic);
         hasRunRef.current = true;
 
-        const selected_device_chars_table: string | null = 
-        NapicuCookies.getCookies<SelectedCharacteristicCookiesData>(COOKIES_SELECTED_CHARACTERISTIC)?.[device.address] || null;
+        const selected_device_chars_table: string | null =
+            NapicuCookies.getCookies<SelectedCharacteristicCookiesData>(COOKIES_SELECTED_CHARACTERISTIC)?.[device.address] || null;
 
         const i = selected_device_chars_table && findServiceAndCharacteristicIndex(selected_device_chars_table);
-        if(i) {
+        if (i) {
             setSelectedServiceIndex(i.service_index);
             setSelectedCharacteristicIndex(i.char_index);
         }
-    };
+    }
 
     return (
         <div className="is-flex is-justify-content-space-between is-flex-direction-column device-section-view">
@@ -467,11 +499,14 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                 <div className="navbar-menu device-navbar-items is-unselectable">
                     <div className="navbar-start">
                         <div className="navbar-item is-clickable" onClick={() => setActiveContentView(0)}>
-                            <strong className={`has-text-white ${activeContentView === 0 ? "selected-navbar-item" : ""}`}>Inspect</strong>
+                            <strong
+                                className={`has-text-white ${activeContentView === 0 ? "selected-navbar-item" : ""}`}>Inspect</strong>
                         </div>
 
-                        <div className="navbar-item has-text-white is-clickable" onClick={() => setActiveContentView(1)}>
-                            <strong className={`has-text-white ${activeContentView === 1 ? "selected-navbar-item" : ""}`}>Status</strong>
+                        <div className="navbar-item has-text-white is-clickable"
+                             onClick={() => setActiveContentView(1)}>
+                            <strong
+                                className={`has-text-white ${activeContentView === 1 ? "selected-navbar-item" : ""}`}>Status</strong>
                         </div>
 
                         {/* <div className="navbar-item has-text-white is-clickable" onClick={() => setActiveContentView(2)}>
@@ -499,7 +534,8 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
 
                         <div className="navbar-item">
                             <div className="buttons">
-                                <button className="button disconnect-button has-text-white has-text-weight-bold" onClick={disconnectFromDevice}>
+                                <button className="button disconnect-button has-text-white has-text-weight-bold"
+                                        onClick={disconnectFromDevice}>
                                     <span>
                                         Disconnect
                                     </span>
@@ -514,23 +550,32 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
             {activeContentView === 0 &&
                 <div className="device-section-view device-option-view is-relative">
                     <div className="is-inline-flex">
-                        <div className="left-view-bar" style={{ width: `${letfPanelWidth}px` }}>
-                            <div className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownLeftResizer}></div>
+                        <div className="left-view-bar" style={{width: `${letfPanelWidth}px`}}>
+                            <div
+                                className={`left-view-bar-resizer is-relative" ${leftPanelResizing ? 'view-bar-resizer-selected' : ''}`}
+                                onMouseDown={handleMouseDownLeftResizer}></div>
                             <div>
-    
+
                                 {/* Services */}
                                 <div className="box-device-view">
                                     <div className=" box-inspect-view has-text-white">
                                         <div className="view">
-                                            <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Services</div>
+                                            <div
+                                                className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Services
+                                            </div>
                                             <div className="inspect-items-view">
                                                 {deviceServices?.map((service, index) => (
-                                                    <div key={index} className={`inspect-item ${selectedServiceIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickService(index)}>
-                                                        <div className=" has-text-black is-clickable" >
-                                                            <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
+                                                    <div key={index}
+                                                         className={`inspect-item ${selectedServiceIndex === index ? 'inspect-item-selected' : ''}`}
+                                                         onClick={() => onClickService(index)}>
+                                                        <div className=" has-text-black is-clickable">
+                                                            <div
+                                                                className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
                                                                 {expandedServiceIndex == index ? (
                                                                     <div>
-                                                                        <div className="is-italic light-text">You can set the alias for this service:</div>
+                                                                        <div className="is-italic light-text">You can
+                                                                            set the alias for this service:
+                                                                        </div>
                                                                         <input
                                                                             ref={aliasEditInput}
                                                                             type="text"
@@ -541,13 +586,18 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                                                                         />
                                                                     </div>
                                                                 ) : (
-                                                                    <div className="is-size-6 has-text-weight-bold uuid-text">
+                                                                    <div
+                                                                        className="is-size-6 has-text-weight-bold uuid-text">
                                                                         {service.alias || service.uuid}
                                                                     </div>
                                                                 )}
-    
-                                                                <div className="has-text-weight-bold is-clickable more-option-edt" >
-                                                                    <img onClick={(e) => onClickServiceEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
+
+                                                                <div
+                                                                    className="has-text-weight-bold is-clickable more-option-edt">
+                                                                    <img onClick={(e) => onClickServiceEdit(e, index)}
+                                                                         title="Edit the alias of this characteristic"
+                                                                         className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`}
+                                                                         src="pen.svg" alt="More option"/>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -561,39 +611,61 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                                 <div className="box-device-view">
                                     <div className=" box-inspect-view has-text-white">
                                         <div className="view">
-                                            <div className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Characteristics</div>
+                                            <div
+                                                className="view-bar-section-name has-text-black is-size-5 has-text-weight-bold is-unselectable has-text-centered">Characteristics
+                                            </div>
                                             <div className="inspect-items-view">
                                                 {getSelectedServiceCharacteristics()?.map((characteristic, index) => (
-                                                    <div key={index} className={`inspect-item ${selectedCharacteristicIndex === index ? 'inspect-item-selected' : ''}`} onClick={() => onClickCharacteristic(index)}>
-                                                        <div className=" has-text-black is-clickable" >
-                                                            <div className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
+                                                    <div key={index}
+                                                         className={`inspect-item ${selectedCharacteristicIndex === index ? 'inspect-item-selected' : ''}`}
+                                                         onClick={() => onClickCharacteristic(index)}>
+                                                        <div className=" has-text-black is-clickable">
+                                                            <div
+                                                                className="is-flex is-justify-content-space-between is-align-items-center is-unselectable">
                                                                 {expandedCharacteristicIndex == index ? (
-                                                                        <div>
-                                                                            <div className="is-italic light-text">You can set the alias for this characteristic:</div>
-                                                                            <input
-                                                                                ref={aliasEditInput}
-                                                                                type="text"
-                                                                                className="is-size-6 has-text-weight-bold"
-                                                                                onChange={handleAliasInputChange}
-                                                                                value={aliasInputValue || ""}
-                                                                                onKeyDown={(e) => handleCharacteristicNameKeyDownInput(e, characteristic.uuid)}
-                                                                            />
+                                                                    <div>
+                                                                        <div className="is-italic light-text">You can
+                                                                            set the alias for this characteristic:
                                                                         </div>
-                                                                    ) : (
-                                                                        <div className="is-size-6 has-text-weight-bold uuid-text">
-                                                                            {characteristic.alias || characteristic.uuid}
-                                                                        </div>
-                                                                    )}
-    
-    
-                                                                <div className="has-text-weight-bold is-clickable more-option-edt">
-                                                                    <img onClick={(e) => onClickCharacteristicEdit(e, index)} title="Edit the alias of this characteristic" className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`} src="pen.svg" alt="More option" />
+                                                                        <input
+                                                                            ref={aliasEditInput}
+                                                                            type="text"
+                                                                            className="is-size-6 has-text-weight-bold"
+                                                                            onChange={handleAliasInputChange}
+                                                                            value={aliasInputValue || ""}
+                                                                            onKeyDown={(e) => handleCharacteristicNameKeyDownInput(e, characteristic.uuid)}
+                                                                        />
+                                                                    </div>
+                                                                ) : (
+                                                                    <div
+                                                                        className="is-size-6 has-text-weight-bold uuid-text">
+                                                                        {characteristic.alias || characteristic.uuid}
+                                                                    </div>
+                                                                )}
+
+
+                                                                <div
+                                                                    className="has-text-weight-bold is-clickable more-option-edt">
+                                                                    <img
+                                                                        onClick={(e) => onClickCharacteristicEdit(e, index)}
+                                                                        title="Edit the alias of this characteristic"
+                                                                        className={`more-option-img ${expandedServiceIndex == index ? 'more-option-img-rotated' : ''}`}
+                                                                        src="pen.svg" alt="More option"/>
                                                                 </div>
                                                             </div>
                                                             <div className="characteristics-properties is-flex">
-                                                                <div className={`characteristics-properties-read ${!characteristic.properties.includes("read") ? 'characteristics-properties-unabled' : ''}`} title="Read">R</div>
-                                                                <div className={`characteristics-properties-write ${!characteristic.properties.includes("write") ? 'characteristics-properties-unabled' : ''}`} title="Write">W</div>
-                                                                <div className={`characteristics-properties-notify ${!characteristic.properties.includes("notify") ? 'characteristics-properties-unabled' : ''}`} title="Notify">N</div>
+                                                                <div
+                                                                    className={`characteristics-properties-read ${!characteristic.properties.includes("read") ? 'characteristics-properties-unabled' : ''}`}
+                                                                    title="Read">R
+                                                                </div>
+                                                                <div
+                                                                    className={`characteristics-properties-write ${!characteristic.properties.includes("write") ? 'characteristics-properties-unabled' : ''}`}
+                                                                    title="Write">W
+                                                                </div>
+                                                                <div
+                                                                    className={`characteristics-properties-notify ${!characteristic.properties.includes("notify") ? 'characteristics-properties-unabled' : ''}`}
+                                                                    title="Notify">N
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -604,45 +676,49 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                                 </div>
                             </div>
                         </div>
-    
+
                     </div>
-    
-    
+
+
                     <div className="right-view-bar">
-    
-                        <div className="main-view is-relative" style={{ height: `${consolePanelHeight}px` }}>
-                            <div className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`} onMouseDown={handleMouseDownConsoleResizer}></div>
+
+                        <div className="main-view is-relative" style={{height: `${consolePanelHeight}px`}}>
+                            <div
+                                className={`console-view-bar-resizer left-view-bar-resizer is-relative" ${consolePanelResizing ? 'view-bar-resizer-selected' : ''}`}
+                                onMouseDown={handleMouseDownConsoleResizer}></div>
                             {getSelectedServiceCharacteristics().length && (
-                                <CharacteristicsView characteristic={getSelectedServiceCharacteristics()[selectedCharacteristicIndex]} onWatchChange={handleWatchCharacteristicChange} />
+                                <CharacteristicsView
+                                    characteristic={getSelectedServiceCharacteristics()[selectedCharacteristicIndex]}
+                                    onWatchChange={handleWatchCharacteristicChange}/>
                             )}
                         </div>
-    
-                        <div className="bottom-console" >
-                            <ConsoleView device={device} consoleHandler={consoleHandler} ref={consoleViewRef} />
+
+                        <div className="bottom-console">
+                            <ConsoleView device={device} consoleHandler={consoleHandler} ref={consoleViewRef}/>
                         </div>
                     </div>
                 </div>
             }
 
             {/* Status view */}
-            {activeContentView === 1 && 
+            {activeContentView === 1 &&
                 <div className="device-section-view is-relative is-flex is-flex-direction-column ml-auto mr-auto mt-2">
                     <div className="device-section-info-title">Basic Informations</div>
                     <div className="device-info-table">
                         <table>
                             <tbody>
-                                <tr>
+                            <tr>
                                 <td><strong>Device name:</strong></td>
                                 <td>{device.local_name}</td>
-                                </tr>
-                                <tr>
+                            </tr>
+                            <tr>
                                 <td><strong>Address:</strong></td>
                                 <td>{device.address}</td>
-                                </tr>
-                                <tr>
+                            </tr>
+                            <tr>
                                 <td><strong>RSSI:</strong></td>
                                 <td>{device_rssi} dBm</td>
-                                </tr>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -650,37 +726,48 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
                     <div className="device-info-table">
                         <table>
                             <thead>
-                                <tr>
-                                    <th><strong>Service</strong></th>
-                                    <th><strong>Characteristics</strong></th>
-                                </tr>
+                            <tr>
+                                <th><strong>Service</strong></th>
+                                <th><strong>Characteristics</strong></th>
+                            </tr>
                             </thead>
                             <tbody>
-                                {deviceServices?.map((service, index) => (
-                                    <tr>
-                                        <td>{service.uuid}</td>
-                                        <td>
-                                            <ul>
-                                                {service.chars.map((characteristics) => (
-                                                    <li>
-                                                        <div>
-                                                            {characteristics.alias && <strong className="alias">{characteristics.alias}</strong>}
-                                                            {characteristics.alias && " - "}
-                                                            {characteristics.uuid}
-                                                        </div>
-                                                        <div>
-                                                        <div className="characteristics-properties characteristics-properties-no-hover is-flex">
-                                                                <div className={`characteristics-properties-read ${!characteristics.properties.includes("read") ? 'characteristics-properties-unabled' : ''}`} title="Read">R</div>
-                                                                <div className={`characteristics-properties-write ${!characteristics.properties.includes("write") ? 'characteristics-properties-unabled' : ''}`} title="Write">W</div>
-                                                                <div className={`characteristics-properties-notify ${!characteristics.properties.includes("notify") ? 'characteristics-properties-unabled' : ''}`} title="Notify">N</div>
+                            {deviceServices?.map((service, index) => (
+                                <tr>
+                                    <td>{service.uuid}</td>
+                                    <td>
+                                        <ul>
+                                            {service.chars.map((characteristics) => (
+                                                <li>
+                                                    <div>
+                                                        {characteristics.alias &&
+                                                            <strong className="alias">{characteristics.alias}</strong>}
+                                                        {characteristics.alias && " - "}
+                                                        {characteristics.uuid}
+                                                    </div>
+                                                    <div>
+                                                        <div
+                                                            className="characteristics-properties characteristics-properties-no-hover is-flex">
+                                                            <div
+                                                                className={`characteristics-properties-read ${!characteristics.properties.includes("read") ? 'characteristics-properties-unabled' : ''}`}
+                                                                title="Read">R
+                                                            </div>
+                                                            <div
+                                                                className={`characteristics-properties-write ${!characteristics.properties.includes("write") ? 'characteristics-properties-unabled' : ''}`}
+                                                                title="Write">W
+                                                            </div>
+                                                            <div
+                                                                className={`characteristics-properties-notify ${!characteristics.properties.includes("notify") ? 'characteristics-properties-unabled' : ''}`}
+                                                                title="Notify">N
                                                             </div>
                                                         </div>
-                                                    </li>                                                    
-                                                ))}
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                ))}
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </td>
+                                </tr>
+                            ))}
                             </tbody>
                         </table>
                     </div>
@@ -688,8 +775,8 @@ const DeviceView = ({ device, device_rssi }: DeviceReactViewProps): JSX.Element 
             }
 
             {/* Settings view */}
-            {activeContentView === 2 && 
-                <div className="device-section-view device-option-view is-relative">Settings view</div>                    
+            {activeContentView === 2 &&
+                <div className="device-section-view device-option-view is-relative">Settings view</div>
             }
 
         </div>

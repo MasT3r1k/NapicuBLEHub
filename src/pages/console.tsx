@@ -161,7 +161,7 @@ const ConsoleView = React.forwardRef<ConsoleViewRef, ConsoleReactViewProps>(({ d
                             case "text":
                                 break;
                             case "UUID":
-                                reg_input_without_space_result[par_count + 1] = allCharacteristicsUUID[selectedCommandIndex.current];;
+                                reg_input_without_space_result[par_count + 1] = allCharacteristicsUUID[selectedCommandIndex.current];
                                 inputDivRef.current.innerText = reg_input_without_space_result.join(" ");
 
                                 setCursorToEnd();
