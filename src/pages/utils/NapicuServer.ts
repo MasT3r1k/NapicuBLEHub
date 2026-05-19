@@ -108,7 +108,7 @@ export default class NapicuServer {
         NapicuLOG.LOG_I("Connecting to:", peripheral.advertisement.localName);
         const emit_data: ConnectingDevice = {address: peripheral.address, local_name: peripheral.advertisement.localName};
         this.io.emit("connecting", emit_data);
-        this.stop_scan();
+        //this.stop_scan();
         noble.removeAllListeners("discover");
         noble.startScanning([], true);
 
@@ -121,13 +121,14 @@ export default class NapicuServer {
           if(found_peripheral.address == peripheral.address && found_peripheral.connectable) {
             clearTimeout(connection_timeout);
             noble.removeAllListeners("discover");
-            noble.stopScanning();
-
-            noble.reset();
+            //noble.stopScanning();
+            //this.stop_scan();
+            //noble.reset();
             peripheral.connect();
 
             peripheral.on("connect", async () => {
               NapicuLOG.LOG_I("Successfully connected to:", peripheral.advertisement.localName);
+              this.stop_scan();
               NapicuLOG.LOG_I("Discovering all services and characteristics...");
 
               //This block resolves a specific error in the discoverAllServicesAndCharacteristicsAsync function 
@@ -336,8 +337,12 @@ export default class NapicuServer {
   private start_scan = (): void => {
     if (!this.is_scanning) {
       //On noble discover
-      noble.reset();
-      NapicuLOG.LOG_I("Restarting BLE.");
+
+      if (process.platform === "linux") {
+        noble.reset();
+        NapicuLOG.LOG_I("Restarting BLE.");
+      }
+
       noble.on("discover", this.noble_discover);
       NapicuLOG.LOG_I("Starting BLE scan...");
 
