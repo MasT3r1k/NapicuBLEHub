@@ -1,4 +1,4 @@
-import { ConnectedDeviceCharacteristicData } from "@/pages/interfaces/Idevice";
+import type { ConnectedDeviceCharacteristicData } from "@/pages/interfaces/Idevice";
 
 export interface Device {
     uuids: string[]

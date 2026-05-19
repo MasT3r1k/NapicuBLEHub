@@ -1,4 +1,4 @@
-import { ConnectedDevice, ConnectedDeviceChar } from "@/types/ble_device";
+import type { ConnectedDevice, ConnectedDeviceChar } from "@/types/ble_device";
 import { CharacteristicsReqHistory } from "../CharacteristicsReqHistory";
 
 export interface DeviceReactViewProps {
