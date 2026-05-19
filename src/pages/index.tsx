@@ -1,5 +1,5 @@
 import { ConnectedDevice, BLEDeviceService, ConnectingDevice, Device, CharacteristicResponse } from "@/types/ble_device";
-import { useEffect, useState } from "react";
+import {JSX, useEffect, useState} from "react";
 import io, { Socket, SocketOptions } from "socket.io-client";
 import DeviceView from "./device";
 import { NapicuLogView } from "./console";

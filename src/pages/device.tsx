@@ -1,5 +1,5 @@
 import { ConnectedDeviceChar, BLEDeviceService, CharacteristicResponse, CharacteristicRequest } from "@/types/ble_device";
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, {useState, useRef, useEffect, useCallback, JSX} from "react";
 import NapicuCookies from "./Cookies";
 import ConsoleView, { NapicuLogView } from "./console";
 import { ConnectedDeviceCharacteristicData, ConnectedDeviceServiceData, DeviceReactViewProps, SelectedCharacteristicCookiesData } from "./interfaces/Idevice";

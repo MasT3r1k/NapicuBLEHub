@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {useState, useRef, useEffect, JSX} from "react";
 import { CharacteristicRequest, ConnectedDeviceCharViewProps } from "@/types/ble_device";
 import { CharacteristicOperationHistory, formatTime } from "./CharacteristicsReqHistory";
 import { useSocket } from "./Socket";
