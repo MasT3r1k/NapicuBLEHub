@@ -1,5 +1,5 @@
 
-# NapicuBLEHub [beta]
+# NapicuBLEHub [Beta]
 
 
 A Bluetooth Low Energy (BLE) Device Debugging and Testing Tool for Developers
@@ -37,6 +37,13 @@ the [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble) libra
   it is mirrored on the web interface. This means that the same connected device will be displayed across all instances
   of the web page that are opened on other devices. This is useful for monitoring and debugging the same BLE device
   across multiple devices.
+---
+
+
+![Application preview 1](imgs/napicu_ble_hub_view_1.png)
+![Application preview 2](imgs/napicu_ble_hub_subscribe_image.png)
+![Application preview 3](imgs/napicu_ble_hub_view_2.png)
+
 ---
 ## Installation
 
@@ -202,5 +209,15 @@ This parameter defines the log level for console output:
 
 * `-1` - Disables all logs (no logs will be shown).
 * `1` - Only error logs will be shown.
-* `2` - Shows error, success, and informational logs.
+  * `2` - Shows error, success, and informational logs.
+
+---
+## 🐛 Bug Reports
+
+If you encounter any issues or bugs, please report them here:
+
+https://github.com/Numax-cz/NapicuBLEHub/issues
+
+Make sure to include as much detail as possible (steps to reproduce, expected behavior, and screenshots if applicable).
+This helps improve the project significantly 👍
 
