@@ -1,4 +1,5 @@
-import {ConsoleCommand} from "@/pages/utils/Command";
+import {ConsoleCommand} from "@/utils/Command";
+
 
 export interface ConsoleViewRef {
     consolePrint: (msg: string, show_name?: boolean) => void;

@@ -1,12 +1,20 @@
-import React, {useState, useRef, useEffect, useImperativeHandle, JSX} from "react";
-import { ConsoleReactViewProps } from "./interfaces/Idevice";
-import { IConsoleCommand, ILogLine } from "./interfaces/IConsole";
-import { COOKIES_CHARACTERISTICS_ALIASES_NAME, COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME, COOKIES_SELECTED_CHARACTERISTIC, COOKIES_SERVICES_ALIASES_NAME, COOKIES_UNWATCHED_CHARACTERISTICS, DEFAULT_CHARACTERISTICS_WATCH, GET_ALL_COMMANDS_NAMES, GET_COMMAND_BY_NAME, SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH, SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH } from "./config";
+import React, {JSX, useEffect, useImperativeHandle, useRef, useState} from "react";
+import {ConsoleReactViewProps} from "./interfaces/Idevice";
+import {IConsoleCommand, ILogLine} from "./interfaces/IConsole";
+import {
+    COOKIES_CONSOLE_PANEL_LAYOUT_WIDTH_NAME,
+    GET_ALL_COMMANDS_NAMES,
+    GET_COMMAND_BY_NAME,
+    SIZE_CONSOLE_PANEL_SPLIT_DEFAULT_WIDTH,
+    SIZE_CONSOLE_PANEL_SPLIT_MAX_WIDTH,
+    SIZE_CONSOLE_PANEL_SPLIT_MIN_WIDTH
+} from "./config";
 import NapicuCookies from "./Cookies";
-import { EventEmitter } from 'events';
-import { ConsoleCommand, IConsoleCommandOption, IConsoleCommandParams } from "./utils/Command";
-import { BLEDeviceService, ConnectedDeviceChar } from "@/types/ble_device";
-import { ConsoleViewRef } from "./interfaces/IConsoleViewRef";
+import {EventEmitter} from 'events';
+
+import {BLEDeviceService, ConnectedDeviceChar} from "@/types/ble_device";
+import {ConsoleViewRef} from "./interfaces/IConsoleViewRef";
+import {ConsoleCommand, IConsoleCommandOption, IConsoleCommandParams} from "@/utils/Command";
 
 
 export class NapicuLogView {

@@ -1,4 +1,4 @@
-import { ConsoleCommand } from "./utils/Command";
+import {ConsoleCommand} from "@/utils/Command";
 
 export const COOKIES_LEFT_PANEL_WIDTH_NAME: string = "left_panel_width";
 export const COOKIES_CONSOLE_PANEL_HEIGHT_NAME: string = "console_panel_height";
