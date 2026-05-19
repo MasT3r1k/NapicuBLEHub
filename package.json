@@ -1,31 +1,31 @@
 {
   "name": "napicu-web-ble-scanner",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next dev -p 6969 -H 0.0.0.0",
     "build": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next build",
     "start": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next start -p 6969 -H 0.0.0.0"
   },
   "dependencies": {
-    "@abandonware/noble": "^1.9.2-25",
-    "bulma": "^1.0.2",
-    "express": "^4.21.1",
-    "next": "15.0.3",
-    "react": "^19.0.0-rc-66855b96-20241106",
-    "react-dom": "^19.0.0-rc-66855b96-20241106",
-    "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
-    "styled-components": "^6.1.13",
-    "ws": "^8.18.0"
+    "@abandonware/noble": "^1.9.2-26",
+    "bulma": "^1.0.4",
+    "express": "^5.2.1",
+    "next": "16.2.6",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
+    "styled-components": "^6.4.2",
+    "ws": "^8.20.1"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "@types/ws": "^8.5.13",
-    "eslint": "^8",
-    "eslint-config-next": "15.0.3",
-    "typescript": "^5"
+    "@types/node": "^25",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/ws": "^8.18.1",
+    "eslint": "^10",
+    "eslint-config-next": "16.2.6",
+    "typescript": "^6"
   }
 }

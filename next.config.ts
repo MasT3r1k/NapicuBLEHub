@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  turbopack: {},
   reactStrictMode: false,
   webpack(config, { isServer }) {
     if (!isServer) {
