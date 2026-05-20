@@ -34,10 +34,10 @@ jobs:
       - name: Build image
         run: |
           docker build -t ghcr.io/numax-cz/napicublehub:latest \
-                       -t numax/napicublehub:latest .
+                       -t numaxcz/napicublehub:latest .
 
       # Push both
       - name: Push image
         run: |
           docker push ghcr.io/numax-cz/napicublehub:latest
-          docker push numax/napicublehub:latest
+          docker push numaxcz/napicublehub:latest
