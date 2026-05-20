@@ -329,6 +329,80 @@ Benefits:
 * Proper permissions (--privileged) are required for BLE functionality
 
 ---
+
+
+## 💻 Console / Terminal Commands
+The application includes a built-in web-based console (terminal) that allows direct interaction with BLE devices.
+
+This console provides a simple command interface for reading, writing, and managing BLE characteristics in real time.
+
+### 📡 `subscribe` (alias: `sub`)
+Subscribe to notifications from a BLE characteristic.
+
+```bash
+subscribe <uuid>
+```
+`uuid` - The characteristic UUID to subscribe to
+
+### 📡 `unsubscribe` (alias: `un`)
+Unsubscribe from notifications of a BLE characteristic.
+
+```bash
+unsubscribe <uuid>
+```
+`uuid` - The characteristic UUID to unsubscribe from
+
+
+### ✍️ `write`
+Write data to a BLE characteristic.
+```bash
+write <uuid> <message>
+```
+`uuid` - The characteristic UUID to write to
+`message` - Data to send to the characteristic
+
+### 📖 `read`
+Read data from a BLE characteristic.
+```bash
+read <uuid>
+```
+`uuid` - The characteristic UUID to read from
+
+### 🧹 `clear` (alias: `cl`)
+Clears the console output.
+```bash
+clear
+```
+
+### 🗑️ `delete` (alias: `dl`)
+Removes stored application settings.
+```bash
+delete <option>
+```
+
+| Option  | Description |
+|----------|-------------|
+| aliases  | Removes all aliases for services and characteristics |
+| sizes    | Removes saved window layout settings |
+| all      | Removes all user settings |
+
+### 🧠 Notes
+
+* UUID must match a valid BLE characteristic on the connected device
+* Write operations depend on characteristic permissions
+* Subscribe enables real-time notifications from BLE devices
+* All commands are executed against the currently connected device
+
+### 🚀 Example usage
+```bash
+subscribe 12345678-1234-1234-1234-123456789abc
+read 12345678-1234-1234-1234-123456789abc
+write 12345678-1234-1234-1234-123456789abc hello
+clear
+```
+
+---
+
 ## 🐛 Bug Reports
 
 If you encounter any issues or bugs, please report them here:
