@@ -195,21 +195,138 @@ For more commands and options, refer to the official
 documentation: [Next.js CLI Reference](https://nextjs.org/docs/pages/api-reference/cli/next).
 
 ```bash
-"dev": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next dev -p 6969 -H 0.0.0.0"
+"dev": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next dev -p 6969 -H 0.0.0.0",
+"build": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next build",
+"start": "next start -H 0.0.0.0"
 ```
 
-#### NOBLE_HCI_DEVICE_ID=0
+### `NOBLE_HCI_DEVICE_ID=0`
 
 This parameter specifies the Bluetooth adapter to be used. NOBLE_HCI_DEVICE_ID=0 means that the adapter with ID 0 will
 be selected. This adapter is used for communication with Bluetooth Low Energy (BLE) devices.
 
-#### NAPICU_SERVER_LOG_LEVEL=2
+### `NAPICU_SERVER_LOG_LEVEL=2`
 
 This parameter defines the log level for console output:
 
 * `-1` - Disables all logs (no logs will be shown).
 * `1` - Only error logs will be shown.
-  * `2` - Shows error, success, and informational logs.
+* `2` - Shows error, success, and informational logs.
+
+---
+
+
+## 🐳 Docker Setup
+
+The application can also be run using Docker, which provides a simple and consistent deployment environment for the BLE backend server and Next.js application.
+
+⚠️ This setup relies on direct access to the host machine’s Bluetooth stack and is therefore recommended for Linux systems only.
+
+
+
+### ⚠️ Requirements (IMPORTANT)
+
+For Bluetooth Low Energy (BLE) to work inside Docker, the following is required on the host machine (NOT inside the container):
+
+🖥️ Linux Host Setup
+
+Install required Bluetooth system dependencies:
+```bash
+sudo apt-get update
+sudo apt-get install bluetooth bluez libbluetooth-dev libudev-dev
+```
+These packages provide the BlueZ Bluetooth stack, which is required by [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble).
+
+
+### ❗ Important Notes
+
+* Docker does NOT provide Bluetooth hardware access by itself
+* The container relies on the host system’s Bluetooth adapter
+* BLE will NOT work on Windows or macOS Docker Desktop reliably
+* Linux is the only fully supported environment
+
+
+### 📦 Run via Docker (Recommended)
+▶️ Pull prebuilt image (GitHub Container Registry)
+```bash
+docker pull ghcr.io/numax-cz/napicublehub:latest
+```
+
+### 🚀 Run container (default configuration)
+```bash
+docker run \
+  -p 6969:6969 \
+  --net=host \
+  --privileged \
+  ghcr.io/numax-cz/napicublehub:latest
+```
+Default values:
+* PORT: 6969
+* BLE HCI device: 0
+* Log level: 2
+
+### ⚙️ Run container with custom configuration
+You can override default settings using environment variables:
+```bash
+docker run \
+  -p 8080:8080 \
+  --net=host \
+  --privileged \
+  -e PORT=8080 \
+  -e NOBLE_HCI_DEVICE_ID=1 \
+  -e NAPICU_SERVER_LOG_LEVEL=1 \
+  ghcr.io/numax-cz/napicublehub:latest
+```
+
+### 🛠️ Build Docker image locally
+If you want to build the project yourself:
+```bash
+docker build -t napicublehub .
+```
+
+### ▶️ Run locally built image
+```bash
+docker run \
+  -p 6969:6969 \
+  --net=host \
+  --privileged \
+  napicublehub
+```
+
+---
+
+## 🔧 Docker Flags Explained
+
+### `--privileged`
+Grants the container elevated permissions.
+
+This is required for BLE functionality because it allows:
+
+* Access to /dev/hci0
+* Direct communication with Bluetooth hardware
+* Interaction with the host’s BlueZ stack
+
+⚠️ Without this flag, BLE scanning and device communication will NOT work.
+
+### `--net=host (Linux only)`
+This makes the container share the host network stack.
+
+Benefits:
+
+* Improved BLE stability
+* Direct access to host Bluetooth interfaces
+* No NAT/network isolation issues
+
+👉 Recommended for production Linux deployments.
+
+---
+
+## 🚀 Docker summary 
+
+* Docker provides a convenient deployment method
+* BLE access depends on the host system (not Docker itself)
+* Linux is strongly recommended and fully supported
+* Proper permissions (--privileged) are required for BLE functionality
 
 ---
 ## 🐛 Bug Reports
