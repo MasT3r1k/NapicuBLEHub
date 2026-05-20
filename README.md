@@ -39,6 +39,20 @@ the [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble) libra
   across multiple devices.
 ---
 
+## 🧪 Tested Platforms
+
+The application has been tested on the following operating systems and kernel versions.
+
+| Operating System | Version / Kernel | Status |
+|---|---|---|
+| macOS | macOS 26.5 | ✅ Tested |
+| Fedora Linux | Linux Kernel 6.19 | ✅ Tested |
+| Debian 13 (Trixie) | Linux Kernel 6.12.88 | ✅ Tested |
+| Windows | Not tested yet | ⚠️ Unknown |
+
+> ⚠️ Linux is currently the recommended and most reliable platform for BLE functionality.
+
+> 🧠 Docker BLE support was primarily tested on Linux systems using the BlueZ Bluetooth stack.
 
 ![Application preview 1](imgs/napicu_ble_hub_view_1.png)
 ![Application preview 2](imgs/napicu_ble_hub_subscribe_image.png)
