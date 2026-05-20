@@ -27,13 +27,16 @@ RUN npm install --omit=dev
 # Copy build output
 COPY --from=builder /app ./
 
-# Expose Next.js port
-EXPOSE 6969
+
 
 # Environment (BLE + server)
 ENV NODE_ENV=production
+ENV PORT=6969
 ENV NOBLE_HCI_DEVICE_ID=0
 ENV NAPICU_SERVER_LOG_LEVEL=2
+
+# Expose Next.js port
+EXPOSE 6969
 
 # Start app
 CMD ["npm", "run", "start"]
