@@ -1,11 +1,17 @@
 {
   "name": "napicu-web-ble-scanner",
-  "version": "0.1.0",
+  "version": "1.1.0",
+  "author": "Numax",
+  "description": "A Bluetooth Low Energy (BLE) Device Debugging and Testing Tool for Developers.",
+  "license": "MIT",
+  "bugs": "https://github.com/Numax-cz/NapicuBLEHub/issues",
+  "readme": "https://github.com/Numax-cz/NapicuBLEHub/blob/main/README.md",
+  "keywords": ["Bluetooth Low Energy", "BLE", "Debugging", "Testing", "Tool", "Developers", "BLE debugging", "Bluetooth tool", "Bluetooth debugging", "NextJS"],
   "private": false,
   "scripts": {
     "dev": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next dev -p 6969 -H 0.0.0.0",
     "build": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next build",
-    "start": "NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next start -p 6969 -H 0.0.0.0"
+    "start": "next start -H 0.0.0.0"
   },
   "dependencies": {
     "@abandonware/noble": "^1.9.2-26",
