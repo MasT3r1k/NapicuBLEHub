@@ -114,7 +114,7 @@ See [Issue #425 · OpenWonderLabs/homebridge-switchbot](https://github.com/OpenW
 Refer to [generic Linux notes above](#linux).
 
 ```sh
-sudo yum install bluez bluez-libs bluez-libs-devel
+sudo dnf install bluez bluez-libs bluez-libs-devel systemd-devel
 ```
 
 ##### Intel Edison
@@ -240,10 +240,11 @@ The application can also be run using Docker, which provides a simple and consis
 
 ### ⚠️ Requirements (IMPORTANT)
 
-For Bluetooth Low Energy (BLE) to work inside Docker, the following is required on the host machine (NOT inside the container):
+For Bluetooth Low Energy (BLE) to work inside Docker, the following is required on the host machine (NOT inside the container)
 
-🖥️ Linux Host Setup
 
+
+### Ubuntu / Debian
 Install required Bluetooth system dependencies:
 ```bash
 sudo apt-get update
@@ -251,6 +252,11 @@ sudo apt-get install bluetooth bluez libbluetooth-dev libudev-dev
 ```
 These packages provide the BlueZ Bluetooth stack, which is required by [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble).
 
+### Fedora / RPM-based distributions
+Install required Bluetooth system dependencies:
+```bash
+sudo dnf install bluez bluez-libs bluez-libs-devel systemd-devel
+```
 
 ### ❗ Important Notes
 
