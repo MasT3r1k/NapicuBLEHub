@@ -2,6 +2,7 @@
 # NapicuBLEHub [Beta]
 
 [![Docker Hub](https://img.shields.io/docker/pulls/numaxcz/napicublehub.svg)](https://hub.docker.com/r/numaxcz/napicublehub)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/0c333851fdd64f76b47ed3e694d0350b)](https://app.codacy.com/gh/Numax-cz/NapicuBLEHub/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 A Bluetooth Low Energy (BLE) Device Debugging and Testing Tool for Developers
 
