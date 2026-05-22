@@ -1,5 +1,5 @@
 # ---- Build stage ----
-FROM node:20-bookworm AS builder
+FROM node:26-bookworm AS builder
 LABEL authors="numax"
 
 WORKDIR /app
@@ -16,7 +16,7 @@ RUN npm run build
 
 
 # ---- Production stage ----
-FROM node:20-bookworm
+FROM node:26-bookworm
 
 WORKDIR /app
 
