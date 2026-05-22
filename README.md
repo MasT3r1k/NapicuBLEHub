@@ -50,7 +50,7 @@ The application has been tested on the following operating systems and kernel ve
 | macOS | macOS 26.5 | ✅ Tested |
 | Fedora Linux | Linux Kernel 6.19 | ✅ Tested |
 | Debian 13 (Trixie) | Linux Kernel 6.12.88 | ✅ Tested |
-| Windows | Not tested yet | ⚠️ Unknown |
+| Windows | Windows 11 | ✅ Tested |
 
 > ⚠️ Linux is currently the recommended and most reliable platform for BLE functionality.
 
@@ -244,7 +244,23 @@ The application can also be run using Docker, which provides a simple and consis
 
 For Bluetooth Low Energy (BLE) to work inside Docker, the following is required on the host machine (NOT inside the container)
 
+### Windows
 
+Require cross-env:
+```bash
+npm install cross-env
+```
+
+Require [chocolatey](https://chocolatey.org/)
+
+Install python and visualstudio2022-workload-vctools:
+```bash
+choco install python visualstudio2022-workload-vctools -y 
+```
+
+To run dev and start on Windows, you have to use cross-env:
+"dev": "cross-env NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next dev -p 6969 -H 0.0.0.0"
+"build": "cross-env NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next build"
 
 ### Ubuntu / Debian
 Install required Bluetooth system dependencies:
