@@ -74,7 +74,7 @@ To change the adapter, [check the multiple adapters section](#multiple-adapters-
 
 Require cross-env:
 ```bash
-npm install cross-env
+npm install --save-dev cross-env
 ```
 
 Require [chocolatey](https://chocolatey.org/)
