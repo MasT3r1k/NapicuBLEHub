@@ -31,8 +31,7 @@ the [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble) libra
 - **Web Server Access**: The program runs as a web application accessible at the IP address where the tool is hosted.
   This allows easy access to the tool from any device on the same network.
 
-- **Cross-Platform Support**: The tool supports Linux and macOS, and while it is designed for these platforms, **Windows
-  support has not been tested** yet.
+- **Cross-Platform Support**: The tool supports Linux, macOS and Windows, and while it is designed for these platforms.
 
 - **Single Connection Support**: The tool supports only one BLE device connection at a time. Once a device is connected,
   it is mirrored on the web interface. This means that the same connected device will be displayed across all instances
