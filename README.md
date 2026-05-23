@@ -1,4 +1,3 @@
-
 # NapicuBLEHub [Beta]
 
 [![Docker Hub](https://img.shields.io/docker/pulls/numaxcz/napicublehub.svg)](https://hub.docker.com/r/numaxcz/napicublehub)
@@ -32,8 +31,7 @@ the [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble) libra
 - **Web Server Access**: The program runs as a web application accessible at the IP address where the tool is hosted.
   This allows easy access to the tool from any device on the same network.
 
-- **Cross-Platform Support**: The tool supports Linux and macOS, and while it is designed for these platforms, **Windows
-  support has not been tested** yet.
+- **Cross-Platform Support**: The tool supports Linux, macOS and Windows, and while it is designed for these platforms.
 
 - **Single Connection Support**: The tool supports only one BLE device connection at a time. Once a device is connected,
   it is mirrored on the web interface. This means that the same connected device will be displayed across all instances
@@ -50,7 +48,7 @@ The application has been tested on the following operating systems and kernel ve
 | macOS | macOS 26.5 | ✅ Tested |
 | Fedora Linux | Linux Kernel 6.19 | ✅ Tested |
 | Debian 13 (Trixie) | Linux Kernel 6.12.88 | ✅ Tested |
-| Windows | Not tested yet | ⚠️ Unknown |
+| Windows | Windows 11 | ✅ Tested |
 
 > ⚠️ Linux is currently the recommended and most reliable platform for BLE functionality.
 
@@ -70,6 +68,24 @@ Source: [@abandonware/noble](https://www.npmjs.com/package/@abandonware/noble)
 
 By default, the Bluetooth adapter is selected as `hci0`.
 To change the adapter, [check the multiple adapters section](#multiple-adapters-linux-specific).
+
+#### Windows
+
+Require cross-env:
+```bash
+npm install --save-dev cross-env
+```
+
+Require [chocolatey](https://chocolatey.org/)
+
+Install python and visualstudio2022-workload-vctools:
+```bash
+choco install python visualstudio2022-workload-vctools -y 
+```
+
+To run dev and start on Windows, you have to use cross-env:
+"dev": "cross-env NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next dev -p 6969 -H 0.0.0.0"
+"build": "cross-env NOBLE_HCI_DEVICE_ID=0 NAPICU_SERVER_LOG_LEVEL=2 next build"
 
 #### macOS
 
@@ -243,8 +259,6 @@ The application can also be run using Docker, which provides a simple and consis
 ### ⚠️ Requirements (IMPORTANT)
 
 For Bluetooth Low Energy (BLE) to work inside Docker, the following is required on the host machine (NOT inside the container)
-
-
 
 ### Ubuntu / Debian
 Install required Bluetooth system dependencies:
@@ -433,4 +447,3 @@ https://github.com/Numax-cz/NapicuBLEHub/issues
 
 Make sure to include as much detail as possible (steps to reproduce, expected behavior, and screenshots if applicable).
 This helps improve the project significantly 👍
-
