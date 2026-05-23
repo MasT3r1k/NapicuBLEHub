@@ -31,14 +31,6 @@ body {
   color: var(--text-light-text);
 }
 
-
-
-/* * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box; 
-} */
-
 #__next {
   height: 100%;
 }
@@ -90,7 +82,6 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
-
 
 .buttons-op>button {
   padding: 15px;
@@ -148,7 +139,6 @@ body {
   outline: none;
 }
 
-
 .filter-window>.section{
   top: 50%;
   width: 40%;
@@ -166,7 +156,6 @@ body {
   background: #0097e6;
   box-shadow: 0 8px 32px #1f26875e;
 }
-
 
 /* Skrytí checkboxu */
 .chck-input input[type="checkbox"] {
@@ -208,7 +197,6 @@ body {
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
-
 
 .button {
   border: none;
@@ -291,11 +279,9 @@ body {
   background: #64d63e;
 }
 
-
 .np-char-switch input:checked + .np-char-slider:before {
   transform: translateX(1.6em);
 }
-
 
 @media (max-width: 1500px) {
   .filter-window>.section{
