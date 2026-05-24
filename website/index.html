@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NapicuBLEHub - Bluetooth Low Energy Debugging Tool</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f39c12;
+            --primary-dark: #d68910;
+            --accent: #e67e22;
+            --accent-light: #ff6b35;
+            --dark-bg: #0a0e27;
+            --dark-card: #1a1f3a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b8d4;
+            --gradient-main: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            --gradient-accent: linear-gradient(135deg, #ff6b35 0%, #f39c12 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #0f1436 50%, #1a0f2e 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Background effect layer */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(243, 156, 18, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(230, 126, 34, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 40% 0%, rgba(255, 107, 53, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Content wrapper */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            padding: 30px 0;
+            border-bottom: 1px solid rgba(243, 156, 18, 0.1);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 28px;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            text-align: center;
+            padding: 80px 0 60px;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 .highlight {
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 36px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--gradient-main);
+            color: white;
+            box-shadow: 0 10px 30px rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(243, 156, 18, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(243, 156, 18, 0.1);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(243, 156, 18, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .btn-docker {
+            background: rgba(230, 126, 34, 0.1);
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-docker:hover {
+            background: rgba(230, 126, 34, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* ===== FEATURES SECTION ===== */
+        .features {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 42px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .section-title .highlight {
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .feature-card {
+            background: rgba(26, 31, 58, 0.5);
+            border: 1px solid rgba(243, 156, 18, 0.2);
+            border-radius: 12px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-main);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(26, 31, 58, 0.8);
+            border-color: rgba(243, 156, 18, 0.4);
+            transform: translateY(-10px);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* ===== CAPABILITIES SECTION ===== */
+        .capabilities {
+            padding: 80px 0;
+        }
+
+        .capabilities-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .capabilities-text h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            line-height: 1.3;
+        }
+
+        .capabilities-text h2 .highlight {
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .capabilities-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .capabilities-list li {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .capabilities-list i {
+            color: var(--primary);
+            font-size: 20px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .capabilities-list span {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .capabilities-visual {
+            background: rgba(26, 31, 58, 0.5);
+            border: 1px solid rgba(243, 156, 18, 0.2);
+            border-radius: 12px;
+            padding: 40px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .capabilities-visual::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(243, 156, 18, 0.15) 0%, transparent 70%);
+            filter: blur(40px);
+        }
+
+        .mock-terminal {
+            background: rgba(10, 14, 39, 0.8);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+
+        .terminal-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+
+        .terminal-line {
+            color: var(--primary);
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .terminal-line.success {
+            color: #2ecc71;
+        }
+
+        .terminal-line.info {
+            color: var(--text-secondary);
+        }
+
+        /* ===== PLATFORMS SECTION ===== */
+        .platforms {
+            padding: 60px 0 80px;
+            background: rgba(26, 31, 58, 0.3);
+            border-radius: 12px;
+            margin: 60px 0;
+            padding: 60px 40px;
+        }
+
+        .platforms h2 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 50px;
+            font-weight: 700;
+        }
+
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .platform-item {
+            padding: 20px;
+            background: rgba(10, 14, 39, 0.5);
+            border: 1px solid rgba(243, 156, 18, 0.2);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .platform-item:hover {
+            border-color: var(--primary);
+            background: rgba(243, 156, 18, 0.05);
+        }
+
+        .platform-item i {
+            font-size: 36px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .platform-item p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* ===== TECH STACK ===== */
+        .tech-stack {
+            padding: 80px 0;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+        }
+
+        .tech-item {
+            background: rgba(26, 31, 58, 0.5);
+            border: 1px solid rgba(243, 156, 18, 0.15);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tech-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            background: rgba(26, 31, 58, 0.7);
+        }
+
+        .tech-item i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .tech-item h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .tech-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid rgba(243, 156, 18, 0.1);
+            margin-top: 80px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            font-size: 13px;
+            color: rgba(176, 184, 212, 0.6);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .capabilities-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-bluetooth"></i>
+                    NapicuBLEHub
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#capabilities">Capabilities</a></li>
+                    <li><a href="#platforms">Platforms</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container">
+            <h1>Bluetooth Low Energy <span class="highlight">Debugging Tool</span></h1>
+            <p>Professional tool for developers to debug and test Bluetooth Low Energy devices. Intuitive web interface with terminal command support.</p>
+            <div class="cta-buttons">
+                <a href="https://github.com/Numax-cz/NapicuBLEHub" target="_blank" class="btn btn-primary">
+                    <i class="fab fa-github"></i> GitHub Repository
+                </a>
+                <a href="https://hub.docker.com/r/numaxcz/napicublehub" target="_blank" class="btn btn-docker">
+                    <i class="fab fa-docker"></i> Docker Hub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Key <span class="highlight">Features</span></h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-rss"></i></div>
+                    <h3>BLE Interaction</h3>
+                    <p>Read and write data to BLE devices, subscribe to notifications in real-time.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-desktop"></i></div>
+                    <h3>Web UI</h3>
+                    <p>Intuitive web interface for simple interaction with BLE devices without CLI.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-terminal"></i></div>
+                    <h3>Web Terminal</h3>
+                    <p>Advanced commands for users who prefer command-line interface.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-share-nodes"></i></div>
+                    <h3>Device Sharing</h3>
+                    <p>Connected BLE device is mirrored on all web clients across the network.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-globe"></i></div>
+                    <h3>Web Server</h3>
+                    <p>Access from any device on the network at the host's IP address.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-cube"></i></div>
+                    <h3>Docker Support</h3>
+                    <p>Easy deployment in containers with support for Linux, macOS, and Windows.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CAPABILITIES SECTION -->
+    <section class="capabilities" id="capabilities">
+        <div class="container">
+            <div class="capabilities-content">
+                <div class="capabilities-text">
+                    <h2>Advanced <span class="highlight">Capabilities</span></h2>
+                    <ul class="capabilities-list">
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>Terminal Commands:</strong> subscribe, unsubscribe, read, write, clear, delete</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>Configuration:</strong> Switchable Bluetooth adapters and log levels</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>Tested Platforms:</strong> macOS, Linux (Fedora, Debian), Windows 11</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>Easy Deployment:</strong> npm run dev/build/start</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>Docker Optimization:</strong> Pre-built images available on Docker Hub</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>TypeScript:</strong> Built in TypeScript for better maintainability and type safety</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="capabilities-visual">
+                    <div class="mock-terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-dot"></div>
+                            <div class="terminal-dot"></div>
+                            <div class="terminal-dot"></div>
+                        </div>
+                        <div class="terminal-line">$ npm run dev</div>
+                        <div class="terminal-line info">▲ Next.js 14.0.0</div>
+                        <div class="terminal-line success">✓ Ready in 2.5s</div>
+                        <div class="terminal-line">➜ Local: http://localhost:6969</div>
+                        <div class="terminal-line" style="margin-top: 20px;">$ subscribe 12345678-1234...</div>
+                        <div class="terminal-line success">✓ Subscribed to notifications</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PLATFORMS SECTION -->
+    <section class="platforms" id="platforms">
+        <div class="container">
+            <h2>Supported <span class="highlight">Platforms</span></h2>
+            <div class="platforms-grid">
+                <div class="platform-item">
+                    <i class="fab fa-apple"></i>
+                    <p><strong>macOS 26.5</strong></p>
+                    <p style="font-size: 12px; color: #2ecc71;">✓ Tested</p>
+                </div>
+                <div class="platform-item">
+                    <i class="fab fa-linux"></i>
+                    <p><strong>Fedora Linux</strong></p>
+                    <p style="font-size: 12px; color: #2ecc71;">✓ Recommended</p>
+                </div>
+                <div class="platform-item">
+                    <i class="fab fa-linux"></i>
+                    <p><strong>Debian 13</strong></p>
+                    <p style="font-size: 12px; color: #2ecc71;">✓ Tested</p>
+                </div>
+                <div class="platform-item">
+                    <i class="fab fa-windows"></i>
+                    <p><strong>Windows 11</strong></p>
+                    <p style="font-size: 12px; color: #2ecc71;">✓ Tested</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TECH STACK -->
+    <section class="tech-stack">
+        <div class="container">
+            <h2 class="section-title">Technology <span class="highlight">Stack</span></h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <i class="fab fa-react"></i>
+                    <h3>Next.js</h3>
+                    <p>Modern React framework for fast performance</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fab fa-js-square"></i>
+                    <h3>TypeScript</h3>
+                    <p>Type-safe JavaScript for better code quality</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-bluetooth"></i>
+                    <h3>@abandonware/noble</h3>
+                    <p>BLE library for Node.js and Electron</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fab fa-docker"></i>
+                    <h3>Docker</h3>
+                    <p>Containerization for easy deployment</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <a href="https://github.com/Numax-cz/NapicuBLEHub" target="_blank" class="footer-link">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                <a href="https://hub.docker.com/r/numaxcz/napicublehub" target="_blank" class="footer-link">
+                    <i class="fab fa-docker"></i> Docker Hub
+                </a>
+                <a href="https://napicu.eu" target="_blank" class="footer-link">
+                    napicu.eu
+                </a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 NapicuBLEHub. MIT License</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
