@@ -515,6 +515,68 @@
             color: rgba(176, 184, 212, 0.6);
         }
 
+        /* ===== GALLERY SECTION ===== */
+        .gallery {
+            padding: 80px 0;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(243, 156, 18, 0.2);
+            background: rgba(26, 31, 58, 0.5);
+            aspect-ratio: 16/9;
+            transition: all 0.3s ease;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(243, 156, 18, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(10, 14, 39, 0.95), transparent);
+            padding: 40px 20px 20px;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .gallery-overlay p {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .hero h1 {
@@ -563,6 +625,7 @@
                     <li><a href="#features">Features</a></li>
                     <li><a href="#capabilities">Capabilities</a></li>
                     <li><a href="#platforms">Platforms</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
                 </ul>
             </div>
         </div>
@@ -728,6 +791,33 @@
                     <i class="fab fa-docker"></i>
                     <h3>Docker</h3>
                     <p>Containerization for easy deployment</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALLERY SECTION -->
+    <section class="gallery" id="gallery">
+        <div class="container">
+            <h2 class="section-title">Application <span class="highlight">Screenshots</span></h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://github.com/Numax-cz/NapicuBLEHub/raw/main/imgs/napicu_ble_hub_view_1.png" alt="NapicuBLEHub Main View">
+                    <div class="gallery-overlay">
+                        <p>Main Application Interface</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://github.com/Numax-cz/NapicuBLEHub/raw/main/imgs/napicu_ble_hub_subscribe_image.png" alt="NapicuBLEHub Subscribe Feature">
+                    <div class="gallery-overlay">
+                        <p>Subscription Management</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://github.com/Numax-cz/NapicuBLEHub/raw/main/imgs/napicu_ble_hub_view_2.png" alt="NapicuBLEHub Device Interaction">
+                    <div class="gallery-overlay">
+                        <p>Device Interaction</p>
+                    </div>
                 </div>
             </div>
         </div>
